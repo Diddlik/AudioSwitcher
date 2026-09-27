@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="src/AudioSwitcher/Assets/audioswitcher.png" width="112" alt="AudioSwitcher-Logo">
+</p>
+
 # AudioSwitcher
 
 Schlankes Windows-Tool zum Umschalten von Standard-Audiogeräten über globale Shortcuts.
@@ -35,17 +39,17 @@ Einen lokalen, selbstständigen Velopack-Installer erzeugen:
 
 Die Ausgaben liegen anschließend unter `artifacts\releases`.
 
-Shortcuts werden als Text eingegeben, zum Beispiel `Ctrl+Alt+1`, `Strg+Shift+F12` oder `Win+Space`.
+Shortcuts werden direkt erfasst: Shortcut-Feld anklicken und die gewünschte Tastenkombination drücken. `Entf` oder `Backspace` löscht die Belegung.
 
 ## Bedienung
 
 1. Profil anlegen und benennen.
 2. Ausgabe- und Eingabegerät wählen.
-3. Optional einen Profil-Shortcut eintragen.
-4. Für den Schnellwechsel zwei Profile und einen Wechsel-Shortcut wählen.
+3. Optional das Shortcut-Feld anklicken und die gewünschte Kombination drücken.
+4. Für den Schnellwechsel zwei Profile wählen und den Wechsel-Shortcut ebenfalls per Tastendruck erfassen.
 5. Speichern. Bereits systemweit belegte Shortcuts werden abgelehnt.
 
-`Jetzt aktivieren` schaltet das gewählte Profil sofort. Das Tray-Menü öffnet oder beendet die App.
+`Jetzt aktivieren` schaltet das gewählte Profil sofort. Systemeinstellungen sind über das Menü `Einstellungen` erreichbar. Das Tray-Menü öffnet oder beendet die App.
 
 ## Veröffentlichung
 

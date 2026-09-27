@@ -60,7 +60,7 @@ public partial class App : Application
 
         _trayIcon = new TrayIcon
         {
-            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://AudioSwitcher/Assets/avalonia-logo.ico"))),
+            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://AudioSwitcher/Assets/audioswitcher.ico"))),
             ToolTipText = "AudioSwitcher",
             Menu = new NativeMenu { Items = { openItem, new NativeMenuItemSeparator(), exitItem } },
         };

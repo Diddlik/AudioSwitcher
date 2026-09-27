@@ -62,6 +62,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public ObservableCollection<AudioProfile> Profiles { get; } = [];
     public ObservableCollection<AudioDeviceInfo> OutputDevices { get; } = [];
     public ObservableCollection<AudioDeviceInfo> InputDevices { get; } = [];
+    public string VersionText { get; } =
+        $"Version {typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "unbekannt"}";
 
     [RelayCommand]
     private void AddProfile()

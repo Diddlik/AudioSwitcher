@@ -35,7 +35,7 @@ dotnet vpk pack `
     --packTitle AudioSwitcher `
     --packAuthors Diddlik `
     --runtime win-x64 `
-    --icon (Join-Path $repositoryRoot 'src/AudioSwitcher/Assets/avalonia-logo.ico') `
+    --icon (Join-Path $repositoryRoot 'src/AudioSwitcher/Assets/audioswitcher.ico') `
     --outputDir $releaseDirectory
 
 Write-Host "Installer created in $releaseDirectory"

@@ -49,7 +49,7 @@ jobs:
         run: dotnet vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} --outputDir artifacts/releases
 
       - name: Build Velopack installer
-        run: dotnet vpk pack --packId Diddlik.AudioSwitcher --packVersion ${{ steps.version.outputs.value }} --packDir artifacts/publish --mainExe AudioSwitcher.exe --packTitle AudioSwitcher --packAuthors Diddlik --runtime win-x64 --icon src/AudioSwitcher/Assets/avalonia-logo.ico --outputDir artifacts/releases
+        run: dotnet vpk pack --packId Diddlik.AudioSwitcher --packVersion ${{ steps.version.outputs.value }} --packDir artifacts/publish --mainExe AudioSwitcher.exe --packTitle AudioSwitcher --packAuthors Diddlik --runtime win-x64 --icon src/AudioSwitcher/Assets/audioswitcher.ico --outputDir artifacts/releases
 
       - name: Publish GitHub release
         run: dotnet vpk upload github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} --outputDir artifacts/releases --publish --releaseName "AudioSwitcher ${{ steps.version.outputs.value }}" --tag ${{ github.ref_name }} --targetCommitish ${{ github.sha }}
