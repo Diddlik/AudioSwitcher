@@ -60,11 +60,11 @@ public sealed class AudioDeviceService
     }
 
     [ComImport]
-    [Guid("294935CE-F637-4E7C-A41B-AB255460B862")]
+    [Guid("870AF99C-171D-4F9E-AF0D-E63DF40C2BC9")]
     private class PolicyConfigClient;
 
     [ComImport]
-    [Guid("568B9108-44BF-40B4-9006-86AFE5B5A620")]
+    [Guid("F8679F50-850A-41CF-9C72-430F290290C8")]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     private interface IPolicyConfig
     {
