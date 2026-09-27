@@ -1,0 +1,55 @@
+name: Release installer
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Read release version
+        id: version
+        shell: pwsh
+        run: |
+          $version = '${{ github.ref_name }}' -replace '^v', ''
+          if ($version -notmatch '^\d+\.\d+\.\d+$') {
+            throw "Release tag must use vMAJOR.MINOR.PATCH."
+          }
+          "value=$version" >> $env:GITHUB_OUTPUT
+
+      - name: Restore tools and packages
+        run: |
+          dotnet tool restore
+          dotnet restore AudioSwitcher.slnx
+
+      - name: Test
+        run: dotnet test AudioSwitcher.slnx --configuration Release --no-restore --maxcpucount:1
+
+      - name: Publish self-contained application
+        run: dotnet publish src/AudioSwitcher/AudioSwitcher.csproj --configuration Release --runtime win-x64 --self-contained true --output artifacts/publish -p:Version=${{ steps.version.outputs.value }}
+
+      - name: Download previous release metadata
+        run: dotnet vpk download github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} --outputDir artifacts/releases
+
+      - name: Build Velopack installer
+        run: dotnet vpk pack --packId Diddlik.AudioSwitcher --packVersion ${{ steps.version.outputs.value }} --packDir artifacts/publish --mainExe AudioSwitcher.exe --packTitle AudioSwitcher --packAuthors Diddlik --runtime win-x64 --icon src/AudioSwitcher/Assets/avalonia-logo.ico --outputDir artifacts/releases
+
+      - name: Publish GitHub release
+        run: dotnet vpk upload github --repoUrl https://github.com/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }} --outputDir artifacts/releases --publish --releaseName "AudioSwitcher ${{ steps.version.outputs.value }}" --tag ${{ github.ref_name }} --targetCommitish ${{ github.sha }}
