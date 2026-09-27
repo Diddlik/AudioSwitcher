@@ -83,7 +83,7 @@ dotnet run --project src/AudioSwitcher
 Lokalen Velopack-Installer erzeugen:
 
 ```powershell
-.\scripts\package.ps1 -Version 1.2.0
+.\scripts\package.ps1 -Version 1.2.1
 ```
 
 Die Pakete werden unter `artifacts\releases` erzeugt.

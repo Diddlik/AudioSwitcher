@@ -26,6 +26,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private string _statusMessage = "Bereit";
     [ObservableProperty] private bool _isStatusError;
 
+    public event Action<string>? ProfileActivated;
+
     public MainWindowViewModel(ConfigurationStore configurationStore, AudioDeviceService audioDeviceService,
         StartupService startupService, GlobalHotkeyService hotkeyService)
     {
@@ -209,7 +211,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch (Exception exception)
         {
             ShowError($"Profil konnte nicht aktiviert werden: {exception.Message}");
+            return;
         }
+
+        ProfileActivated?.Invoke(profile.Name);
     }
 
     private bool Validate(out string error)

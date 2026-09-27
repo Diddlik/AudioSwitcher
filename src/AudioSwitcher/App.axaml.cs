@@ -18,6 +18,7 @@ public partial class App : Application
     private MainWindowViewModel? _viewModel;
     private TrayIcon? _trayIcon;
     private AutoUpdateService? _autoUpdateService;
+    private ProfileNotificationService? _profileNotificationService;
     private readonly CancellationTokenSource _updateCancellation = new();
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
@@ -38,6 +39,8 @@ public partial class App : Application
 
             var window = new MainWindow { DataContext = _viewModel };
             desktop.MainWindow = window;
+            _profileNotificationService = new ProfileNotificationService(window);
+            _viewModel.ProfileActivated += _profileNotificationService.Show;
             CreateTrayIcon(desktop, window);
             _autoUpdateService = new AutoUpdateService();
             _ = CheckForUpdatesAsync();
@@ -89,6 +92,7 @@ public partial class App : Application
 
         TrayIcon.SetIcons(this, null);
         _trayIcon?.Dispose();
+        _profileNotificationService?.Dispose();
         _viewModel?.Dispose();
         _hotkeyService?.Dispose();
         window.CloseForExit();
