@@ -19,6 +19,8 @@
   <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><strong>Download the latest installer</strong></a>
 </p>
 
+![AudioSwitcher main window in German](docs/screenshots/main.png)
+
 ## Why AudioSwitcher?
 
 Windows can switch default audio devices, but repeatedly selecting the same speaker, headset, and microphone combinations takes time. AudioSwitcher saves each combination as a profile and activates it with a click or global shortcut.
@@ -58,6 +60,8 @@ Select **Activate now** to switch to the selected profile. Press `Delete` or `Ba
 ## Settings
 
 Open **Settings** to choose the interface language or enable automatic startup with Windows.
+
+![AudioSwitcher settings in German](docs/screenshots/settings.png)
 
 Closing the main window hides it. Use the tray menu to open AudioSwitcher again or exit it completely.
 
