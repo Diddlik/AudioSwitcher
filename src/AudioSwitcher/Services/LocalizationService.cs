@@ -485,7 +485,7 @@ public sealed class LocalizationService : ObservableObject
         var culture = CultureInfo.GetCultureInfo(code);
         CultureInfo.CurrentUICulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
-        OnPropertyChanged("Item[]");
+        OnPropertyChanged("Item");
         OnPropertyChanged(nameof(CurrentLanguage));
         LanguageChanged?.Invoke(this, EventArgs.Empty);
     }
