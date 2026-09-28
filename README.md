@@ -1,79 +1,75 @@
 <p align="center">
-  <img src="src/AudioSwitcher/Assets/audioswitcher.png" width="128" alt="AudioSwitcher-Logo">
+  <img src="src/AudioSwitcher/Assets/audioswitcher.png" width="128" alt="AudioSwitcher logo">
 </p>
 
 <h1 align="center">AudioSwitcher</h1>
 
 <p align="center">
-  Ein schlankes Windows-Tool für Audio-Profile, globale Shortcuts und schnellen Gerätewechsel.
+  A Windows utility for audio profiles, global shortcuts, and quick device switching.
 </p>
 
 <p align="center">
-  <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><img alt="Aktuelles Release" src="https://img.shields.io/github/v/release/Diddlik/AudioSwitcher?style=flat-square&color=66E3C4"></a>
-  <a href="https://github.com/Diddlik/AudioSwitcher/actions/workflows/release.yml"><img alt="Release-Build" src="https://img.shields.io/github/actions/workflow/status/Diddlik/AudioSwitcher/release.yml?style=flat-square&label=release"></a>
-  <img alt="Windows 10 und 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=flat-square&logo=windows11&logoColor=white">
+  <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/Diddlik/AudioSwitcher?style=flat-square&color=66E3C4"></a>
+  <a href="https://github.com/Diddlik/AudioSwitcher/actions/workflows/release.yml"><img alt="Release build" src="https://img.shields.io/github/actions/workflow/status/Diddlik/AudioSwitcher/release.yml?style=flat-square&label=release"></a>
+  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?style=flat-square&logo=windows11&logoColor=white">
   <img alt=".NET 10" src="https://img.shields.io/badge/.NET-10-512BD4?style=flat-square&logo=dotnet&logoColor=white">
 </p>
 
 <p align="center">
-  <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><strong>Aktuellen Installer herunterladen</strong></a>
+  <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><strong>Download the latest installer</strong></a>
 </p>
 
-![AudioSwitcher-Hauptansicht](docs/screenshots/main.png)
+## Why AudioSwitcher?
 
-## Warum AudioSwitcher?
+Windows can switch default audio devices, but repeatedly selecting the same speaker, headset, and microphone combinations takes time. AudioSwitcher saves each combination as a profile and activates it with a click or global shortcut.
 
-Windows kann Standardgeräte umschalten, aber wiederkehrende Kombinationen aus Lautsprechern, Kopfhörern und Mikrofonen sind umständlich. AudioSwitcher speichert diese Kombinationen als Profile und aktiviert sie per Klick oder globalem Shortcut.
+## Features
 
-## Funktionen
-
-| Funktion | Beschreibung |
+| Feature | Description |
 | --- | --- |
-| Audio-Profile | Ein Standard-Ausgabe- und Eingabegerät pro Profil |
-| Globale Shortcuts | Profile aus jeder Anwendung heraus aktivieren |
-| Schnellwechsel | Mit einer Tastenkombination zwischen zwei Profilen wechseln |
-| Direkte Tastenerfassung | Shortcut-Feld fokussieren und gewünschte Kombination drücken |
-| Alle Windows-Rollen | Konsole, Multimedia und Kommunikation werden gemeinsam gesetzt |
-| System-Tray | Fenster ausblenden und AudioSwitcher im Hintergrund weiterverwenden |
-| Autostart | Optionaler Start mit dem aktuellen Windows-Benutzer |
-| Auto-Updates | Neue stabile Releases werden im Hintergrund heruntergeladen |
-| Sprachen | Englisch, Russisch, Ukrainisch, Französisch, Italienisch und Polnisch |
+| Audio profiles | One default output and input device per profile |
+| Global shortcuts | Activate profiles from any application |
+| Quick switch | Switch between two profiles with one shortcut |
+| Direct key capture | Focus a shortcut field and press the required combination |
+| All Windows roles | Set the Console, Multimedia, and Communications defaults together |
+| System tray | Hide the window and keep AudioSwitcher running in the background |
+| Startup | Start automatically for the current Windows user |
+| Automatic updates | Download stable releases in the background |
+| Languages | English, Russian, Ukrainian, French, Italian, and Polish |
 
 ## Installation
 
-1. Den [aktuellen Windows-Installer](https://github.com/Diddlik/AudioSwitcher/releases/latest) herunterladen.
-2. `Diddlik.AudioSwitcher-win-Setup.exe` starten.
-3. AudioSwitcher öffnen und das erste Profil konfigurieren.
+1. Download the [latest Windows installer](https://github.com/Diddlik/AudioSwitcher/releases/latest).
+2. Run `Diddlik.AudioSwitcher-win-Setup.exe`.
+3. Open AudioSwitcher and configure the first profile.
 
-Der Installer benötigt keine Administratorrechte. Er ist derzeit nicht code-signiert; Windows kann deshalb beim ersten Start eine SmartScreen-Warnung anzeigen.
+The installer does not require administrator rights. It is not code signed, so Windows may show a SmartScreen warning on first launch.
 
-## Bedienung
+## Usage
 
-1. Profil anlegen und benennen.
-2. Ausgabe- und Eingabegerät auswählen.
-3. Optional das Shortcut-Feld anklicken und die gewünschte Tastenkombination drücken.
-4. Für den Schnellwechsel zwei Profile auswählen und einen Wechsel-Shortcut erfassen.
-5. **Speichern** wählen.
+1. Create and name a profile.
+2. Select the output and input devices.
+3. Click the shortcut field and press an optional key combination.
+4. Select two profiles and capture a shortcut if you want to use quick switching.
+5. Select **Save**.
 
-**Jetzt aktivieren** schaltet das ausgewählte Profil sofort. `Entf` oder `Backspace` entfernt einen Shortcut. Bereits systemweit belegte Kombinationen werden abgelehnt.
+Select **Activate now** to switch to the selected profile. Press `Delete` or `Backspace` to clear a shortcut. AudioSwitcher rejects combinations that another application has already registered.
 
-## Einstellungen
+## Settings
 
-Die Systemoptionen liegen im separaten Menü **Einstellungen**. Dort lassen sich die Sprache und der automatische Start mit Windows auswählen.
+Open **Settings** to choose the interface language or enable automatic startup with Windows.
 
-![AudioSwitcher-Einstellungsmenü](docs/screenshots/settings.png)
+Closing the main window hides it. Use the tray menu to open AudioSwitcher again or exit it completely.
 
-Schließen blendet das Hauptfenster aus. Über das Tray-Menü lässt sich AudioSwitcher wieder öffnen oder vollständig beenden.
+## Updates and local data
 
-## Updates und lokale Daten
+AudioSwitcher checks the public GitHub Releases feed for stable updates. It downloads an available update in the background and installs it when the application exits.
 
-AudioSwitcher prüft GitHub Releases automatisch auf stabile Updates. Ein gefundenes Update wird im Hintergrund geladen und beim nächsten Beenden installiert.
+AudioSwitcher stores profiles and settings only in `%LocalAppData%\AudioSwitcher\config.json`.
 
-Die Profile werden ausschließlich lokal unter `%LocalAppData%\AudioSwitcher\config.json` gespeichert.
+## Development
 
-## Entwicklung
-
-Voraussetzungen: Windows 10 oder 11 und .NET SDK 10.
+Development requires Windows 10 or 11 and the .NET 10 SDK.
 
 ```powershell
 dotnet build
@@ -81,14 +77,14 @@ dotnet test
 dotnet run --project src/AudioSwitcher
 ```
 
-Lokalen Velopack-Installer erzeugen:
+Create a local Velopack installer with:
 
 ```powershell
 .\scripts\package.ps1 -Version 1.3.0
 ```
 
-Die Pakete werden unter `artifacts\releases` erzeugt.
+The packages are written to `artifacts\releases`.
 
-## Veröffentlichung
+## Publishing
 
-Ein Tag im Format `vMAJOR.MINOR.PATCH` startet den Release-Workflow. Er testet die Lösung, veröffentlicht eine selbstständige Windows-x64-App, erzeugt Velopack-Pakete und lädt Installer sowie Update-Feed in ein GitHub Release.
+Push a tag in the `vMAJOR.MINOR.PATCH` format to start the release workflow. The workflow tests and publishes a standalone Windows x64 application, builds the Velopack packages, and uploads the installer and update feed to a GitHub release.
