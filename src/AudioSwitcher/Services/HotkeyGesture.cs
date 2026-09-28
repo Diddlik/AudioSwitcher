@@ -15,14 +15,16 @@ public enum HotkeyModifiers : uint
 
 public readonly record struct HotkeyGesture(HotkeyModifiers Modifiers, uint VirtualKey)
 {
-    public static bool TryParse(string? text, out HotkeyGesture gesture, out string error)
+    public static bool TryParse(string? text, out HotkeyGesture gesture, out string error,
+        LocalizationService? localization = null)
     {
+        localization ??= new LocalizationService();
         gesture = default;
         error = string.Empty;
 
         if (string.IsNullOrWhiteSpace(text))
         {
-            error = "Shortcut fehlt.";
+            error = localization["ShortcutMissing"];
             return false;
         }
 
@@ -50,7 +52,7 @@ public readonly record struct HotkeyGesture(HotkeyModifiers Modifiers, uint Virt
                 default:
                     if (key != 0 || !TryParseKey(part, out key))
                     {
-                        error = $"Ungültige Taste: {rawPart}.";
+                        error = localization.Format("InvalidKey", rawPart);
                         return false;
                     }
 
@@ -60,13 +62,13 @@ public readonly record struct HotkeyGesture(HotkeyModifiers Modifiers, uint Virt
 
         if (key == 0)
         {
-            error = "Shortcut benötigt eine Taste.";
+            error = localization["ShortcutKeyRequired"];
             return false;
         }
 
         if ((modifiers & ~HotkeyModifiers.NoRepeat) == HotkeyModifiers.None)
         {
-            error = "Shortcut benötigt Ctrl, Alt, Shift oder Win.";
+            error = localization["ShortcutModifierRequired"];
             return false;
         }
 

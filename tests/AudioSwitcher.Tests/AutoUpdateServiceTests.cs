@@ -10,7 +10,7 @@ public sealed class AutoUpdateServiceTests
     {
         VelopackApp.Build().Run();
         var statuses = new List<string>();
-        var service = new AutoUpdateService();
+        var service = new AutoUpdateService(new LocalizationService());
 
         await service.CheckAndDownloadAsync(statuses.Add);
 

@@ -7,7 +7,7 @@ public sealed partial class AudioProfile : ObservableObject
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [ObservableProperty]
-    private string _name = "Neues Profil";
+    private string _name = "New profile";
 
     [ObservableProperty]
     private string _outputDeviceId = string.Empty;

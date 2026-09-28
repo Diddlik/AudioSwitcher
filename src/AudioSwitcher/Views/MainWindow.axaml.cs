@@ -58,7 +58,7 @@ public partial class MainWindow : Window
         }
         else if (DataContext is MainWindowViewModel viewModel)
         {
-            viewModel.ReportBackgroundError("Shortcut benötigt Ctrl, Alt, Shift oder Win plus eine Taste.");
+            viewModel.ReportBackgroundError(viewModel.Text["ShortcutCombinationRequired"]);
         }
 
         eventArgs.Handled = true;

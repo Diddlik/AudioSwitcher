@@ -15,7 +15,7 @@ public sealed class StartupService
         if (enabled)
         {
             var executablePath = Environment.ProcessPath
-                ?? throw new InvalidOperationException("Der Programmpfad konnte nicht ermittelt werden.");
+                ?? throw new InvalidOperationException("The application path could not be determined.");
             key.SetValue(ValueName, $"\"{executablePath}\" --minimized");
         }
         else

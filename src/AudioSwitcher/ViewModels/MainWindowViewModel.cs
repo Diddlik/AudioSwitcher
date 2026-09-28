@@ -23,29 +23,34 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private AudioProfile? _toggleProfileB;
     [ObservableProperty] private string _toggleHotkey = string.Empty;
     [ObservableProperty] private bool _startWithWindows;
-    [ObservableProperty] private string _statusMessage = "Bereit";
+    [ObservableProperty] private LanguageOption? _selectedLanguage;
+    [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isStatusError;
 
     public event Action<string>? ProfileActivated;
 
     public MainWindowViewModel(ConfigurationStore configurationStore, AudioDeviceService audioDeviceService,
-        StartupService startupService, GlobalHotkeyService hotkeyService)
+        StartupService startupService, GlobalHotkeyService hotkeyService, LocalizationService localization)
     {
         _configurationStore = configurationStore;
         _audioDeviceService = audioDeviceService;
         _startupService = startupService;
         _hotkeyService = hotkeyService;
+        Text = localization;
         _hotkeyService.Triggered += OnHotkeyTriggered;
 
         RefreshDevices();
         var configuration = _configurationStore.Load(out var warning);
+        Text.SetLanguage(configuration.Language);
+        SelectedLanguage = Text.SupportedLanguages.First(language => language.Code == Text.CurrentLanguage);
+        StatusMessage = Text["Ready"];
         foreach (var profile in configuration.Profiles) Profiles.Add(profile);
 
         if (Profiles.Count == 0)
         {
             Profiles.Add(new AudioProfile
             {
-                Name = "Profil 1",
+                Name = Text.Format("DefaultProfile", 1),
                 OutputDeviceId = _audioDeviceService.GetDefaultDeviceId(DataFlow.Render) ?? string.Empty,
                 InputDeviceId = _audioDeviceService.GetDefaultDeviceId(DataFlow.Capture) ?? string.Empty,
             });
@@ -64,8 +69,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public ObservableCollection<AudioProfile> Profiles { get; } = [];
     public ObservableCollection<AudioDeviceInfo> OutputDevices { get; } = [];
     public ObservableCollection<AudioDeviceInfo> InputDevices { get; } = [];
-    public string VersionText { get; } =
-        $"Version {typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? "unbekannt"}";
+    public LocalizationService Text { get; }
+    public IReadOnlyList<LanguageOption> Languages => Text.SupportedLanguages;
+    public string VersionText => Text.Format("Version",
+        typeof(MainWindowViewModel).Assembly.GetName().Version?.ToString(3) ?? Text["Unknown"]);
 
     [RelayCommand]
     private void AddProfile()
@@ -78,7 +85,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         };
         Profiles.Add(profile);
         SelectedProfile = profile;
-        ShowSuccess("Neues Profil angelegt.");
+        ShowSuccess(Text["ProfileCreated"]);
     }
 
     [RelayCommand]
@@ -90,7 +97,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         SelectedProfile = Profiles.Count == 0 ? null : Profiles[Math.Min(index, Profiles.Count - 1)];
         if (ToggleProfileA is not null && !Profiles.Contains(ToggleProfileA)) ToggleProfileA = null;
         if (ToggleProfileB is not null && !Profiles.Contains(ToggleProfileB)) ToggleProfileB = null;
-        ShowSuccess("Profil entfernt. Speichern übernimmt die Änderung.");
+        ShowSuccess(Text["ProfileRemoved"]);
     }
 
     [RelayCommand]
@@ -102,7 +109,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         Replace(InputDevices, _audioDeviceService.GetDevices(DataFlow.Capture));
         SelectedOutputDevice = OutputDevices.FirstOrDefault(device => device.Id == outputId);
         SelectedInputDevice = InputDevices.FirstOrDefault(device => device.Id == inputId);
-        ShowSuccess($"{OutputDevices.Count} Ausgänge · {InputDevices.Count} Eingänge");
+        ShowSuccess(Text.Format("DeviceCounts", OutputDevices.Count, InputDevices.Count));
     }
 
     [RelayCommand]
@@ -126,17 +133,26 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             _configurationStore.Save(new AppConfiguration
             {
                 Profiles = Profiles.ToList(),
+                Language = Text.CurrentLanguage,
                 ToggleHotkey = ToggleHotkey.Trim(),
                 ToggleProfileAId = ToggleProfileA?.Id,
                 ToggleProfileBId = ToggleProfileB?.Id,
                 StartWithWindows = StartWithWindows,
             });
-            ShowSuccess("Konfiguration gespeichert.");
+            ShowSuccess(Text["ConfigurationSaved"]);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
         {
-            ShowError($"Speichern fehlgeschlagen: {exception.Message}");
+            ShowError(Text.Format("SaveFailed", exception.Message));
         }
+    }
+
+    partial void OnSelectedLanguageChanged(LanguageOption? value)
+    {
+        if (value is null) return;
+        Text.SetLanguage(value.Code);
+        StatusMessage = Text["Ready"];
+        OnPropertyChanged(nameof(VersionText));
     }
 
     partial void OnSelectedProfileChanged(AudioProfile? value)
@@ -185,7 +201,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (ToggleProfileA is null || ToggleProfileB is null)
         {
-            ShowError("Für den Wechsel müssen zwei Profile gewählt sein.");
+            ShowError(Text["SelectTwoProfiles"]);
             return;
         }
 
@@ -198,7 +214,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!OutputDevices.Any(device => device.Id == profile.OutputDeviceId) ||
             !InputDevices.Any(device => device.Id == profile.InputDeviceId))
         {
-            ShowError($"„{profile.Name}“ verweist auf ein nicht verfügbares Gerät.");
+            ShowError(Text.Format("UnavailableDevice", profile.Name));
             return;
         }
 
@@ -206,11 +222,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             _audioDeviceService.ActivateProfile(profile);
             SelectedProfile = profile;
-            ShowSuccess($"{profile.Name} ist aktiv.");
+            ShowSuccess(Text.Format("ProfileActive", profile.Name));
         }
         catch (Exception exception)
         {
-            ShowError($"Profil konnte nicht aktiviert werden: {exception.Message}");
+            ShowError(Text.Format("ProfileActivationFailed", exception.Message));
             return;
         }
 
@@ -219,15 +235,15 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private bool Validate(out string error)
     {
-        if (Profiles.Count == 0) return Fail("Mindestens ein Profil ist erforderlich.", out error);
-        if (Profiles.Any(profile => string.IsNullOrWhiteSpace(profile.Name))) return Fail("Jedes Profil benötigt einen Namen.", out error);
+        if (Profiles.Count == 0) return Fail(Text["ProfileRequired"], out error);
+        if (Profiles.Any(profile => string.IsNullOrWhiteSpace(profile.Name))) return Fail(Text["ProfileNameRequired"], out error);
         if (Profiles.GroupBy(profile => profile.Name.Trim(), StringComparer.CurrentCultureIgnoreCase).Any(group => group.Count() > 1))
-            return Fail("Profilnamen müssen eindeutig sein.", out error);
+            return Fail(Text["UniqueProfileNames"], out error);
 
         foreach (var profile in Profiles)
         {
             if (string.IsNullOrEmpty(profile.OutputDeviceId) || string.IsNullOrEmpty(profile.InputDeviceId))
-                return Fail($"„{profile.Name}“ benötigt Ein- und Ausgabegerät.", out error);
+                return Fail(Text.Format("ProfileDevicesRequired", profile.Name), out error);
             if (!ValidateOptionalHotkey(profile.Hotkey, out error)) return false;
         }
 
@@ -235,10 +251,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         var shortcuts = Profiles.Select(profile => profile.Hotkey).Append(ToggleHotkey)
             .Where(shortcut => !string.IsNullOrWhiteSpace(shortcut)).Select(NormalizeHotkey).ToArray();
         if (shortcuts.Distinct(StringComparer.OrdinalIgnoreCase).Count() != shortcuts.Length)
-            return Fail("Shortcuts dürfen nicht doppelt vergeben werden.", out error);
+            return Fail(Text["UniqueShortcuts"], out error);
         if (!string.IsNullOrWhiteSpace(ToggleHotkey) &&
             (ToggleProfileA is null || ToggleProfileB is null || ToggleProfileA == ToggleProfileB))
-            return Fail("Der Wechsel-Shortcut benötigt zwei verschiedene Profile.", out error);
+            return Fail(Text["ToggleProfilesRequired"], out error);
 
         error = string.Empty;
         return true;
@@ -256,14 +272,14 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         for (var number = 1; ; number++)
         {
-            var candidate = $"Profil {number}";
+            var candidate = Text.Format("DefaultProfile", number);
             if (Profiles.All(profile => !string.Equals(profile.Name, candidate, StringComparison.CurrentCultureIgnoreCase))) return candidate;
         }
     }
 
-    private static bool ValidateOptionalHotkey(string hotkey, out string error)
+    private bool ValidateOptionalHotkey(string hotkey, out string error)
     {
-        if (!string.IsNullOrWhiteSpace(hotkey)) return HotkeyGesture.TryParse(hotkey, out _, out error);
+        if (!string.IsNullOrWhiteSpace(hotkey)) return HotkeyGesture.TryParse(hotkey, out _, out error, Text);
         error = string.Empty;
         return true;
     }

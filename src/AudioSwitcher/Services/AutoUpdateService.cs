@@ -7,7 +7,10 @@ public sealed class AutoUpdateService
 {
     private const string RepositoryUrl = "https://github.com/Diddlik/AudioSwitcher";
     private readonly UpdateManager _updateManager = new(new GithubSource(RepositoryUrl, null, false));
+    private readonly LocalizationService _text;
     private VelopackAsset? _pendingUpdate;
+
+    public AutoUpdateService(LocalizationService text) => _text = text;
 
     public async Task CheckAndDownloadAsync(Action<string> reportStatus, CancellationToken cancellationToken = default)
     {
@@ -16,21 +19,21 @@ public sealed class AutoUpdateService
             return;
         }
 
-        reportStatus("Suche nach Updates …");
+        reportStatus(_text["CheckingUpdates"]);
         var update = await _updateManager.CheckForUpdatesAsync().WaitAsync(cancellationToken);
         if (update is null)
         {
-            reportStatus("AudioSwitcher ist aktuell.");
+            reportStatus(_text["UpToDate"]);
             return;
         }
 
-        reportStatus($"Update {update.TargetFullRelease.Version} wird heruntergeladen …");
+        reportStatus(_text.Format("DownloadingUpdate", update.TargetFullRelease.Version));
         await _updateManager.DownloadUpdatesAsync(
             update,
-            progress => reportStatus($"Update wird heruntergeladen: {progress}%"),
+            progress => reportStatus(_text.Format("DownloadProgress", progress)),
             cancellationToken);
         _pendingUpdate = update.TargetFullRelease;
-        reportStatus($"Update {update.TargetFullRelease.Version} wird beim Beenden installiert.");
+        reportStatus(_text.Format("UpdateOnExit", update.TargetFullRelease.Version));
     }
 
     public bool SchedulePendingUpdate()

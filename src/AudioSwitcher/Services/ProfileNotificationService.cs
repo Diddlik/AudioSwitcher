@@ -20,12 +20,14 @@ public sealed class ProfileNotificationService : IDisposable
     private const uint PlaySoundNoDefault = 0x0002;
     private const uint PlaySoundAlias = 0x00010000;
     private readonly Window _screenSource;
+    private readonly LocalizationService _text;
     private readonly DispatcherTimer _closeTimer;
     private readonly List<Window> _windows = [];
 
-    public ProfileNotificationService(Window screenSource)
+    public ProfileNotificationService(Window screenSource, LocalizationService text)
     {
         _screenSource = screenSource;
+        _text = text;
         _closeTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.6) };
         _closeTimer.Tick += (_, _) => CloseAll();
     }
@@ -60,7 +62,7 @@ public sealed class ProfileNotificationService : IDisposable
 
     public void Dispose() => CloseAll();
 
-    private static Window CreateWindow(string profileName, Screen screen) => new()
+    private Window CreateWindow(string profileName, Screen screen) => new()
     {
         Width = OverlayWidth,
         Height = OverlayHeight,
@@ -81,7 +83,7 @@ public sealed class ProfileNotificationService : IDisposable
             Padding = new Thickness(24, 16),
             Child = new TextBlock
             {
-                Text = $"✓  Profil „{profileName}“ aktiviert",
+                Text = _text.Format("ProfileActivatedOverlay", profileName),
                 Foreground = Brushes.White,
                 FontSize = 19,
                 FontWeight = FontWeight.SemiBold,

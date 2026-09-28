@@ -11,14 +11,16 @@ public sealed class GlobalHotkeyService : IDisposable
     private const uint WmQuit = 0x0012;
 
     private readonly ConcurrentQueue<RegistrationRequest> _requests = new();
+    private readonly LocalizationService _text;
     private readonly Dictionary<int, string> _registrations = [];
     private readonly Thread _thread;
     private readonly ManualResetEventSlim _ready = new();
     private uint _threadId;
     private bool _disposed;
 
-    public GlobalHotkeyService()
+    public GlobalHotkeyService(LocalizationService text)
     {
+        _text = text;
         _thread = new Thread(MessageLoop)
         {
             IsBackground = true,
@@ -43,7 +45,7 @@ public sealed class GlobalHotkeyService : IDisposable
 
         if (!request.Completed.Wait(TimeSpan.FromSeconds(5)))
         {
-            error = "Die Shortcut-Registrierung hat nicht geantwortet.";
+            error = _text["ShortcutRegistrationTimeout"];
             return false;
         }
 
@@ -95,7 +97,7 @@ public sealed class GlobalHotkeyService : IDisposable
 
         foreach (var shortcut in request.Shortcuts)
         {
-            if (!HotkeyGesture.TryParse(shortcut.Value, out var gesture, out var parseError))
+            if (!HotkeyGesture.TryParse(shortcut.Value, out var gesture, out var parseError, _text))
             {
                 request.Error = $"{shortcut.Value}: {parseError}";
                 ClearRegistrations();
@@ -105,7 +107,7 @@ public sealed class GlobalHotkeyService : IDisposable
 
             if (!RegisterHotKey(IntPtr.Zero, id, (uint)gesture.Modifiers, gesture.VirtualKey))
             {
-                request.Error = $"Shortcut {shortcut.Value} ist bereits belegt.";
+                request.Error = _text.Format("ShortcutAlreadyInUse", shortcut.Value);
                 ClearRegistrations();
                 request.Completed.Set();
                 return;

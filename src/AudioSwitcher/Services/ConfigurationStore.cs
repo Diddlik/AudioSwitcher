@@ -33,7 +33,7 @@ public sealed class ConfigurationStore
             var configuration = JsonSerializer.Deserialize<AppConfiguration>(File.ReadAllText(_path), JsonOptions);
             if (configuration?.SchemaVersion != 1)
             {
-                warning = "Die Konfiguration hat eine nicht unterstützte Version.";
+                warning = "The configuration uses an unsupported version.";
                 return new AppConfiguration();
             }
 
@@ -42,7 +42,7 @@ public sealed class ConfigurationStore
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or JsonException)
         {
-            warning = $"Konfiguration konnte nicht geladen werden: {exception.Message}";
+            warning = $"The configuration could not be loaded: {exception.Message}";
             return new AppConfiguration();
         }
     }

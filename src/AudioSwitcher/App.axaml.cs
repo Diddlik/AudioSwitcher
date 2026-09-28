@@ -19,6 +19,7 @@ public partial class App : Application
     private TrayIcon? _trayIcon;
     private AutoUpdateService? _autoUpdateService;
     private ProfileNotificationService? _profileNotificationService;
+    private readonly LocalizationService _text = new();
     private readonly CancellationTokenSource _updateCancellation = new();
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
@@ -30,19 +31,20 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            _hotkeyService = new GlobalHotkeyService();
+            _hotkeyService = new GlobalHotkeyService(_text);
             _viewModel = new MainWindowViewModel(
                 new ConfigurationStore(),
                 new AudioDeviceService(),
                 new StartupService(),
-                _hotkeyService);
+                _hotkeyService,
+                _text);
 
             var window = new MainWindow { DataContext = _viewModel };
             desktop.MainWindow = window;
-            _profileNotificationService = new ProfileNotificationService(window);
+            _profileNotificationService = new ProfileNotificationService(window, _text);
             _viewModel.ProfileActivated += _profileNotificationService.Show;
             CreateTrayIcon(desktop, window);
-            _autoUpdateService = new AutoUpdateService();
+            _autoUpdateService = new AutoUpdateService(_text);
             _ = CheckForUpdatesAsync();
 
             if (desktop.Args?.Contains("--minimized", StringComparer.OrdinalIgnoreCase) == true)
@@ -56,9 +58,9 @@ public partial class App : Application
 
     private void CreateTrayIcon(IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
-        var openItem = new NativeMenuItem("Öffnen");
+        var openItem = new NativeMenuItem(_text["Open"]);
         openItem.Click += (_, _) => ShowWindow(window);
-        var exitItem = new NativeMenuItem("Beenden");
+        var exitItem = new NativeMenuItem(_text["Exit"]);
         exitItem.Click += (_, _) => Exit(desktop, window);
 
         _trayIcon = new TrayIcon
@@ -69,6 +71,11 @@ public partial class App : Application
         };
         _trayIcon.Clicked += (_, _) => ShowWindow(window);
         TrayIcon.SetIcons(this, new TrayIcons { _trayIcon });
+        _text.LanguageChanged += (_, _) =>
+        {
+            openItem.Header = _text["Open"];
+            exitItem.Header = _text["Exit"];
+        };
     }
 
     private static void ShowWindow(MainWindow window)
@@ -87,7 +94,7 @@ public partial class App : Application
         }
         catch (Exception exception)
         {
-            _viewModel?.ReportBackgroundError($"Update konnte nicht vorbereitet werden: {exception.Message}");
+            _viewModel?.ReportBackgroundError(_text.Format("UpdatePreparingFailed", exception.Message));
         }
 
         TrayIcon.SetIcons(this, null);
@@ -113,7 +120,7 @@ public partial class App : Application
         catch (Exception exception)
         {
             Dispatcher.UIThread.Post(() =>
-                _viewModel?.ReportBackgroundError($"Update-Prüfung fehlgeschlagen: {exception.Message}"));
+                _viewModel?.ReportBackgroundError(_text.Format("UpdateCheckFailed", exception.Message)));
         }
     }
 

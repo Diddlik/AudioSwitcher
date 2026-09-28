@@ -22,6 +22,7 @@ public sealed class ConfigurationStoreTests : IDisposable
 
         store.Save(new AppConfiguration
         {
+            Language = "pl",
             Profiles = [profile],
             ToggleHotkey = "Ctrl+Alt+Space",
             ToggleProfileAId = profile.Id,
@@ -35,6 +36,7 @@ public sealed class ConfigurationStoreTests : IDisposable
         Assert.Equal("Headset", loaded.Name);
         Assert.Equal("output-1", loaded.OutputDeviceId);
         Assert.Equal(profile.Id, result.ToggleProfileAId);
+        Assert.Equal("pl", result.Language);
         Assert.True(result.StartWithWindows);
     }
 

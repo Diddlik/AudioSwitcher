@@ -73,29 +73,32 @@
                 <Image Width="48" Height="48" Source="/Assets/audioswitcher.png"
                        Stretch="Uniform" AutomationProperties.Name="AudioSwitcher-Logo"/>
                 <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
-                    <TextBlock Classes="eyebrow" Text="WINDOWS AUDIO ROUTING"/>
+                    <TextBlock Classes="eyebrow" Text="{Binding Text[WindowsAudioRouting]}"/>
                     <TextBlock Classes="h1" Text="AudioSwitcher"/>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Command="{Binding RefreshDevicesCommand}" Content="Geräte aktualisieren"
-                            ToolTip.Tip="Verfügbare Windows-Audiogeräte neu einlesen"/>
-                    <Button Content="⚙  Einstellungen" AutomationProperties.Name="Einstellungen">
+                    <Button Command="{Binding RefreshDevicesCommand}" Content="{Binding Text[RefreshDevices]}"
+                            ToolTip.Tip="{Binding Text[RefreshDevicesTip]}"/>
+                    <Button Content="{Binding Text[Settings], StringFormat='⚙  {0}'}"
+                            AutomationProperties.Name="{Binding Text[Settings]}">
                         <Button.Flyout>
                             <Flyout Placement="BottomEdgeAlignedRight">
                                 <StackPanel Width="300" Spacing="12" Margin="4"
                                             x:DataType="vm:MainWindowViewModel">
-                                    <TextBlock Classes="eyebrow" Text="SYSTEM"/>
-                                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="Einstellungen"/>
+                                    <TextBlock Classes="eyebrow" Text="{Binding Text[System]}"/>
+                                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="{Binding Text[Settings]}"/>
+                                    <TextBlock Classes="label" Text="{Binding Text[Language]}"/>
+                                    <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"/>
                                     <CheckBox IsChecked="{Binding StartWithWindows}"
-                                              Content="Mit Windows starten"
-                                              AutomationProperties.Name="Mit Windows starten"/>
+                                              Content="{Binding Text[StartWithWindows]}"
+                                              AutomationProperties.Name="{Binding Text[StartWithWindows]}"/>
                                     <TextBlock FontSize="11" Foreground="#8D98A8" TextWrapping="Wrap"
-                                               Text="Schließen blendet das Fenster aus. Beenden ist über das Tray-Menü möglich."/>
+                                               Text="{Binding Text[CloseHint]}"/>
                                 </StackPanel>
                             </Flyout>
                         </Button.Flyout>
                     </Button>
-                    <Button Classes="primary" Command="{Binding SaveCommand}" Content="Speichern"/>
+                    <Button Classes="primary" Command="{Binding SaveCommand}" Content="{Binding Text[Save]}"/>
                 </StackPanel>
             </Grid>
         </Border>
@@ -104,9 +107,9 @@
             <Border Grid.Column="0" Padding="20" Background="#10151C" BorderBrush="#27313E" BorderThickness="0,0,1,0">
                 <Grid RowDefinitions="Auto,*,Auto">
                     <Grid ColumnDefinitions="*,Auto" Margin="4,0,4,12">
-                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="Profile" VerticalAlignment="Center"/>
+                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding Text[Profiles]}" VerticalAlignment="Center"/>
                         <Button Grid.Column="1" Command="{Binding AddProfileCommand}" Content="＋" Padding="10,5"
-                                ToolTip.Tip="Profil hinzufügen"/>
+                                ToolTip.Tip="{Binding Text[AddProfile]}"/>
                     </Grid>
                     <ListBox Grid.Row="1" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
                         <ListBox.ItemTemplate>
@@ -115,13 +118,13 @@
                                     <Border Width="8" Height="8" CornerRadius="4" Background="#66E3C4" VerticalAlignment="Center"/>
                                     <StackPanel Grid.Column="1">
                                         <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding Hotkey, FallbackValue=Kein Shortcut}" FontSize="11" Foreground="#8D98A8"/>
+                                        <TextBlock Text="{Binding Hotkey}" FontSize="11" Foreground="#8D98A8"/>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Grid.Row="2" Classes="danger" Command="{Binding DeleteProfileCommand}" Content="Profil entfernen"
+                    <Button Grid.Row="2" Classes="danger" Command="{Binding DeleteProfileCommand}" Content="{Binding Text[RemoveProfile]}"
                             HorizontalAlignment="Stretch" Margin="0,12,0,0"/>
                 </Grid>
             </Border>
@@ -132,23 +135,23 @@
                         <StackPanel Spacing="16">
                             <Grid ColumnDefinitions="*,Auto">
                                 <StackPanel>
-                                    <TextBlock Classes="eyebrow" Text="PROFIL"/>
-                                    <TextBlock FontSize="21" FontWeight="SemiBold" Text="Gerätekombination"/>
+                                    <TextBlock Classes="eyebrow" Text="{Binding Text[Profile]}"/>
+                                    <TextBlock FontSize="21" FontWeight="SemiBold" Text="{Binding Text[DeviceCombination]}"/>
                                 </StackPanel>
                                 <Button Grid.Column="1" Classes="primary" Command="{Binding ActivateSelectedProfileCommand}"
-                                        Content="Jetzt aktivieren" VerticalAlignment="Center"/>
+                                        Content="{Binding Text[ActivateNow]}" VerticalAlignment="Center"/>
                             </Grid>
 
                             <StackPanel>
-                                <TextBlock Classes="label" Text="Name"/>
-                                <TextBox Text="{Binding SelectedProfile.Name, Mode=TwoWay}" Watermark="z. B. Headset"
-                                         AutomationProperties.Name="Profilname"/>
+                                <TextBlock Classes="label" Text="{Binding Text[Name]}"/>
+                                <TextBox Text="{Binding SelectedProfile.Name, Mode=TwoWay}" Watermark="{Binding Text[NameExample]}"
+                                         AutomationProperties.Name="{Binding Text[ProfileName]}"/>
                             </StackPanel>
                             <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
                                 <StackPanel>
-                                    <TextBlock Classes="label" Text="Ausgabe"/>
+                                    <TextBlock Classes="label" Text="{Binding Text[Output]}"/>
                                     <ComboBox ItemsSource="{Binding OutputDevices}" SelectedItem="{Binding SelectedOutputDevice}"
-                                              AutomationProperties.Name="Ausgabegerät">
+                                              AutomationProperties.Name="{Binding Text[OutputDevice]}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:AudioDeviceInfo">
                                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
@@ -157,9 +160,9 @@
                                     </ComboBox>
                                 </StackPanel>
                                 <StackPanel Grid.Column="1">
-                                    <TextBlock Classes="label" Text="Eingabe"/>
+                                    <TextBlock Classes="label" Text="{Binding Text[Input]}"/>
                                     <ComboBox ItemsSource="{Binding InputDevices}" SelectedItem="{Binding SelectedInputDevice}"
-                                              AutomationProperties.Name="Eingabegerät">
+                                              AutomationProperties.Name="{Binding Text[InputDevice]}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:AudioDeviceInfo">
                                                 <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis"/>
@@ -169,14 +172,14 @@
                                 </StackPanel>
                             </Grid>
                             <StackPanel>
-                                <TextBlock Classes="label" Text="Globaler Shortcut für dieses Profil"/>
+                                <TextBlock Classes="label" Text="{Binding Text[ProfileShortcutLabel]}"/>
                                 <TextBox Classes="hotkey" Text="{Binding SelectedProfile.Hotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Watermark="Hier klicken und Shortcut drücken" IsReadOnly="True"
+                                         Watermark="{Binding Text[ShortcutWatermark]}" IsReadOnly="True"
                                          GotFocus="OnHotkeyGotFocus" KeyDown="OnHotkeyKeyDown"
-                                         AutomationProperties.Name="Profil-Shortcut"
-                                         AutomationProperties.HelpText="Feld fokussieren und eine Tastenkombination drücken. Entf oder Backspace löscht."/>
+                                         AutomationProperties.Name="{Binding Text[ProfileShortcut]}"
+                                         AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
                                 <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#687587"
-                                           Text="Klicken, Kombination drücken · Entf oder Backspace löscht"/>
+                                           Text="{Binding Text[ShortcutHint]}"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>
@@ -184,25 +187,25 @@
                     <Border Classes="card">
                         <StackPanel Spacing="16">
                             <StackPanel>
-                                <TextBlock Classes="eyebrow" Text="SCHNELLWECHSEL"/>
-                                <TextBlock FontSize="21" FontWeight="SemiBold" Text="Zwischen zwei Profilen wechseln"/>
+                                <TextBlock Classes="eyebrow" Text="{Binding Text[QuickSwitch]}"/>
+                                <TextBlock FontSize="21" FontWeight="SemiBold" Text="{Binding Text[QuickSwitchTitle]}"/>
                             </StackPanel>
                             <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
                                 <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileA}"
-                                          AutomationProperties.Name="Erstes Wechselprofil"/>
+                                          AutomationProperties.Name="{Binding Text[FirstToggleProfile]}"/>
                                 <TextBlock Grid.Column="1" Text="⇄" FontSize="22" Foreground="#66E3C4" VerticalAlignment="Center"/>
                                 <ComboBox Grid.Column="2" ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileB}"
-                                          AutomationProperties.Name="Zweites Wechselprofil"/>
+                                          AutomationProperties.Name="{Binding Text[SecondToggleProfile]}"/>
                             </Grid>
                             <StackPanel>
-                                <TextBlock Classes="label" Text="Wechsel-Shortcut"/>
+                                <TextBlock Classes="label" Text="{Binding Text[ToggleShortcut]}"/>
                                 <TextBox Classes="hotkey" Text="{Binding ToggleHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Watermark="Hier klicken und Shortcut drücken" IsReadOnly="True"
+                                         Watermark="{Binding Text[ShortcutWatermark]}" IsReadOnly="True"
                                          GotFocus="OnHotkeyGotFocus" KeyDown="OnHotkeyKeyDown"
-                                         AutomationProperties.Name="Wechsel-Shortcut"
-                                         AutomationProperties.HelpText="Feld fokussieren und eine Tastenkombination drücken. Entf oder Backspace löscht."/>
+                                         AutomationProperties.Name="{Binding Text[ToggleShortcut]}"
+                                         AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
                                 <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#687587"
-                                           Text="Klicken, Kombination drücken · Entf oder Backspace löscht"/>
+                                           Text="{Binding Text[ShortcutHint]}"/>
                             </StackPanel>
                         </StackPanel>
                     </Border>

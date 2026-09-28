@@ -37,6 +37,7 @@ Windows kann Standardgeräte umschalten, aber wiederkehrende Kombinationen aus L
 | System-Tray | Fenster ausblenden und AudioSwitcher im Hintergrund weiterverwenden |
 | Autostart | Optionaler Start mit dem aktuellen Windows-Benutzer |
 | Auto-Updates | Neue stabile Releases werden im Hintergrund heruntergeladen |
+| Sprachen | Englisch, Russisch, Ukrainisch, Französisch, Italienisch und Polnisch |
 
 ## Installation
 
@@ -58,7 +59,7 @@ Der Installer benötigt keine Administratorrechte. Er ist derzeit nicht code-sig
 
 ## Einstellungen
 
-Die Systemoptionen liegen im separaten Menü **Einstellungen**. Dort lässt sich der automatische Start mit Windows aktivieren.
+Die Systemoptionen liegen im separaten Menü **Einstellungen**. Dort lassen sich die Sprache und der automatische Start mit Windows auswählen.
 
 ![AudioSwitcher-Einstellungsmenü](docs/screenshots/settings.png)
 
@@ -83,7 +84,7 @@ dotnet run --project src/AudioSwitcher
 Lokalen Velopack-Installer erzeugen:
 
 ```powershell
-.\scripts\package.ps1 -Version 1.2.1
+.\scripts\package.ps1 -Version 1.3.0
 ```
 
 Die Pakete werden unter `artifacts\releases` erzeugt.
