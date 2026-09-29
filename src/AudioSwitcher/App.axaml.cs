@@ -18,6 +18,7 @@ public partial class App : Application
     private MainWindowViewModel? _viewModel;
     private TrayIcon? _trayIcon;
     private AutoUpdateService? _autoUpdateService;
+    private AboutWindowViewModel? _aboutViewModel;
     private ProfileNotificationService? _profileNotificationService;
     private readonly LocalizationService _text = new();
     private readonly CancellationTokenSource _updateCancellation = new();
@@ -39,13 +40,14 @@ public partial class App : Application
                 _hotkeyService,
                 _text);
 
-            var window = new MainWindow { DataContext = _viewModel };
+            _autoUpdateService = new AutoUpdateService(_text);
+            _aboutViewModel = new AboutWindowViewModel(_text, CheckForUpdatesAsync);
+            var window = new MainWindow { DataContext = _viewModel, AboutViewModel = _aboutViewModel };
             desktop.MainWindow = window;
             _profileNotificationService = new ProfileNotificationService(window, _text);
             _viewModel.ProfileActivated += _profileNotificationService.Show;
             CreateTrayIcon(desktop, window);
-            _autoUpdateService = new AutoUpdateService(_text);
-            _ = CheckForUpdatesAsync();
+            _ = _aboutViewModel.CheckForUpdatesCommand.ExecuteAsync(null);
 
             if (desktop.Args?.Contains("--minimized", StringComparer.OrdinalIgnoreCase) == true)
             {
@@ -111,7 +113,11 @@ public partial class App : Application
         try
         {
             await _autoUpdateService!.CheckAndDownloadAsync(
-                message => Dispatcher.UIThread.Post(() => _viewModel?.ReportBackgroundStatus(message)),
+                message => Dispatcher.UIThread.Post(() =>
+                {
+                    _viewModel?.ReportBackgroundStatus(message);
+                    if (_aboutViewModel is not null) _aboutViewModel.UpdateStatus = message;
+                }),
                 _updateCancellation.Token);
         }
         catch (OperationCanceledException)
@@ -120,7 +126,11 @@ public partial class App : Application
         catch (Exception exception)
         {
             Dispatcher.UIThread.Post(() =>
-                _viewModel?.ReportBackgroundError(_text.Format("UpdateCheckFailed", exception.Message)));
+            {
+                var message = _text.Format("UpdateCheckFailed", exception.Message);
+                _viewModel?.ReportBackgroundError(message);
+                if (_aboutViewModel is not null) _aboutViewModel.UpdateStatus = message;
+            });
         }
     }
 

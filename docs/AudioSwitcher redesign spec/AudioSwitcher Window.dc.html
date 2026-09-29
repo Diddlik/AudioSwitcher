@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet"><style>body{margin:0}button,select,input{font:inherit;color:inherit}a{color:#0B6B63}a:hover{color:#095A53}:focus{outline:none}:focus-visible{outline:2px solid #1C1B19;outline-offset:2px;box-shadow:0 0 0 4px #FFFFFF}@keyframes asPulse{0%,100%{opacity:1}50%{opacity:.25}}</style></helmet>
+<div style="width:100%;height:100%;display:flex;flex-direction:column;background:#F1F0EC;color:#1C1B19;font-family:'Segoe UI Variable Text','Segoe UI','IBM Plex Sans',system-ui,sans-serif;font-size:14px;line-height:20px;border:1px solid #C9C6BE;border-radius:8px;overflow:hidden;position:relative;box-sizing:border-box;box-shadow:0 18px 48px rgba(28,27,25,.18),0 2px 6px rgba(28,27,25,.08)">
+  <div style="height:48px;flex:none;display:flex;align-items:center;gap:8px;padding-left:16px">
+    <div style="width:20px;height:20px;border-radius:5px;background:#0B6B63;display:flex;align-items:center;justify-content:center;flex:none"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-3-3M18 16H6l3 3"></path></svg></div>
+    <div style="font-size:13px;font-weight:600">AudioSwitcher</div>
+    <div style="flex:1"></div>
+    <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+      <div role="status" style="display:flex;align-items:center;gap:6px;font-size:12px;color:#8A5A00;padding:0 8px;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:#C98A12;flex:none"></span>{{ t.unsaved }}</div>
+    </sc-if>
+    <button onClick="{{ refresh }}" aria-label="{{ t.refresh }}" title="{{ t.refresh }}" style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;border:none;background:transparent;border-radius:4px;cursor:pointer;white-space:nowrap" style-hover="background:#E6E4DE"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"></path></svg><sc-if value="{{ showRefreshLabel }}" hint-placeholder-val="{{ true }}"><span>{{ t.refresh }}</span></sc-if></button>
+    <sc-if value="{{ dirty }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ save }}" style="height:32px;padding:0 16px;border:none;border-radius:4px;background:#0B6B63;color:#fff;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:#095A53" style-active="background:#074A44">{{ t.save }}</button>
+    </sc-if>
+    <sc-if value="{{ clean }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ save }}" style="height:32px;padding:0 16px;border:1px solid #D3D0C8;border-radius:4px;background:#fff;font-weight:600;cursor:pointer;white-space:nowrap" style-hover="background:#F7F6F3">{{ t.save }}</button>
+    </sc-if>
+    <div style="display:flex;align-self:stretch;margin-left:8px">
+      <div aria-hidden="true" style="width:46px;display:flex;align-items:center;justify-content:center" style-hover="background:#E6E4DE"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 5h10" stroke="#1C1B19"></path></svg></div>
+      <div aria-hidden="true" style="width:46px;display:flex;align-items:center;justify-content:center" style-hover="background:#E6E4DE"><svg width="10" height="10" viewBox="0 0 10 10"><rect x=".5" y=".5" width="9" height="9" fill="none" stroke="#1C1B19"></rect></svg></div>
+      <div aria-hidden="true" style="width:46px;display:flex;align-items:center;justify-content:center" style-hover="background:#C42B1C"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10" stroke="#1C1B19"></path></svg></div>
+    </div>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex">
+    <nav aria-label="Profiles and settings" style="width:{{ sideW }}px;flex:none;display:flex;flex-direction:column;padding:4px 8px 12px;box-sizing:border-box;gap:2px;min-height:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:6px 4px 6px 12px">
+        <div id="as-prof-h" style="font-size:12px;font-weight:600;color:#5D5A53">{{ t.profiles }}</div>
+        <button onClick="{{ addProfile }}" aria-label="{{ t.addProfile }}" title="{{ t.addProfile }}" style="width:32px;height:32px;border:none;background:transparent;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#E6E4DE"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></button>
+      </div>
+      <div role="listbox" aria-labelledby="as-prof-h" style="display:flex;flex-direction:column;gap:2px;overflow:auto;min-height:0">
+        <sc-for list="{{ items }}" as="it" hint-placeholder-count="3">
+          <button role="option" aria-selected="{{ it.ariaSel }}" onClick="{{ it.onClick }}" style="position:relative;display:flex;align-items:center;gap:8px;min-height:52px;padding:7px 10px 7px 14px;border:none;border-radius:6px;background:{{ it.bg }};text-align:left;cursor:pointer;width:100%;box-sizing:border-box" style-hover="background:{{ it.hoverBg }}">
+            <span style="position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:2px;background:{{ it.bar }}"></span>
+            <span style="flex:1;min-width:0;display:flex;flex-direction:column">
+              <span style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.name }}</span>
+              <span style="display:flex;align-items:center;gap:4px;font-size:12px;line-height:16px;color:{{ it.subColor }};min-width:0">
+                <sc-if value="{{ it.showAct }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+                <sc-if value="{{ it.showWarn }}" hint-placeholder-val="{{ false }}"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" style="flex:none"><path d="M12 3l10 18H2z M12 10v5 M12 18v.5"></path></svg></sc-if>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ it.sub }}</span>
+              </span>
+            </span>
+            <sc-if value="{{ it.showErr }}" hint-placeholder-val="{{ false }}"><svg aria-label="Has errors" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B3261E" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg></sc-if>
+            <sc-if value="{{ it.hasKeys }}" hint-placeholder-val="{{ false }}"><span style="display:flex;gap:2px;flex:none"><sc-for list="{{ it.keys }}" as="k" hint-placeholder-count="0"><span style="font:500 10px/14px 'Cascadia Mono','IBM Plex Mono',monospace;padding:0 4px;border:1px solid #D3D0C8;border-bottom-width:2px;border-radius:3px;background:#fff;color:#5D5A53">{{ k }}</span></sc-for></span></sc-if>
+          </button>
+        </sc-for>
+      </div>
+      <div style="flex:1"></div>
+      <div style="height:1px;background:#E0DDD6;margin:8px 4px"></div>
+      <button onClick="{{ goQuick }}" aria-current="{{ quickCurrent }}" style="position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 10px 0 14px;border:none;border-radius:6px;background:{{ quickBg }};text-align:left;cursor:pointer" style-hover="background:{{ quickHover }}">
+        <span style="position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:2px;background:{{ quickBar }}"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M6 8h12l-3-3M18 16H6l3 3"></path></svg>
+        <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.quick }}</span>
+        <sc-if value="{{ qsErr }}" hint-placeholder-val="{{ false }}"><svg aria-label="Has errors" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B3261E" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg></sc-if>
+        <span style="display:flex;gap:2px;flex:none"><sc-for list="{{ qsKeys }}" as="k" hint-placeholder-count="0"><span style="font:500 10px/14px 'Cascadia Mono','IBM Plex Mono',monospace;padding:0 4px;border:1px solid #D3D0C8;border-bottom-width:2px;border-radius:3px;background:#fff;color:#5D5A53">{{ k }}</span></sc-for></span>
+      </button>
+      <button onClick="{{ goSettings }}" aria-current="{{ setCurrent }}" style="position:relative;display:flex;align-items:center;gap:10px;height:40px;padding:0 10px 0 14px;border:none;border-radius:6px;background:{{ setBg }};text-align:left;cursor:pointer" style-hover="background:{{ setHover }}">
+        <span style="position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:2px;background:{{ setBar }}"></span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" style="flex:none"><path d="M4 7h9M19 7h1M4 17h3M13 17h7"></path><circle cx="16" cy="7" r="2.5"></circle><circle cx="10" cy="17" r="2.5"></circle></svg>
+        <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ t.settings }}</span>
+      </button>
+    </nav>
+
+    <main style="flex:1;min-width:0;background:#FFFFFF;border-top:1px solid #E3E1DB;border-left:1px solid #E3E1DB;border-top-left-radius:8px;overflow:auto">
+      <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+        <div style="padding:28px {{ padX }}px 32px;display:flex;flex-direction:column;gap:24px;max-width:680px">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap">
+              <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1 1 220px">
+                <h1 style="margin:0;font-size:24px;line-height:32px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:{{ titleColor }}">{{ title }}</h1>
+                <div style="display:flex;align-items:center;gap:6px;font-size:12px;line-height:16px;color:{{ actColor }}">
+                  <sc-if value="{{ wasActivated }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+                  <span>{{ actText }}</span>
+                </div>
+              </div>
+              <button onClick="{{ activate }}" aria-describedby="as-act-help" style="height:40px;display:flex;align-items:center;gap:8px;padding:0 20px;border:none;border-radius:4px;background:#0B6B63;color:#fff;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;flex:none" style-hover="background:#095A53" style-active="background:#074A44"><svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M13 2L4 14h7l-1 8 9-12h-7z"></path></svg>{{ t.activate }}</button>
+            </div>
+            <div id="as-act-help" style="font-size:12px;line-height:16px;color:#5D5A53;text-wrap:pretty">{{ t.activateHelp }}</div>
+          </div>
+          <div style="height:1px;background:#E3E1DB"></div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label for="as-name" style="font-weight:600;font-size:13px">{{ t.name }}</label>
+            <input id="as-name" value="{{ sel.name }}" onChange="{{ onName }}" aria-invalid="{{ nameInvalid }}" aria-describedby="as-name-err" style="height:36px;padding:0 12px;border:1px solid {{ nameBorder }};border-bottom:2px solid {{ nameBottom }};border-radius:4px;background:#fff;font-size:14px;max-width:420px;box-sizing:border-box" style-hover="background:#FBFAF8" style-focus="border-bottom-color:#0B6B63">
+            <sc-if value="{{ nameErr }}" hint-placeholder-val="{{ false }}"><div id="as-name-err" style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:#B3261E"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>{{ nameErr }}</div></sc-if>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label for="as-out" style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h3l5-4v14l-5-4H4z M16 9a4 4 0 0 1 0 6 M18.5 6.5a7.5 7.5 0 0 1 0 11"></path></svg>{{ t.output }}</label>
+            <div style="position:relative;max-width:520px">
+              <select id="as-out" value="{{ outVal }}" onChange="{{ onOut }}" aria-describedby="as-out-msg" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 36px 0 12px;border:1px solid {{ outBorder }};border-radius:4px;background:{{ outBg }};font-size:14px;cursor:pointer;box-sizing:border-box" style-hover="background:#F7F6F3">
+                <sc-if value="{{ outMissing }}" hint-placeholder-val="{{ false }}"><option value="__missing" disabled="disabled">{{ t.unavailable }}</option></sc-if>
+                <sc-if value="{{ outNone }}" hint-placeholder-val="{{ false }}"><option value="" disabled="disabled">{{ t.selectDevice }}</option></sc-if>
+                <sc-for list="{{ outputs }}" as="d" hint-placeholder-count="3"><option value="{{ d.id }}">{{ d.name }}</option></sc-for>
+              </select>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;top:12px;pointer-events:none"><path d="M6 9l6 6 6-6"></path></svg>
+            </div>
+            <sc-if value="{{ outMsg }}" hint-placeholder-val="{{ false }}"><div id="as-out-msg" style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:{{ outMsgColor }};max-width:520px;text-wrap:pretty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" style="flex:none;margin-top:1px"><path d="M12 3l10 18H2z M12 10v5 M12 18v.5"></path></svg>{{ outMsg }}</div></sc-if>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label for="as-in" style="display:flex;align-items:center;gap:6px;font-weight:600;font-size:13px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"></rect><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"></path></svg>{{ t.input }}</label>
+            <div style="position:relative;max-width:520px">
+              <select id="as-in" value="{{ inVal }}" onChange="{{ onIn }}" aria-describedby="as-in-msg" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 36px 0 12px;border:1px solid {{ inBorder }};border-radius:4px;background:{{ inBg }};font-size:14px;cursor:pointer;box-sizing:border-box" style-hover="background:#F7F6F3">
+                <sc-if value="{{ inMissing }}" hint-placeholder-val="{{ false }}"><option value="__missing" disabled="disabled">{{ t.unavailable }}</option></sc-if>
+                <sc-if value="{{ inNone }}" hint-placeholder-val="{{ false }}"><option value="" disabled="disabled">{{ t.selectDevice }}</option></sc-if>
+                <sc-for list="{{ inputs }}" as="d" hint-placeholder-count="3"><option value="{{ d.id }}">{{ d.name }}</option></sc-for>
+              </select>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;top:12px;pointer-events:none"><path d="M6 9l6 6 6-6"></path></svg>
+            </div>
+            <sc-if value="{{ inMsg }}" hint-placeholder-val="{{ false }}"><div id="as-in-msg" style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:{{ inMsgColor }};max-width:520px;text-wrap:pretty"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" style="flex:none;margin-top:1px"><path d="M12 3l10 18H2z M12 10v5 M12 18v.5"></path></svg>{{ inMsg }}</div></sc-if>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div id="as-sc-l" style="font-weight:600;font-size:13px">{{ t.shortcut }}</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div role="button" tabIndex="0" aria-labelledby="as-sc-l" aria-describedby="as-sc-help" onFocus="{{ pc.onFocus }}" onBlur="{{ pc.onBlur }}" onKeyDown="{{ pc.onKeyDown }}" style="flex:0 1 320px;min-width:0;height:36px;display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid {{ pc.border }};box-shadow:{{ pc.ring }};border-radius:4px;background:{{ pc.bg }};cursor:pointer;box-sizing:border-box;overflow:hidden">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="1.6" stroke-linecap="round" style="flex:none"><rect x="2.5" y="6" width="19" height="12" rx="2"></rect><path d="M6 10h.5M9.5 10h.5M13 10h.5M16.5 10h1M7 14h10"></path></svg>
+                <sc-for list="{{ pc.keys }}" as="k" hint-placeholder-count="0"><span style="font:500 12px/18px 'Cascadia Mono','IBM Plex Mono',monospace;padding:0 6px;border:1px solid #D3D0C8;border-bottom-width:2px;border-radius:4px;background:#fff">{{ k }}</span></sc-for>
+                <sc-if value="{{ pc.showEmpty }}" hint-placeholder-val="{{ false }}"><span style="color:#77746C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.scEmpty }} · {{ t.scEmptyHint }}</span></sc-if>
+                <sc-if value="{{ pc.showListen }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:#0B6B63;font-weight:500;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:#0B6B63;animation:asPulse 1.2s ease-in-out infinite"></span>{{ t.scListening }}</span></sc-if>
+              </div>
+              <sc-if value="{{ pc.canClear }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pc.onClear }}" aria-label="{{ t.clear }}" title="{{ t.clear }}" style="width:32px;height:32px;border:none;background:transparent;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none" style-hover="background:#EFEDE8"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+            </div>
+            <div id="as-sc-help" style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:{{ pc.helpColor }};max-width:520px;text-wrap:pretty"><sc-if value="{{ pc.isErr }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg></sc-if>{{ pc.help }}</div>
+          </div>
+
+          <div style="height:1px;background:#E3E1DB"></div>
+          <div><button onClick="{{ removeProfile }}" style="height:32px;display:flex;align-items:center;gap:8px;padding:0 10px;margin-left:-10px;border:none;background:transparent;border-radius:4px;color:#B3261E;font-weight:500;cursor:pointer" style-hover="background:#FCEBE9"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M10 7V5h4v2M7 7l1 13h8l1-13"></path></svg>{{ t.remove }}</button></div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="height:100%;display:flex;align-items:center;justify-content:center;padding:32px;box-sizing:border-box">
+          <div style="max-width:340px;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center">
+            <div style="width:48px;height:48px;border-radius:12px;background:#F1F0EC;display:flex;align-items:center;justify-content:center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M4 9h3l5-4v14l-5-4H4z M16 9a4 4 0 0 1 0 6"></path></svg></div>
+            <div style="font-size:18px;line-height:24px;font-weight:600">{{ t.noSel }}</div>
+            <div style="color:#5D5A53;text-wrap:pretty">{{ t.noSelBody }}</div>
+            <button onClick="{{ addProfile }}" style="margin-top:8px;height:36px;display:flex;align-items:center;gap:8px;padding:0 16px;border:none;border-radius:4px;background:#0B6B63;color:#fff;font-weight:600;cursor:pointer" style-hover="background:#095A53"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg>{{ t.addProfile }}</button>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isQuick }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px {{ padX }}px 32px;display:flex;flex-direction:column;gap:24px;max-width:680px">
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <h1 style="margin:0;font-size:24px;line-height:32px;font-weight:600">{{ t.quick }}</h1>
+            <div style="color:#5D5A53;text-wrap:pretty;max-width:520px">{{ t.qsBody }}</div>
+          </div>
+          <div style="height:1px;background:#E3E1DB"></div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:grid;grid-template-columns:minmax(0,1fr) 32px minmax(0,1fr);gap:8px;align-items:end;max-width:560px">
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <label for="as-qa" style="font-weight:600;font-size:13px">{{ t.qsA }}</label>
+                <div style="position:relative"><select id="as-qa" value="{{ qsAVal }}" onChange="{{ onQA }}" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid {{ qsPairBorder }};border-radius:4px;background:#fff;cursor:pointer;box-sizing:border-box"><option value="">{{ t.none }}</option><sc-for list="{{ qsOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;top:12px;pointer-events:none"><path d="M6 9l6 6 6-6"></path></svg></div>
+              </div>
+              <div aria-hidden="true" style="height:36px;display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#77746C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8h12l-3-3M18 16H6l3 3"></path></svg></div>
+              <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                <label for="as-qb" style="font-weight:600;font-size:13px">{{ t.qsB }}</label>
+                <div style="position:relative"><select id="as-qb" value="{{ qsBVal }}" onChange="{{ onQB }}" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid {{ qsPairBorder }};border-radius:4px;background:#fff;cursor:pointer;box-sizing:border-box"><option value="">{{ t.none }}</option><sc-for list="{{ qsOptions }}" as="o" hint-placeholder-count="3"><option value="{{ o.id }}">{{ o.name }}</option></sc-for></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;top:12px;pointer-events:none"><path d="M6 9l6 6 6-6"></path></svg></div>
+              </div>
+            </div>
+            <sc-if value="{{ qsPairErr }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:#B3261E"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg>{{ qsPairErr }}</div></sc-if>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div id="as-qc-l" style="font-weight:600;font-size:13px">{{ t.qsSc }}</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div role="button" tabIndex="0" aria-labelledby="as-qc-l" aria-describedby="as-qc-help" onFocus="{{ qc.onFocus }}" onBlur="{{ qc.onBlur }}" onKeyDown="{{ qc.onKeyDown }}" style="flex:0 1 320px;min-width:0;height:36px;display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid {{ qc.border }};box-shadow:{{ qc.ring }};border-radius:4px;background:{{ qc.bg }};cursor:pointer;box-sizing:border-box;overflow:hidden">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="1.6" stroke-linecap="round" style="flex:none"><rect x="2.5" y="6" width="19" height="12" rx="2"></rect><path d="M6 10h.5M9.5 10h.5M13 10h.5M16.5 10h1M7 14h10"></path></svg>
+                <sc-for list="{{ qc.keys }}" as="k" hint-placeholder-count="0"><span style="font:500 12px/18px 'Cascadia Mono','IBM Plex Mono',monospace;padding:0 6px;border:1px solid #D3D0C8;border-bottom-width:2px;border-radius:4px;background:#fff">{{ k }}</span></sc-for>
+                <sc-if value="{{ qc.showEmpty }}" hint-placeholder-val="{{ false }}"><span style="color:#77746C;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.scEmpty }} · {{ t.scEmptyHint }}</span></sc-if>
+                <sc-if value="{{ qc.showListen }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:8px;color:#0B6B63;font-weight:500;white-space:nowrap"><span style="width:8px;height:8px;border-radius:50%;background:#0B6B63;animation:asPulse 1.2s ease-in-out infinite"></span>{{ t.scListening }}</span></sc-if>
+              </div>
+              <sc-if value="{{ qc.canClear }}" hint-placeholder-val="{{ false }}"><button onClick="{{ qc.onClear }}" aria-label="{{ t.clear }}" title="{{ t.clear }}" style="width:32px;height:32px;border:none;background:transparent;border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none" style-hover="background:#EFEDE8"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></sc-if>
+            </div>
+            <div id="as-qc-help" style="display:flex;gap:6px;align-items:flex-start;font-size:12px;line-height:16px;color:{{ qc.helpColor }};max-width:520px;text-wrap:pretty"><sc-if value="{{ qc.isErr }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg></sc-if>{{ qc.help }}</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px {{ padX }}px 32px;display:flex;flex-direction:column;gap:24px;max-width:680px">
+          <h1 style="margin:0;font-size:24px;line-height:32px;font-weight:600">{{ t.settings }}</h1>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <label for="as-lang" style="font-weight:600;font-size:13px">{{ t.language }}</label>
+            <div style="position:relative;max-width:280px"><select id="as-lang" value="{{ lang }}" onChange="{{ onLang }}" aria-describedby="as-lang-help" style="appearance:none;-webkit-appearance:none;width:100%;height:36px;padding:0 32px 0 12px;border:1px solid #D3D0C8;border-radius:4px;background:#fff;cursor:pointer;box-sizing:border-box" style-hover="background:#F7F6F3"><sc-for list="{{ langs }}" as="l" hint-placeholder-count="6"><option value="{{ l.id }}">{{ l.name }}</option></sc-for></select><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;right:12px;top:12px;pointer-events:none"><path d="M6 9l6 6 6-6"></path></svg></div>
+            <div id="as-lang-help" style="font-size:12px;line-height:16px;color:#5D5A53">{{ t.languageHelp }}</div>
+          </div>
+          <div style="height:1px;background:#E3E1DB"></div>
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px">
+            <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+              <div id="as-start-l" style="font-weight:600;font-size:13px">{{ t.startup }}</div>
+              <div id="as-start-help" style="font-size:12px;line-height:16px;color:#5D5A53;text-wrap:pretty">{{ t.startupHelp }}</div>
+            </div>
+            <button role="switch" aria-checked="{{ startupStr }}" aria-labelledby="as-start-l" aria-describedby="as-start-help" onClick="{{ toggleStartup }}" style="flex:none;display:flex;align-items:center;gap:10px;height:32px;padding:0 4px;border:none;background:transparent;cursor:pointer;border-radius:4px">
+              <span style="font-size:13px;color:#5D5A53;min-width:24px;text-align:right">{{ startupWord }}</span>
+              <span style="width:40px;height:20px;border-radius:10px;box-sizing:border-box;border:1px solid {{ tgBorder }};background:{{ tgBg }};position:relative;display:block"><span style="position:absolute;top:3px;left:{{ tgX }}px;width:12px;height:12px;border-radius:50%;background:{{ tgKnob }}"></span></span>
+            </button>
+          </div>
+          <div style="height:1px;background:#E3E1DB"></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:16px;background:#F7F6F3;border-radius:8px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5D5A53" stroke-width="1.8" stroke-linecap="round" style="flex:none;margin-top:1px"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg>
+            <div style="display:flex;flex-direction:column;gap:4px"><div style="font-weight:600;font-size:13px">{{ t.trayTitle }}</div><div style="font-size:13px;color:#5D5A53;text-wrap:pretty">{{ t.trayBody }}</div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="font-weight:600;font-size:13px">{{ t.updates }}</div>
+            <div style="font-size:13px;color:#5D5A53;text-wrap:pretty">{{ t.updatesBody }}</div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:12px;color:#5D5A53;margin-top:4px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg>{{ updateText }}<span style="color:#77746C">·</span><span style="font-family:'Cascadia Mono','IBM Plex Mono',monospace;color:#77746C">v2.3.1</span></div>
+          </div>
+        </div>
+      </sc-if>
+    </main>
+  </div>
+
+  <footer style="height:36px;flex:none;display:flex;align-items:center;gap:12px;padding:0 12px;font-size:12px;line-height:16px;border-top:1px solid #E3E1DB;background:#F1F0EC">
+    <div role="status" aria-live="polite" style="min-width:0;display:flex;align-items:center;gap:6px;padding:3px 8px;border-radius:4px;background:{{ stBg }};color:{{ stColor }}">
+      <sc-if value="{{ stIsOk }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+      <sc-if value="{{ stIsErr }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v6M12 16.5v.5"></path></svg></sc-if>
+      <sc-if value="{{ stIsWarn }}" hint-placeholder-val="{{ false }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" style="flex:none"><path d="M12 3l10 18H2z M12 10v5 M12 18v.5"></path></svg></sc-if>
+      <sc-if value="{{ stIsInfo }}" hint-placeholder-val="{{ true }}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="flex:none"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v6M12 7.5v.5"></path></svg></sc-if>
+      <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ stText }}</span>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px;color:#5D5A53;white-space:nowrap;min-width:0;overflow:hidden"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg><span style="overflow:hidden;text-overflow:ellipsis">{{ updateText }}</span></div>
+    <span style="font-family:'Cascadia Mono','IBM Plex Mono',monospace;color:#77746C;flex:none">v2.3.1</span>
+  </footer>
+
+  <sc-if value="{{ overlay }}" hint-placeholder-val="{{ false }}">
+    <div aria-hidden="true" style="position:absolute;left:50%;bottom:64px;transform:translateX(-50%);pointer-events:none;display:flex;align-items:center;gap:14px;padding:14px 20px 14px 14px;border-radius:12px;background:rgba(28,27,25,.94);color:#fff;box-shadow:0 12px 32px rgba(0,0,0,.3);max-width:440px">
+      <div style="width:36px;height:36px;border-radius:50%;background:#0B6B63;display:flex;align-items:center;justify-content:center;flex:none"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></div>
+      <div style="display:flex;flex-direction:column;min-width:0">
+        <div style="font-size:12px;line-height:16px;color:#D8D5CD">{{ t.overlay }}</div>
+        <div style="font-size:16px;line-height:22px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ overlay.name }}</div>
+        <div style="font-size:12px;line-height:16px;color:#D8D5CD;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ overlay.devices }}</div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:700},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;ru&quot;,&quot;uk&quot;,&quot;fr&quot;,&quot;it&quot;,&quot;pl&quot;],&quot;default&quot;:&quot;en&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;view&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;profile&quot;,&quot;quick&quot;,&quot;settings&quot;],&quot;default&quot;:&quot;profile&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;scenario&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;default&quot;,&quot;empty&quot;,&quot;error&quot;],&quot;default&quot;:&quot;default&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;compact&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  static OUT = [{id:'o1',name:'Speakers (Realtek(R) Audio)'},{id:'o2',name:'Headset Earphone (Arctis Nova 7)'},{id:'o3',name:'LG ULTRAGEAR (NVIDIA High Definition Audio)'}];
+  static IN = [{id:'i1',name:'Microphone (Shure MV7)'},{id:'i2',name:'Headset Microphone (Arctis Nova 7)'},{id:'i3',name:'Microphone Array (Realtek(R) Audio)'}];
+  static LANGS = [{id:'en',name:'English'},{id:'ru',name:'Русский'},{id:'uk',name:'Українська'},{id:'fr',name:'Français'},{id:'it',name:'Italiano'},{id:'pl',name:'Polski'}];
+  static TAKEN = ['Ctrl+Shift+M','Win+Shift+S'];
+  static S = {
+    en:{refresh:'Refresh devices',save:'Save',unsaved:'Unsaved changes',profiles:'Profiles',addProfile:'Add profile',quick:'Quick switch',settings:'Settings',profileWord:'Profile',name:'Profile name',output:'Output device',input:'Input device',shortcut:'Shortcut',scHelp:'Select the field, then press a combination that includes Ctrl, Alt, Shift or Win. Delete or Backspace clears it.',scEmpty:'Not set',scEmptyHint:'Select to record',scListening:'Press a combination…',scNeedMod:'Include Ctrl, Alt, Shift or Win.',clear:'Clear shortcut',activate:'Activate now',activateHelp:'Sets both devices as the Windows default for playback, recording and communications.',remove:'Remove profile',activatedAt:'Activated at {t}',notActivated:'Not activated in this session',noSel:'No profile selected',noSelBody:'Add a profile to pair an output device with an input device.',qsBody:'One shortcut switches between two profiles. AudioSwitcher checks the current default output device and activates the other profile.',qsA:'Profile A',qsB:'Profile B',qsSc:'Switch shortcut',none:'None',language:'Language',languageHelp:'The interface changes immediately. Save to keep the choice.',startup:'Start with Windows',startupHelp:'Opens in the system tray when you sign in. No administrator rights required.',on:'On',off:'Off',trayTitle:'Closing the window',trayBody:'Closing the window keeps AudioSwitcher running in the system tray, so shortcuts and updates keep working. To quit, right-click the tray icon and choose Exit.',updates:'Updates',updatesBody:'Stable updates download automatically and install after you exit AudioSwitcher.',unavailable:'Device not available',unavailableHelp:'The saved device is not connected. Choose another device, or reconnect it and refresh.',selectDevice:'Select a device',ready:'Ready',sActivated:'Activated “{p}”.',sSaved:'Configuration saved.',sRefreshed:'Found {o} output and {i} input devices.',sRemoved:'Profile removed. Select Save to keep this change.',sAdded:'Profile added. Select Save to keep it.',eNoProfiles:'Add at least one profile before saving.',eNoName:'Every profile needs a name.',eDupName:'Two profiles are named “{p}”. Profile names must be unique.',eNoDevice:'“{p}” needs both an output and an input device.',eUnavailable:'Can’t activate “{p}”: a saved device is not available.',eDupSc:'{k} is assigned to more than one action.',eTaken:'{k} is already registered by another application.',eQs:'Quick switch needs two different profiles.',overlay:'Profile activated',update:'Update {v} ready · installs when you exit'},
+    ru:{refresh:'Обновить устройства',save:'Сохранить',unsaved:'Несохранённые изменения',profiles:'Профили',addProfile:'Добавить профиль',quick:'Быстрое переключение',settings:'Настройки',profileWord:'Профиль',name:'Название профиля',output:'Устройство вывода',input:'Устройство ввода',shortcut:'Сочетание клавиш',scHelp:'Выберите поле и нажмите сочетание с Ctrl, Alt, Shift или Win. Delete или Backspace очищает его.',scEmpty:'Не задано',scEmptyHint:'Выберите для записи',scListening:'Нажмите сочетание…',scNeedMod:'Добавьте Ctrl, Alt, Shift или Win.',clear:'Очистить сочетание',activate:'Активировать',activateHelp:'Назначает оба устройства устройствами Windows по умолчанию для воспроизведения, записи и связи.',remove:'Удалить профиль',activatedAt:'Активирован в {t}',notActivated:'Не активировался в этом сеансе',noSel:'Профиль не выбран',noSelBody:'Добавьте профиль, чтобы связать устройство вывода с устройством ввода.',qsBody:'Одно сочетание клавиш переключает два профиля. AudioSwitcher проверяет текущее устройство вывода по умолчанию и активирует другой профиль.',qsA:'Профиль A',qsB:'Профиль B',qsSc:'Сочетание для переключения',none:'Нет',language:'Язык',languageHelp:'Интерфейс меняется сразу. Нажмите «Сохранить», чтобы запомнить выбор.',startup:'Запускать вместе с Windows',startupHelp:'Открывается в области уведомлений при входе в систему. Права администратора не нужны.',on:'Вкл.',off:'Выкл.',trayTitle:'Закрытие окна',trayBody:'После закрытия окна AudioSwitcher продолжает работать в области уведомлений, поэтому сочетания клавиш и обновления остаются активными. Чтобы выйти, щёлкните значок правой кнопкой мыши и выберите «Выход».',updates:'Обновления',updatesBody:'Стабильные обновления загружаются автоматически и устанавливаются после выхода из AudioSwitcher.',unavailable:'Устройство недоступно',unavailableHelp:'Сохранённое устройство не подключено. Выберите другое или подключите его и обновите список.',selectDevice:'Выберите устройство',ready:'Готово',sActivated:'Профиль «{p}» активирован.',sSaved:'Конфигурация сохранена.',sRefreshed:'Найдено устройств вывода: {o}, ввода: {i}.',sRemoved:'Профиль удалён. Нажмите «Сохранить», чтобы применить изменение.',sAdded:'Профиль добавлен. Нажмите «Сохранить», чтобы сохранить его.',eNoProfiles:'Добавьте хотя бы один профиль перед сохранением.',eNoName:'У каждого профиля должно быть название.',eDupName:'Два профиля называются «{p}». Названия должны быть уникальными.',eNoDevice:'Для «{p}» нужны устройство вывода и устройство ввода.',eUnavailable:'Не удалось активировать «{p}»: сохранённое устройство недоступно.',eDupSc:'{k} назначено нескольким действиям.',eTaken:'{k} уже занято другим приложением.',eQs:'Для быстрого переключения нужны два разных профиля.',overlay:'Профиль активирован',update:'Обновление {v} готово · установится после выхода'},
+    uk:{refresh:'Оновити пристрої',save:'Зберегти',unsaved:'Незбережені зміни',profiles:'Профілі',addProfile:'Додати профіль',quick:'Швидке перемикання',settings:'Налаштування',profileWord:'Профіль',name:'Назва профілю',output:'Пристрій виведення',input:'Пристрій введення',shortcut:'Сполучення клавіш',scHelp:'Виберіть поле й натисніть сполучення з Ctrl, Alt, Shift або Win. Delete чи Backspace очищує його.',scEmpty:'Не задано',scEmptyHint:'Виберіть, щоб записати',scListening:'Натисніть сполучення…',scNeedMod:'Додайте Ctrl, Alt, Shift або Win.',clear:'Очистити сполучення',activate:'Активувати',activateHelp:'Робить обидва пристрої типовими в Windows для відтворення, запису та зв’язку.',remove:'Видалити профіль',activatedAt:'Активовано о {t}',notActivated:'Не активувався в цьому сеансі',noSel:'Профіль не вибрано',noSelBody:'Додайте профіль, щоб поєднати пристрій виведення з пристроєм введення.',qsBody:'Одне сполучення клавіш перемикає між двома профілями. AudioSwitcher перевіряє поточний типовий пристрій виведення й активує інший профіль.',qsA:'Профіль A',qsB:'Профіль B',qsSc:'Сполучення для перемикання',none:'Немає',language:'Мова',languageHelp:'Інтерфейс змінюється одразу. Натисніть «Зберегти», щоб запам’ятати вибір.',startup:'Запускати разом із Windows',startupHelp:'Відкривається в області сповіщень під час входу. Права адміністратора не потрібні.',on:'Увімк.',off:'Вимк.',trayTitle:'Закриття вікна',trayBody:'Після закриття вікна AudioSwitcher працює в області сповіщень, тож сполучення клавіш і оновлення лишаються активними. Щоб вийти, клацніть значок правою кнопкою й виберіть «Вихід».',updates:'Оновлення',updatesBody:'Стабільні оновлення завантажуються автоматично й встановлюються після виходу з AudioSwitcher.',unavailable:'Пристрій недоступний',unavailableHelp:'Збережений пристрій не під’єднано. Виберіть інший або під’єднайте його й оновіть список.',selectDevice:'Виберіть пристрій',ready:'Готово',sActivated:'Профіль «{p}» активовано.',sSaved:'Конфігурацію збережено.',sRefreshed:'Знайдено пристроїв виведення: {o}, введення: {i}.',sRemoved:'Профіль видалено. Натисніть «Зберегти», щоб застосувати зміну.',sAdded:'Профіль додано. Натисніть «Зберегти», щоб зберегти його.',eNoProfiles:'Перед збереженням додайте хоча б один профіль.',eNoName:'Кожен профіль повинен мати назву.',eDupName:'Два профілі мають назву «{p}». Назви мають бути унікальними.',eNoDevice:'Для «{p}» потрібні пристрій виведення та пристрій введення.',eUnavailable:'Не вдалося активувати «{p}»: збережений пристрій недоступний.',eDupSc:'{k} призначено кільком діям.',eTaken:'{k} уже використовує інша програма.',eQs:'Для швидкого перемикання потрібні два різні профілі.',overlay:'Профіль активовано',update:'Оновлення {v} готове · встановиться після виходу'},
+    fr:{refresh:'Actualiser les périphériques',save:'Enregistrer',unsaved:'Modifications non enregistrées',profiles:'Profils',addProfile:'Ajouter un profil',quick:'Bascule rapide',settings:'Paramètres',profileWord:'Profil',name:'Nom du profil',output:'Périphérique de sortie',input:'Périphérique d’entrée',shortcut:'Raccourci',scHelp:'Sélectionnez le champ, puis appuyez sur une combinaison avec Ctrl, Alt, Shift ou Win. Suppr ou Retour arrière l’efface.',scEmpty:'Non défini',scEmptyHint:'Sélectionnez pour capturer',scListening:'Appuyez sur une combinaison…',scNeedMod:'Ajoutez Ctrl, Alt, Shift ou Win.',clear:'Effacer le raccourci',activate:'Activer maintenant',activateHelp:'Définit les deux périphériques par défaut dans Windows pour la lecture, l’enregistrement et les communications.',remove:'Supprimer le profil',activatedAt:'Activé à {t}',notActivated:'Pas encore activé dans cette session',noSel:'Aucun profil sélectionné',noSelBody:'Ajoutez un profil pour associer un périphérique de sortie à un périphérique d’entrée.',qsBody:'Un seul raccourci bascule entre deux profils. AudioSwitcher vérifie le périphérique de sortie par défaut actuel et active l’autre profil.',qsA:'Profil A',qsB:'Profil B',qsSc:'Raccourci de bascule',none:'Aucun',language:'Langue',languageHelp:'L’interface change immédiatement. Enregistrez pour conserver ce choix.',startup:'Démarrer avec Windows',startupHelp:'S’ouvre dans la zone de notification à l’ouverture de session. Aucun droit administrateur requis.',on:'Activé',off:'Désactivé',trayTitle:'Fermeture de la fenêtre',trayBody:'Fermer la fenêtre laisse AudioSwitcher actif dans la zone de notification : les raccourcis et les mises à jour continuent de fonctionner. Pour quitter, faites un clic droit sur l’icône et choisissez Quitter.',updates:'Mises à jour',updatesBody:'Les mises à jour stables se téléchargent automatiquement et s’installent après la fermeture d’AudioSwitcher.',unavailable:'Périphérique indisponible',unavailableHelp:'Le périphérique enregistré n’est pas connecté. Choisissez-en un autre, ou reconnectez-le puis actualisez.',selectDevice:'Choisir un périphérique',ready:'Prêt',sActivated:'« {p} » activé.',sSaved:'Configuration enregistrée.',sRefreshed:'{o} périphériques de sortie et {i} d’entrée trouvés.',sRemoved:'Profil supprimé. Enregistrez pour conserver ce changement.',sAdded:'Profil ajouté. Enregistrez pour le conserver.',eNoProfiles:'Ajoutez au moins un profil avant d’enregistrer.',eNoName:'Chaque profil doit avoir un nom.',eDupName:'Deux profils s’appellent « {p} ». Les noms doivent être uniques.',eNoDevice:'« {p} » nécessite un périphérique de sortie et un périphérique d’entrée.',eUnavailable:'Impossible d’activer « {p} » : un périphérique enregistré est indisponible.',eDupSc:'{k} est attribué à plusieurs actions.',eTaken:'{k} est déjà utilisé par une autre application.',eQs:'La bascule rapide nécessite deux profils différents.',overlay:'Profil activé',update:'Mise à jour {v} prête · installation à la fermeture'},
+    it:{refresh:'Aggiorna dispositivi',save:'Salva',unsaved:'Modifiche non salvate',profiles:'Profili',addProfile:'Aggiungi profilo',quick:'Cambio rapido',settings:'Impostazioni',profileWord:'Profilo',name:'Nome profilo',output:'Dispositivo di uscita',input:'Dispositivo di ingresso',shortcut:'Scorciatoia',scHelp:'Seleziona il campo e premi una combinazione con Ctrl, Alt, Shift o Win. Canc o Backspace la cancella.',scEmpty:'Non impostata',scEmptyHint:'Seleziona per registrare',scListening:'Premi una combinazione…',scNeedMod:'Includi Ctrl, Alt, Shift o Win.',clear:'Cancella scorciatoia',activate:'Attiva ora',activateHelp:'Imposta entrambi i dispositivi come predefiniti di Windows per riproduzione, registrazione e comunicazioni.',remove:'Rimuovi profilo',activatedAt:'Attivato alle {t}',notActivated:'Non attivato in questa sessione',noSel:'Nessun profilo selezionato',noSelBody:'Aggiungi un profilo per abbinare un dispositivo di uscita a uno di ingresso.',qsBody:'Una sola scorciatoia alterna due profili. AudioSwitcher controlla il dispositivo di uscita predefinito attuale e attiva l’altro profilo.',qsA:'Profilo A',qsB:'Profilo B',qsSc:'Scorciatoia di cambio',none:'Nessuno',language:'Lingua',languageHelp:'L’interfaccia cambia subito. Salva per mantenere la scelta.',startup:'Avvia con Windows',startupHelp:'Si apre nell’area di notifica all’accesso. Non servono diritti di amministratore.',on:'Attivo',off:'Disattivo',trayTitle:'Chiusura della finestra',trayBody:'Chiudendo la finestra AudioSwitcher resta attivo nell’area di notifica, così scorciatoie e aggiornamenti continuano a funzionare. Per uscire, fai clic destro sull’icona e scegli Esci.',updates:'Aggiornamenti',updatesBody:'Gli aggiornamenti stabili vengono scaricati automaticamente e installati dopo la chiusura di AudioSwitcher.',unavailable:'Dispositivo non disponibile',unavailableHelp:'Il dispositivo salvato non è collegato. Scegline un altro oppure ricollegalo e aggiorna.',selectDevice:'Seleziona un dispositivo',ready:'Pronto',sActivated:'“{p}” attivato.',sSaved:'Configurazione salvata.',sRefreshed:'Trovati {o} dispositivi di uscita e {i} di ingresso.',sRemoved:'Profilo rimosso. Seleziona Salva per mantenere la modifica.',sAdded:'Profilo aggiunto. Seleziona Salva per mantenerlo.',eNoProfiles:'Aggiungi almeno un profilo prima di salvare.',eNoName:'Ogni profilo deve avere un nome.',eDupName:'Due profili si chiamano “{p}”. I nomi devono essere univoci.',eNoDevice:'“{p}” richiede un dispositivo di uscita e uno di ingresso.',eUnavailable:'Impossibile attivare “{p}”: un dispositivo salvato non è disponibile.',eDupSc:'{k} è assegnata a più azioni.',eTaken:'{k} è già registrata da un’altra applicazione.',eQs:'Il cambio rapido richiede due profili diversi.',overlay:'Profilo attivato',update:'Aggiornamento {v} pronto · installazione all’uscita'},
+    pl:{refresh:'Odśwież urządzenia',save:'Zapisz',unsaved:'Niezapisane zmiany',profiles:'Profile',addProfile:'Dodaj profil',quick:'Szybkie przełączanie',settings:'Ustawienia',profileWord:'Profil',name:'Nazwa profilu',output:'Urządzenie wyjściowe',input:'Urządzenie wejściowe',shortcut:'Skrót klawiszowy',scHelp:'Zaznacz pole i naciśnij kombinację z Ctrl, Alt, Shift lub Win. Delete lub Backspace czyści skrót.',scEmpty:'Nie ustawiono',scEmptyHint:'Zaznacz, aby nagrać',scListening:'Naciśnij kombinację…',scNeedMod:'Dodaj Ctrl, Alt, Shift lub Win.',clear:'Wyczyść skrót',activate:'Aktywuj teraz',activateHelp:'Ustawia oba urządzenia jako domyślne w Windows dla odtwarzania, nagrywania i komunikacji.',remove:'Usuń profil',activatedAt:'Aktywowano o {t}',notActivated:'Nieaktywowany w tej sesji',noSel:'Nie wybrano profilu',noSelBody:'Dodaj profil, aby połączyć urządzenie wyjściowe z wejściowym.',qsBody:'Jeden skrót przełącza między dwoma profilami. AudioSwitcher sprawdza bieżące domyślne urządzenie wyjściowe i aktywuje drugi profil.',qsA:'Profil A',qsB:'Profil B',qsSc:'Skrót przełączania',none:'Brak',language:'Język',languageHelp:'Interfejs zmienia się od razu. Zapisz, aby zachować wybór.',startup:'Uruchamiaj z systemem Windows',startupHelp:'Otwiera się w zasobniku systemowym po zalogowaniu. Nie wymaga uprawnień administratora.',on:'Wł.',off:'Wył.',trayTitle:'Zamykanie okna',trayBody:'Po zamknięciu okna AudioSwitcher działa dalej w zasobniku systemowym, więc skróty i aktualizacje pozostają aktywne. Aby zakończyć, kliknij ikonę prawym przyciskiem i wybierz Zakończ.',updates:'Aktualizacje',updatesBody:'Stabilne aktualizacje pobierają się automatycznie i instalują po zamknięciu AudioSwitcher.',unavailable:'Urządzenie niedostępne',unavailableHelp:'Zapisane urządzenie nie jest podłączone. Wybierz inne albo podłącz je i odśwież listę.',selectDevice:'Wybierz urządzenie',ready:'Gotowe',sActivated:'Aktywowano „{p}”.',sSaved:'Konfiguracja zapisana.',sRefreshed:'Znaleziono urządzenia wyjściowe: {o}, wejściowe: {i}.',sRemoved:'Profil usunięty. Wybierz Zapisz, aby zachować zmianę.',sAdded:'Profil dodany. Wybierz Zapisz, aby go zachować.',eNoProfiles:'Dodaj co najmniej jeden profil przed zapisaniem.',eNoName:'Każdy profil musi mieć nazwę.',eDupName:'Dwa profile mają nazwę „{p}”. Nazwy muszą być unikalne.',eNoDevice:'„{p}” wymaga urządzenia wyjściowego i wejściowego.',eUnavailable:'Nie można aktywować „{p}”: zapisane urządzenie jest niedostępne.',eDupSc:'{k} przypisano do kilku akcji.',eTaken:'{k} jest już zarejestrowany przez inną aplikację.',eQs:'Szybkie przełączanie wymaga dwóch różnych profili.',overlay:'Profil aktywowany',update:'Aktualizacja {v} gotowa · instalacja po zamknięciu'}
+  };
+
+  constructor(props) {
+    super(props);
+    const sc = props.scenario || 'default';
+    const profiles = sc === 'empty' ? [] : [
+      {id:'p1',name:'Desk',out:'o1',in:'i1',sc:['Ctrl','Alt','1']},
+      {id:'p2',name:'Headset',out:'o2',in:'i2',sc:['Ctrl','Alt','2']},
+      {id:'p3',name:'Living room',out:'o9',in:'i3',sc:null}
+    ];
+    let status = {kind:'info',key:'ready'};
+    if (sc === 'empty') status = {kind:'warning',key:'sRemoved'};
+    if (sc === 'error') status = {kind:'error',key:'eUnavailable',args:{p:'Living room'}};
+    this.state = {
+      lang: props.lang || 'en', view: props.view || 'profile', profiles,
+      selectedId: sc === 'empty' ? null : (sc === 'error' ? 'p3' : 'p1'),
+      qsA: sc === 'empty' ? '' : 'p1', qsB: sc === 'empty' ? '' : 'p2', qsSc: sc === 'empty' ? null : ['Ctrl','Alt','S'],
+      startup: true, dirty: sc === 'empty' || sc === 'error', status,
+      capture: null, partial: null, hint: null, issues: {},
+      lastAct: sc === 'empty' ? null : {id:'p2', time:'09:41'}, overlay: null, nextId: 4
+    };
+  }
+  componentWillUnmount(){ clearTimeout(this._ot); }
+
+  tr(key, args) {
+    const S = Component.S; let s = (S[this.state.lang] || S.en)[key] ?? S.en[key] ?? key;
+    if (args) Object.keys(args).forEach(k => { s = s.split('{'+k+'}').join(args[k]); });
+    return s;
+  }
+  dev(list, id) { return list.find(d => d.id === id); }
+  short(n) { return n ? n.replace(/\s*\(.*$/, '') : ''; }
+  scStr(k) { return k ? k.join('+') : ''; }
+  sel() { return this.state.profiles.find(p => p.id === this.state.selectedId); }
+  edit(patch) {
+    const id = this.state.selectedId;
+    this.setState(s => { const issues = {...s.issues}; delete issues[id];
+      return { profiles: s.profiles.map(p => p.id === id ? {...p, ...patch} : p), dirty: true, issues }; });
+  }
+  keyName(e) {
+    const c = e.code || '';
+    if (/^Key[A-Z]$/.test(c)) return c.slice(3);
+    if (/^Digit\d$/.test(c)) return c.slice(5);
+    if (/^F\d{1,2}$/.test(c)) return c;
+    if (/^Numpad\d$/.test(c)) return 'Num' + c.slice(6);
+    const m = {Space:'Space',ArrowUp:'Up',ArrowDown:'Down',ArrowLeft:'Left',ArrowRight:'Right',Home:'Home',End:'End',PageUp:'PgUp',PageDown:'PgDn',Insert:'Ins',Minus:'-',Equal:'=',Comma:',',Period:'.',Slash:'/',Backquote:'`',BracketLeft:'[',BracketRight:']',Semicolon:';',Quote:"'",Backslash:'\\',Pause:'Pause',Enter:'Enter'};
+    return m[c] || null;
+  }
+  setSc(field, keys) {
+    if (field === 'p') this.edit({sc: keys});
+    else this.setState(s => { const issues = {...s.issues}; delete issues.qs; return {qsSc: keys, dirty: true, issues}; });
+  }
+  onKey(field, e) {
+    if (e.key === 'Tab') return;
+    e.preventDefault();
+    const mods = [];
+    if (e.ctrlKey) mods.push('Ctrl'); if (e.altKey) mods.push('Alt'); if (e.shiftKey) mods.push('Shift'); if (e.metaKey) mods.push('Win');
+    if (e.key === 'Escape' && !mods.length) { e.currentTarget.blur(); return; }
+    if ((e.key === 'Delete' || e.key === 'Backspace') && !mods.length) { this.setSc(field, null); this.setState({partial:null, hint:null}); return; }
+    if (['Control','Alt','Shift','Meta','OS'].includes(e.key)) { this.setState({partial: mods, hint: null}); return; }
+    const k = this.keyName(e); if (!k) return;
+    if (!mods.length) { this.setState({hint: field, partial: null}); return; }
+    this.setSc(field, [...mods, k]); this.setState({partial: null, hint: null});
+    e.currentTarget.blur();
+  }
+
+  addProfile = () => {
+    const {profiles} = this.state; const w = this.tr('profileWord');
+    let n = profiles.length + 1; while (profiles.some(p => p.name === w + ' ' + n)) n++;
+    const id = 'p' + this.state.nextId;
+    this.setState({profiles: [...profiles, {id, name: w + ' ' + n, out:'o1', in:'i1', sc:null}], selectedId: id, view:'profile', dirty:true, nextId: this.state.nextId + 1, status:{kind:'info', key:'sAdded'}});
+  };
+  removeProfile = () => {
+    const {profiles, selectedId, qsA, qsB} = this.state;
+    const i = profiles.findIndex(p => p.id === selectedId); const rest = profiles.filter(p => p.id !== selectedId);
+    const next = rest[Math.min(i, rest.length - 1)];
+    this.setState({profiles: rest, selectedId: next ? next.id : null, qsA: qsA === selectedId ? '' : qsA, qsB: qsB === selectedId ? '' : qsB, dirty:true, status:{kind:'warning', key:'sRemoved'}});
+  };
+  activate = () => {
+    const p = this.sel(); if (!p) return;
+    const o = this.dev(Component.OUT, p.out), i = this.dev(Component.IN, p.in);
+    if (!o || !i) { this.setState({status:{kind:'error', key:'eUnavailable', args:{p: p.name}}}); return; }
+    const d = new Date(); const time = String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+    clearTimeout(this._ot);
+    this.setState({lastAct:{id:p.id, time}, status:{kind:'success', key:'sActivated', args:{p:p.name}}, overlay:{name:p.name, devices: this.short(o.name) + ' · ' + this.short(i.name)}});
+    this._ot = setTimeout(() => this.setState({overlay:null}), 1600);
+  };
+  refresh = () => this.setState({status:{kind:'info', key:'sRefreshed', args:{o: Component.OUT.length, i: Component.IN.length}}});
+  save = () => {
+    const {profiles, qsA, qsB, qsSc} = this.state; const iss = {}; let first = null, owner = null;
+    const add = (id, f, msg) => { (iss[id] = iss[id] || {})[f] = msg; if (!first) { first = {kind:'error', ...msg}; owner = id; } };
+    if (!profiles.length) first = {kind:'error', key:'eNoProfiles'};
+    const counts = {}; profiles.forEach(p => { const k = p.name.trim().toLowerCase(); if (k) counts[k] = (counts[k] || 0) + 1; });
+    profiles.forEach(p => {
+      if (!p.name.trim()) add(p.id, 'name', {key:'eNoName'});
+      else if (counts[p.name.trim().toLowerCase()] > 1) add(p.id, 'name', {key:'eDupName', args:{p:p.name.trim()}});
+      if (!p.out || !p.in) add(p.id, 'dev', {key:'eNoDevice', args:{p:p.name}});
+    });
+    const all = profiles.filter(p => p.sc).map(p => ({o:p.id, k:this.scStr(p.sc)})); if (qsSc) all.push({o:'qs', k:this.scStr(qsSc)});
+    all.forEach(a => {
+      const label = a.k.split('+').join(' + ');
+      if (all.filter(b => b.k === a.k).length > 1) add(a.o, 'sc', {key:'eDupSc', args:{k:label}});
+      else if (Component.TAKEN.includes(a.k)) add(a.o, 'sc', {key:'eTaken', args:{k:label}});
+    });
+    if (qsSc && (profiles.length < 2 || !qsA || !qsB || qsA === qsB)) add('qs', 'pair', {key:'eQs'});
+    if (first) {
+      const nav = owner === 'qs' ? {view:'quick'} : owner ? {view:'profile', selectedId: owner} : {};
+      this.setState({issues: iss, status: first, ...nav}); return;
+    }
+    this.setState({issues:{}, dirty:false, status:{kind:'success', key:'sSaved'}});
+  };
+
+  capView(field, keys, issue) {
+    const s = this.state, listening = s.capture === field;
+    const shown = listening ? (s.partial && s.partial.length ? [...s.partial, '…'] : []) : (keys || []);
+    const errText = s.hint === field ? this.tr('scNeedMod') : issue ? this.tr(issue.key, issue.args) : null;
+    return {
+      keys: shown, showEmpty: !listening && !shown.length, showListen: listening && !shown.length,
+      border: errText ? '#B3261E' : listening ? '#0B6B63' : '#D3D0C8',
+      ring: listening ? 'inset 0 0 0 1px #0B6B63' : errText ? 'inset 0 0 0 1px #B3261E' : 'none',
+      bg: listening ? '#F3F9F7' : '#FFFFFF', canClear: !!(keys && keys.length) && !listening,
+      help: errText || this.tr('scHelp'), helpColor: errText ? '#B3261E' : '#5D5A53', isErr: !!errText,
+      onFocus: () => this.setState({capture: field, partial: null, hint: null}),
+      onBlur: () => this.setState(st => ({capture: null, partial: null, hint: st.hint === field ? null : st.hint})),
+      onKeyDown: e => this.onKey(field, e),
+      onClear: () => this.setSc(field, null)
+    };
+  }
+  navStyle(on) { return {bg: on ? '#E2EFEC' : 'transparent', hover: on ? '#D7E9E5' : '#E6E4DE', bar: on ? '#0B6B63' : 'transparent'}; }
+
+  renderVals() {
+    const s = this.state, S = Component.S, t = {...S.en, ...(S[s.lang] || {})};
+    const compact = !!this.props.compact, p = this.sel(), iss = s.issues;
+    const items = s.profiles.map(q => {
+      const on = q.id === s.selectedId, o = this.dev(Component.OUT, q.out), i = this.dev(Component.IN, q.in);
+      const act = s.lastAct && s.lastAct.id === q.id, warn = !o || !i;
+      return { name: q.name || '—', ariaSel: on ? 'true' : 'false', onClick: () => this.setState({selectedId: q.id, view:'profile'}),
+        bg: on ? '#E2EFEC' : 'transparent', hoverBg: on ? '#D7E9E5' : '#E6E4DE', bar: on ? '#0B6B63' : 'transparent',
+        showAct: act && !warn, showWarn: warn, showErr: !!iss[q.id],
+        sub: warn ? this.tr('unavailable') : act ? this.tr('activatedAt', {t: s.lastAct.time}) : this.short(o.name) + ' · ' + this.short(i.name),
+        subColor: warn ? '#8A5A00' : act ? '#0B6B63' : '#5D5A53', keys: q.sc || [], hasKeys: !!(q.sc && q.sc.length) };
+    });
+    const pi = p ? (iss[p.id] || {}) : {};
+    const devField = (list, id) => {
+      const d = this.dev(list, id), missing = !!id && !d, none = !id;
+      const msg = missing ? this.tr('unavailableHelp') : (none && pi.dev) ? this.tr(pi.dev.key, pi.dev.args) : null;
+      return { val: missing ? '__missing' : (id || ''), missing, none, msg, msgColor: missing ? '#8A5A00' : '#B3261E',
+        border: missing ? '#C98A12' : (none && pi.dev) ? '#B3261E' : '#D3D0C8', bg: missing ? '#FDF7EA' : '#FFFFFF' };
+    };
+    const of = p ? devField(Component.OUT, p.out) : {}, inf = p ? devField(Component.IN, p.in) : {};
+    const qi = iss.qs || {};
+    const st = s.status, kinds = {info:['transparent','#5D5A53'], success:['#E2EFEC','#0A5A53'], warning:['#FBF1DC','#7A4F00'], error:['#FCEBE9','#A1221B']};
+    const qn = this.navStyle(s.view === 'quick'), sn = this.navStyle(s.view === 'settings');
+    const act = p && s.lastAct && s.lastAct.id === p.id;
+    return {
+      t, lang: s.lang, langs: Component.LANGS, dirty: s.dirty, clean: !s.dirty,
+      sideW: compact ? 232 : 264, padX: compact ? 24 : 32, showRefreshLabel: !compact,
+      items, addProfile: this.addProfile, removeProfile: this.removeProfile, activate: this.activate, refresh: this.refresh, save: this.save,
+      goQuick: () => this.setState({view:'quick'}), goSettings: () => this.setState({view:'settings'}),
+      quickBg: qn.bg, quickHover: qn.hover, quickBar: qn.bar, quickCurrent: s.view === 'quick' ? 'page' : 'false',
+      setBg: sn.bg, setHover: sn.hover, setBar: sn.bar, setCurrent: s.view === 'settings' ? 'page' : 'false',
+      qsKeys: s.qsSc || [], qsErr: !!iss.qs,
+      isProfile: s.view === 'profile' && !!p, isEmpty: s.view === 'profile' && !p, isQuick: s.view === 'quick', isSettings: s.view === 'settings',
+      sel: p || {name:''}, title: p && p.name.trim() ? p.name : this.tr('name'), titleColor: p && p.name.trim() ? '#1C1B19' : '#77746C',
+      wasActivated: !!act, actText: act ? this.tr('activatedAt', {t: s.lastAct.time}) : this.tr('notActivated'), actColor: act ? '#0B6B63' : '#77746C',
+      onName: e => this.edit({name: e.target.value}),
+      nameErr: pi.name ? this.tr(pi.name.key, pi.name.args) : null, nameInvalid: pi.name ? 'true' : 'false',
+      nameBorder: pi.name ? '#B3261E' : '#D3D0C8', nameBottom: pi.name ? '#B3261E' : '#8F8B82',
+      outputs: Component.OUT, inputs: Component.IN,
+      outVal: of.val, outMissing: of.missing, outNone: of.none, outMsg: of.msg, outMsgColor: of.msgColor, outBorder: of.border, outBg: of.bg,
+      inVal: inf.val, inMissing: inf.missing, inNone: inf.none, inMsg: inf.msg, inMsgColor: inf.msgColor, inBorder: inf.border, inBg: inf.bg,
+      onOut: e => this.edit({out: e.target.value}), onIn: e => this.edit({in: e.target.value}),
+      pc: this.capView('p', p ? p.sc : null, pi.sc), qc: this.capView('q', s.qsSc, qi.sc),
+      qsOptions: s.profiles.map(q => ({id:q.id, name:q.name || '—'})), qsAVal: s.qsA, qsBVal: s.qsB,
+      onQA: e => this.setState({qsA: e.target.value, dirty: true}), onQB: e => this.setState({qsB: e.target.value, dirty: true}),
+      qsPairErr: qi.pair ? this.tr(qi.pair.key) : null, qsPairBorder: qi.pair ? '#B3261E' : '#D3D0C8',
+      onLang: e => this.setState({lang: e.target.value, dirty: true}),
+      startupStr: s.startup ? 'true' : 'false', startupWord: s.startup ? t.on : t.off, toggleStartup: () => this.setState({startup: !s.startup, dirty: true}),
+      tgBg: s.startup ? '#0B6B63' : '#FFFFFF', tgBorder: s.startup ? '#0B6B63' : '#77746C', tgKnob: s.startup ? '#FFFFFF' : '#5D5A53', tgX: s.startup ? 23 : 3,
+      stText: this.tr(st.key, st.args), stBg: kinds[st.kind][0], stColor: kinds[st.kind][1],
+      stIsOk: st.kind === 'success', stIsErr: st.kind === 'error', stIsWarn: st.kind === 'warning', stIsInfo: st.kind === 'info',
+      updateText: this.tr('update', {v:'2.4.0'}), overlay: s.overlay
+    };
+  }
+}
+</script>
+</body>
+</html>

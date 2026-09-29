@@ -19,7 +19,9 @@
   <a href="https://github.com/Diddlik/AudioSwitcher/releases/latest"><strong>Download the latest installer</strong></a>
 </p>
 
-![AudioSwitcher main window in German](docs/screenshots/main.png)
+![AudioSwitcher 1.4 profile editor](docs/screenshots/v1.4-profile.png)
+
+The v1.4 images are rendered directly from the application's Avalonia controls using an isolated test configuration. They show the actual interface, without native window decorations. Original German desktop screenshots are preserved below.
 
 ## Why AudioSwitcher?
 
@@ -38,6 +40,8 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Startup | Start automatically for the current Windows user |
 | Automatic updates | Download stable releases in the background |
 | Languages | English, Russian, Ukrainian, French, Italian, and Polish |
+| Redesigned interface | Dedicated profile, quick-switch, and settings views; visible unsaved state and shortcut keycaps |
+| About | App and runtime versions, update status, manual update checks, and package credits |
 
 ## Installation
 
@@ -61,19 +65,43 @@ Select **Activate now** to switch to the selected profile. Press `Delete` or `Ba
 
 Open **Settings** to choose the interface language or enable automatic startup with Windows.
 
-![AudioSwitcher settings in German](docs/screenshots/settings.png)
+![AudioSwitcher 1.4 settings](docs/screenshots/v1.4-settings.png)
 
 Closing the main window hides it. Use the tray menu to open AudioSwitcher again or exit it completely.
 
 ## Updates and local data
 
-AudioSwitcher checks the public GitHub Releases feed for stable updates. It downloads an available update in the background and installs it when the application exits.
+Installed copies of AudioSwitcher check the public GitHub Releases feed for stable updates. An available update downloads in the background and installs when the application exits. Open **About** to view the current status or check again. Standalone development builds explain that automatic updates require an installed copy.
+
+The About window also lists application/runtime versions and credits for 25 direct, transitive, and development dependencies, with package versions, authors, and license references. Package links lead to their NuGet pages.
+
+![AudioSwitcher 1.4 About window](docs/screenshots/v1.4-about.png)
 
 AudioSwitcher stores profiles and settings only in `%LocalAppData%\AudioSwitcher\config.json`.
+
+## Quick switch
+
+Configure two profiles and one shortcut in the dedicated Quick switch view. Shortcut buttons display individual keycaps; press a combination to replace it, or Delete/Backspace to clear it. Tab leaves capture mode.
+
+![AudioSwitcher 1.4 quick switch](docs/screenshots/v1.4-quick-switch.png)
+
+## Earlier desktop screenshots
+
+These original German screenshots show the earlier interface and are retained for reference.
+
+<details>
+<summary>Original German main window and settings</summary>
+
+![Earlier AudioSwitcher main window in German](docs/screenshots/main.png)
+![Earlier AudioSwitcher settings in German](docs/screenshots/settings.png)
+
+</details>
 
 ## Development
 
 Development requires Windows 10 or 11 and the .NET 10 SDK.
+
+See the [UI redesign brief](docs/ui-redesign-brief.md) for the complete product behavior, interface requirements, and design constraints.
 
 ```powershell
 dotnet build
@@ -84,10 +112,17 @@ dotnet run --project src/AudioSwitcher
 Create a local Velopack installer with:
 
 ```powershell
-.\scripts\package.ps1 -Version 1.3.1
+.\scripts\package.ps1 -Version 1.4.0
 ```
 
 The packages are written to `artifacts\releases`.
+
+After changing dependencies, run `dotnet restore` and `./scripts/update-package-credits.ps1` to refresh the embedded NuGet credits. To render the current interface without changing user settings:
+
+```powershell
+$env:AUDIOSWITCHER_LAYOUT_OUTPUT = Join-Path $env:TEMP 'AudioSwitcher-layout-review'
+dotnet test -c Release --filter FullyQualifiedName~MainWindowLayoutTests
+```
 
 ## Publishing
 

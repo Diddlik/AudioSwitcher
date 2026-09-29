@@ -71,6 +71,9 @@ If any `[TO FILL]` entry remains, complete this onboarding before implementing t
 - Important entry points: `src/AudioSwitcher/Program.cs` starts the application; `src/AudioSwitcher/App.axaml` configures Avalonia; `src/AudioSwitcher/Views/MainWindow.axaml` is the main GUI.
 - Build command: `dotnet build`
 - Test command: `dotnet test`
+- Visual layout regression: `dotnet test -c Release --filter FullyQualifiedName~MainWindowLayoutTests` checks the three editor pages at 1040 x 700 and 880 x 620 in all six languages. Set `AUDIOSWITCHER_LAYOUT_OUTPUT` to a temporary directory to export rendered PNGs. The test uses an isolated configuration and does not activate audio profiles or save settings.
+- Redesign reference: `docs/AudioSwitcher redesign spec/AudioSwitcher Redesign.dc.html` defines the component states and tokens; `AudioSwitcher Window.dc.html` is the interactive window template.
+- The About dialog shares the startup update command and status. Standalone builds report that automatic updates require a Velopack installation. Package credits include direct, transitive, and development dependencies from restored NuGet metadata; regenerate `src/AudioSwitcher/Assets/PackageCredits.json` with `./scripts/update-package-credits.ps1` after restoring changed dependencies. Do not edit that generated file manually.
 - Lint and format command: `dotnet format --verify-no-changes`
 - Local run command: `dotnet run --project src/AudioSwitcher`
 - Required environment: Windows 10 or 11. The development environment has .NET SDK 10.0.401 installed.

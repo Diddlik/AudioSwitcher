@@ -16,6 +16,13 @@ public sealed class AutoUpdateService
     {
         if (!_updateManager.IsInstalled)
         {
+            reportStatus(_text["StandaloneUpdates"]);
+            return;
+        }
+
+        if (_pendingUpdate is not null)
+        {
+            reportStatus(_text.Format("UpdateOnExit", _pendingUpdate.Version));
             return;
         }
 

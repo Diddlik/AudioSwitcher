@@ -1,0 +1,177 @@
+[
+  {
+    "Name": "Avalonia",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Angle.Windows.Natives",
+    "Version": "2.1.25547.20250602",
+    "Authors": "Avalonia Team",
+    "License": "LICENSE",
+    "Url": "https://www.nuget.org/packages/Avalonia.Angle.Windows.Natives/2.1.25547.20250602"
+  },
+  {
+    "Name": "Avalonia.BuildServices",
+    "Version": "0.0.31",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.BuildServices/0.0.31"
+  },
+  {
+    "Name": "Avalonia.Controls.ColorPicker",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Controls.ColorPicker/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Diagnostics",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Diagnostics/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Remote.Protocol",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Remote.Protocol/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Skia",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Skia/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Themes.Fluent",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Themes.Fluent/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Themes.Simple",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Themes.Simple/11.3.6"
+  },
+  {
+    "Name": "Avalonia.Win32",
+    "Version": "11.3.6",
+    "Authors": "Avalonia Team",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Avalonia.Win32/11.3.6"
+  },
+  {
+    "Name": "CommunityToolkit.Mvvm",
+    "Version": "8.2.1",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/CommunityToolkit.Mvvm/8.2.1"
+  },
+  {
+    "Name": "HarfBuzzSharp",
+    "Version": "8.3.1.1",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/HarfBuzzSharp/8.3.1.1"
+  },
+  {
+    "Name": "HarfBuzzSharp.NativeAssets.Linux",
+    "Version": "8.3.1.1",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.Linux/8.3.1.1"
+  },
+  {
+    "Name": "HarfBuzzSharp.NativeAssets.WebAssembly",
+    "Version": "8.3.1.1",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.WebAssembly/8.3.1.1"
+  },
+  {
+    "Name": "HarfBuzzSharp.NativeAssets.Win32",
+    "Version": "8.3.1.1",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/HarfBuzzSharp.NativeAssets.Win32/8.3.1.1"
+  },
+  {
+    "Name": "MicroCom.Runtime",
+    "Version": "0.11.0",
+    "Authors": "MicroCom.Runtime",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/MicroCom.Runtime/0.11.0"
+  },
+  {
+    "Name": "NAudio.Core",
+    "Version": "3.1.0",
+    "Authors": "Mark Heath",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/NAudio.Core/3.1.0"
+  },
+  {
+    "Name": "NAudio.Wasapi",
+    "Version": "3.1.0",
+    "Authors": "Mark Heath",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/NAudio.Wasapi/3.1.0"
+  },
+  {
+    "Name": "SkiaSharp",
+    "Version": "2.88.9",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/SkiaSharp/2.88.9"
+  },
+  {
+    "Name": "SkiaSharp.NativeAssets.Linux",
+    "Version": "2.88.9",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.Linux/2.88.9"
+  },
+  {
+    "Name": "SkiaSharp.NativeAssets.macOS",
+    "Version": "2.88.9",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.macOS/2.88.9"
+  },
+  {
+    "Name": "SkiaSharp.NativeAssets.WebAssembly",
+    "Version": "2.88.9",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.WebAssembly/2.88.9"
+  },
+  {
+    "Name": "SkiaSharp.NativeAssets.Win32",
+    "Version": "2.88.9",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/SkiaSharp.NativeAssets.Win32/2.88.9"
+  },
+  {
+    "Name": "System.Numerics.Tensors",
+    "Version": "9.0.0",
+    "Authors": "Microsoft",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/System.Numerics.Tensors/9.0.0"
+  },
+  {
+    "Name": "Velopack",
+    "Version": "1.2.158",
+    "Authors": "Velopack Ltd,Caelan Sayler,Kevin Bost",
+    "License": "MIT",
+    "Url": "https://www.nuget.org/packages/Velopack/1.2.158"
+  }
+]

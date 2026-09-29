@@ -2,155 +2,395 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="using:AudioSwitcher.ViewModels"
         xmlns:models="using:AudioSwitcher.Models"
+        xmlns:views="using:AudioSwitcher.Views"
+        xmlns:converters="using:Avalonia.Data.Converters"
         x:Class="AudioSwitcher.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Width="1040" Height="700" MinWidth="880" MinHeight="620"
-        Background="#0D1117" FontFamily="Segoe UI Variable Text"
-        Icon="/Assets/audioswitcher.ico"
-        Title="AudioSwitcher">
+        Background="#F1F0EC" Foreground="#1C1B19" FontSize="14" FontFamily="Segoe UI Variable Text, Segoe UI"
+        SystemDecorations="BorderOnly" CanResize="True"
+        ExtendClientAreaToDecorationsHint="True" ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="0"
+        Icon="/Assets/audioswitcher.ico" Title="AudioSwitcher">
+
+    <Window.Resources>
+        <Color x:Key="SystemAccentColor">#0B6B63</Color>
+        <Color x:Key="SystemAccentColorDark1">#095A53</Color>
+        <Color x:Key="SystemAccentColorDark2">#074A44</Color>
+        <Color x:Key="SystemAccentColorDark3">#074A44</Color>
+        <Color x:Key="SystemAccentColorLight1">#0B6B63</Color>
+        <Color x:Key="SystemAccentColorLight2">#D7E9E5</Color>
+        <Color x:Key="SystemAccentColorLight3">#E2EFEC</Color>
+    </Window.Resources>
 
     <Window.Styles>
-        <Style Selector="TextBlock.h1">
-            <Setter Property="FontFamily" Value="Bahnschrift"/>
-            <Setter Property="FontSize" Value="30"/>
+        <Style Selector="TextBlock.page-title">
+            <Setter Property="FontSize" Value="24"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Foreground" Value="#F5F7FA"/>
-        </Style>
-        <Style Selector="TextBlock.eyebrow">
-            <Setter Property="FontSize" Value="11"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#66E3C4"/>
-            <Setter Property="LetterSpacing" Value="1.6"/>
+            <Setter Property="Foreground" Value="#1C1B19"/>
         </Style>
         <Style Selector="TextBlock.label">
-            <Setter Property="FontSize" Value="12"/>
-            <Setter Property="Foreground" Value="#8D98A8"/>
-            <Setter Property="Margin" Value="0,0,0,6"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#1C1B19"/>
         </Style>
-        <Style Selector="Border.card">
-            <Setter Property="Background" Value="#151B23"/>
-            <Setter Property="BorderBrush" Value="#27313E"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="CornerRadius" Value="12"/>
-            <Setter Property="Padding" Value="22"/>
+        <Style Selector="TextBlock.help">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#5D5A53"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="LineHeight" Value="16"/>
         </Style>
         <Style Selector="Button">
-            <Setter Property="CornerRadius" Value="7"/>
-            <Setter Property="Padding" Value="16,9"/>
+            <Setter Property="MinHeight" Value="32"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="14,6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
         </Style>
         <Style Selector="Button.primary">
-            <Setter Property="Background" Value="#66E3C4"/>
-            <Setter Property="Foreground" Value="#07120F"/>
-            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Background" Value="#0B6B63"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#095A53"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.save">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="#1C1B19"/>
+            <Setter Property="BorderBrush" Value="#D3D0C8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="Button.save.dirty">
+            <Setter Property="Background" Value="#0B6B63"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.save:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F7F6F3"/>
+        </Style>
+        <Style Selector="Button.save:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#EFEDE8"/>
+        </Style>
+        <Style Selector="Button.save.dirty:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#095A53"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.primary:pressed /template/ ContentPresenter, Button.save.dirty:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#074A44"/>
+            <Setter Property="Foreground" Value="#E2EFEC"/>
+        </Style>
+        <Style Selector="Button.subtle">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1C1B19"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.subtle:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E6E4DE"/>
         </Style>
         <Style Selector="Button.danger">
-            <Setter Property="Foreground" Value="#FF8A91"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#B3261E"/>
+            <Setter Property="BorderThickness" Value="0"/>
         </Style>
-        <Style Selector="TextBox, ComboBox">
-            <Setter Property="MinHeight" Value="40"/>
-            <Setter Property="CornerRadius" Value="7"/>
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#FCEBE9"/>
+            <Setter Property="Foreground" Value="#B3261E"/>
         </Style>
-        <Style Selector="TextBox.hotkey">
-            <Setter Property="Background" Value="#101820"/>
-            <Setter Property="BorderBrush" Value="#344456"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="TextAlignment" Value="Center"/>
+        <Style Selector="Button.danger:pressed /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F7D8D4"/>
+            <Setter Property="Foreground" Value="#8F1D17"/>
+        </Style>
+        <Style Selector="Button.nav">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#1C1B19"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+        <Style Selector="Button.nav.active">
+            <Setter Property="Background" Value="#E2EFEC"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
-        <Style Selector="TextBox.hotkey:focus">
-            <Setter Property="BorderBrush" Value="#66E3C4"/>
+        <Style Selector="Button.nav:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E6E4DE"/>
+        </Style>
+        <Style Selector="Button.nav.active:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D7E9E5"/>
+        </Style>
+        <Style Selector="Button.caption">
+            <Setter Property="Width" Value="46"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="MinHeight" Value="48"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style Selector="Button.caption:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E6E4DE"/>
+        </Style>
+        <Style Selector="Button.caption.close:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#C42B1C"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Border.keycap">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D3D0C8"/>
+            <Setter Property="BorderThickness" Value="1,1,1,2"/>
+            <Setter Property="CornerRadius" Value="3"/>
+            <Setter Property="Padding" Value="4,0"/>
+        </Style>
+        <Style Selector="TextBox, ComboBox">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D3D0C8"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="ComboBox">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="StackPanel.editor">
+            <Setter Property="MaxWidth" Value="680"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.hotkey">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#D3D0C8"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="ContentTemplate">
+                <DataTemplate x:CompileBindings="False">
+                    <Grid ColumnDefinitions="16,*" ColumnSpacing="8">
+                        <Path Width="16" Height="16" Stretch="Uniform" Stroke="#5D5A53" StrokeThickness="1.6"
+                              VerticalAlignment="Center" StrokeLineCap="Round"
+                              Data="M4,6 L20,6 Q22,6 22,8 L22,16 Q22,18 20,18 L4,18 Q2,18 2,16 L2,8 Q2,6 4,6 Z M6,10 L7,10 M10,10 L11,10 M14,10 L15,10 M18,10 L19,10 M7,14 L17,14"/>
+                        <ItemsControl Grid.Column="1" VerticalAlignment="Center"
+                                      ItemsSource="{Binding Converter={x:Static views:MainWindow.HotkeyPartsConverter}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="6"/></ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="keycap" Padding="6,0" CornerRadius="4">
+                                        <TextBlock Text="{Binding}" FontFamily="Cascadia Mono, Consolas"
+                                                   FontSize="12" LineHeight="18" FontWeight="Medium"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Foreground="#77746C" FontWeight="Normal"
+                                   TextTrimming="CharacterEllipsis"
+                                   Text="{Binding $parent[Window].DataContext.Text[ShortcutWatermark]}"
+                                   IsVisible="{Binding Converter={x:Static converters:StringConverters.IsNullOrEmpty}}"/>
+                    </Grid>
+                </DataTemplate>
+            </Setter>
+        </Style>
+        <Style Selector="Button.hotkey:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#F7F6F3"/>
+        </Style>
+        <Style Selector="Button.hotkey:focus /template/ ContentPresenter">
+            <Setter Property="BorderBrush" Value="#0B6B63"/>
+            <Setter Property="BorderThickness" Value="1,1,1,2"/>
+            <Setter Property="Background" Value="#F3F9F7"/>
         </Style>
         <Style Selector="ListBoxItem">
-            <Setter Property="Padding" Value="14,11"/>
-            <Setter Property="Margin" Value="0,2"/>
-            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="MinHeight" Value="52"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Padding" Value="14,7,10,7"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        </Style>
+        <Style Selector="ListBoxItem:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E6E4DE"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E2EFEC"/>
+            <Setter Property="BorderBrush" Value="#0B6B63"/>
+            <Setter Property="BorderThickness" Value="3,0,0,0"/>
+        </Style>
+        <Style Selector="ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#D7E9E5"/>
+        </Style>
+        <Style Selector="ListBox.inactive ListBoxItem:selected /template/ ContentPresenter">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+        </Style>
+        <Style Selector="ListBox.inactive ListBoxItem:selected:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#E6E4DE"/>
         </Style>
     </Window.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto">
-        <Border Grid.Row="0" Padding="30,24,30,18" BorderBrush="#27313E" BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
-                <Image Width="48" Height="48" Source="/Assets/audioswitcher.png"
-                       Stretch="Uniform" AutomationProperties.Name="AudioSwitcher-Logo"/>
-                <StackPanel Grid.Column="1" Spacing="3" VerticalAlignment="Center">
-                    <TextBlock Classes="eyebrow" Text="{Binding Text[WindowsAudioRouting]}"/>
-                    <TextBlock Classes="h1" Text="AudioSwitcher"/>
+    <Border Background="#F1F0EC" BorderBrush="#C9C6BE" BorderThickness="1" CornerRadius="8">
+    <Grid RowDefinitions="48,*,36" ClipToBounds="True">
+        <Border Grid.Row="0" Background="#F1F0EC" Padding="16,0,0,0"
+                PointerPressed="OnTitleBarPointerPressed">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto,Auto,Auto,46,46,46" ColumnSpacing="8">
+                <Border Width="20" Height="20" CornerRadius="5" Background="#0B6B63" VerticalAlignment="Center">
+                    <Path Width="14" Height="14" Stretch="Uniform" Stroke="White" StrokeThickness="2.4"
+                          HorizontalAlignment="Center" VerticalAlignment="Center" StrokeLineCap="Round"
+                          Data="M6,8 L18,8 L15,5 M18,16 L6,16 L9,19"/>
+                </Border>
+                <TextBlock Grid.Column="1" Text="AudioSwitcher" FontSize="13" FontWeight="SemiBold"
+                           Foreground="#1C1B19" VerticalAlignment="Center"/>
+                <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center"
+                            IsVisible="{Binding IsDirty}">
+                    <Border Width="8" Height="8" CornerRadius="4" Background="#C98A12"/>
+                    <TextBlock Text="{Binding Text[UnsavedChanges]}" FontSize="12" Foreground="#8A5A00"
+                               VerticalAlignment="Center"/>
                 </StackPanel>
-                <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-                    <Button Command="{Binding RefreshDevicesCommand}" Content="{Binding Text[RefreshDevices]}"
-                            ToolTip.Tip="{Binding Text[RefreshDevicesTip]}"/>
-                    <Button Content="{Binding Text[Settings], StringFormat='⚙  {0}'}"
-                            AutomationProperties.Name="{Binding Text[Settings]}">
-                        <Button.Flyout>
-                            <Flyout Placement="BottomEdgeAlignedRight">
-                                <StackPanel Width="300" Spacing="12" Margin="4"
-                                            x:DataType="vm:MainWindowViewModel">
-                                    <TextBlock Classes="eyebrow" Text="{Binding Text[System]}"/>
-                                    <TextBlock FontSize="18" FontWeight="SemiBold" Text="{Binding Text[Settings]}"/>
-                                    <TextBlock Classes="label" Text="{Binding Text[Language]}"/>
-                                    <ComboBox ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}"/>
-                                    <CheckBox IsChecked="{Binding StartWithWindows}"
-                                              Content="{Binding Text[StartWithWindows]}"
-                                              AutomationProperties.Name="{Binding Text[StartWithWindows]}"/>
-                                    <TextBlock FontSize="11" Foreground="#8D98A8" TextWrapping="Wrap"
-                                               Text="{Binding Text[CloseHint]}"/>
-                                </StackPanel>
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-                    <Button Classes="primary" Command="{Binding SaveCommand}" Content="{Binding Text[Save]}"/>
-                </StackPanel>
+                <Button Grid.Column="4" Classes="subtle" Command="{Binding RefreshDevicesCommand}"
+                        ToolTip.Tip="{Binding Text[RefreshDevicesTip]}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                              StrokeLineCap="Round" Data="M20,12 A8,8 0 1 1 17.66,6.34 M20,4 L20,9 L15,9"/>
+                        <TextBlock x:Name="RefreshLabel" Text="{Binding Text[RefreshDevices]}"/>
+                    </StackPanel>
+                </Button>
+                <Button Grid.Column="5" Classes="save" Classes.dirty="{Binding IsDirty}"
+                        Command="{Binding SaveCommand}" Content="{Binding Text[Save]}"/>
+                <Button Grid.Column="6" Classes="caption" Click="OnMinimizeClick" AutomationProperties.Name="Minimize">
+                    <Border Width="10" Height="1" Background="#1C1B19"/>
+                </Button>
+                <Button Grid.Column="7" Classes="caption" Click="OnMaximizeClick" AutomationProperties.Name="Maximize">
+                    <Path Width="10" Height="10" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1" Data="M0.5,0.5 L9.5,0.5 L9.5,9.5 L0.5,9.5 Z"/>
+                </Button>
+                <Button Grid.Column="8" Classes="caption close" Click="OnCaptionCloseClick" AutomationProperties.Name="Close">
+                    <Path Width="10" Height="10" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1" Data="M0,0 L10,10 M10,0 L0,10"/>
+                </Button>
             </Grid>
         </Border>
 
-        <Grid Grid.Row="1" ColumnDefinitions="280,*">
-            <Border Grid.Column="0" Padding="20" Background="#10151C" BorderBrush="#27313E" BorderThickness="0,0,1,0">
-                <Grid RowDefinitions="Auto,*,Auto">
-                    <Grid ColumnDefinitions="*,Auto" Margin="4,0,4,12">
-                        <TextBlock FontSize="16" FontWeight="SemiBold" Text="{Binding Text[Profiles]}" VerticalAlignment="Center"/>
-                        <Button Grid.Column="1" Command="{Binding AddProfileCommand}" Content="＋" Padding="10,5"
-                                ToolTip.Tip="{Binding Text[AddProfile]}"/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border x:Name="Sidebar" Grid.Column="0" Width="264" Background="#F1F0EC" Padding="8,4,8,12">
+                <Grid RowDefinitions="Auto,*,Auto,Auto,Auto,Auto">
+                    <Grid ColumnDefinitions="*,Auto" Margin="12,2,4,6">
+                        <TextBlock Text="{Binding Text[Profiles]}" FontSize="12" FontWeight="SemiBold"
+                                   Foreground="#5D5A53" VerticalAlignment="Center"/>
+                        <Button Grid.Column="1" Classes="subtle" Width="40" Height="40" Padding="0"
+                                Command="{Binding AddProfileCommand}" Content="＋"
+                                ToolTip.Tip="{Binding Text[AddProfile]}"
+                                AutomationProperties.Name="{Binding Text[AddProfile]}"/>
                     </Grid>
-                    <ListBox Grid.Row="1" ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
+                    <ListBox x:Name="ProfileList" Grid.Row="1" Background="Transparent" BorderThickness="0"
+                             Classes.inactive="{Binding !IsProfileView}"
+                             PointerReleased="OnProfilePointerReleased" KeyDown="OnProfileListKeyDown"
+                             ItemsSource="{Binding Profiles}" SelectedItem="{Binding SelectedProfile}">
                         <ListBox.ItemTemplate>
                             <DataTemplate x:DataType="models:AudioProfile">
-                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="11">
-                                    <Border Width="8" Height="8" CornerRadius="4" Background="#66E3C4" VerticalAlignment="Center"/>
-                                    <StackPanel Grid.Column="1">
-                                        <TextBlock Text="{Binding Name}" FontWeight="SemiBold"/>
-                                        <TextBlock Text="{Binding Hotkey}" FontSize="11" Foreground="#8D98A8"/>
-                                    </StackPanel>
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" MinWidth="0">
+                                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" Foreground="#1C1B19"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Grid.Row="1" Text="{Binding SecondaryText}" FontSize="12"
+                                               Foreground="{Binding SecondaryColor}" TextTrimming="CharacterEllipsis"/>
+                                    <ItemsControl Grid.Column="1" Grid.RowSpan="2" Margin="8,0,0,0"
+                                                  HorizontalAlignment="Right" VerticalAlignment="Center"
+                                                  ItemsSource="{Binding HotkeyParts}">
+                                        <ItemsControl.ItemsPanel>
+                                            <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="2"/></ItemsPanelTemplate>
+                                        </ItemsControl.ItemsPanel>
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <Border Classes="keycap">
+                                                    <TextBlock Text="{Binding}" FontFamily="Cascadia Mono, Consolas"
+                                                               FontSize="10" Foreground="#5D5A53"/>
+                                                </Border>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <Button Grid.Row="2" Classes="danger" Command="{Binding DeleteProfileCommand}" Content="{Binding Text[RemoveProfile]}"
-                            HorizontalAlignment="Stretch" Margin="0,12,0,0"/>
+                    <Border Grid.Row="2" Height="1" Background="#E0DDD6" Margin="4,8"/>
+                    <Button Grid.Row="3" Classes="nav" Classes.active="{Binding IsQuickSwitchView}"
+                            Command="{Binding ShowQuickSwitchCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                                  StrokeLineCap="Round" Data="M6,8 L18,8 L15,5 M18,16 L6,16 L9,19"/>
+                            <TextBlock Text="{Binding Text[QuickSwitch]}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Row="4" Classes="nav" Classes.active="{Binding IsSettingsView}"
+                            Command="{Binding ShowSettingsCommand}">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                                  StrokeLineCap="Round" Data="M4,7 L13,7 M19,7 L20,7 M4,17 L7,17 M13,17 L20,17 M16,4.5 A2.5,2.5 0 1 1 16,9.5 A2.5,2.5 0 1 1 16,4.5 M10,14.5 A2.5,2.5 0 1 1 10,19.5 A2.5,2.5 0 1 1 10,14.5"/>
+                            <TextBlock Text="{Binding Text[Settings]}"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Grid.Row="5" Classes="nav" Click="OnAboutClick">
+                        <StackPanel Orientation="Horizontal" Spacing="10">
+                            <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                                  StrokeLineCap="Round" Data="M12,3 A9,9 0 1 1 12,21 A9,9 0 1 1 12,3 M12,11 L12,16 M12,7 L12,7.5"/>
+                            <TextBlock Text="{Binding Text[About]}"/>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Border>
 
-            <ScrollViewer Grid.Column="1">
-                <StackPanel Margin="30" Spacing="18" MaxWidth="720">
-                    <Border Classes="card">
-                        <StackPanel Spacing="16">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel>
-                                    <TextBlock Classes="eyebrow" Text="{Binding Text[Profile]}"/>
-                                    <TextBlock FontSize="21" FontWeight="SemiBold" Text="{Binding Text[DeviceCombination]}"/>
+            <Border Grid.Column="1" Background="White" BorderBrush="#E3E1DB" BorderThickness="1,1,0,0"
+                    CornerRadius="8,0,0,0">
+                <Grid>
+                    <ScrollViewer IsVisible="{Binding IsProfileView}">
+                        <Grid>
+                            <StackPanel x:Name="ProfileContent" Classes="editor" Margin="32,28,32,32" Spacing="24"
+                                        IsVisible="{Binding HasSelectedProfile}">
+                                <StackPanel Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="16">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Classes="page-title" Text="{Binding SelectedProfile.Name}"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock FontSize="12" Foreground="{Binding SelectedActivationColor}"
+                                                   Text="{Binding SelectedActivationText}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="1" Classes="primary" Height="40" Padding="20,0" VerticalAlignment="Top"
+                                            Command="{Binding ActivateSelectedProfileCommand}">
+                                        <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                                            <PathIcon Width="16" Height="16" Foreground="White"
+                                                      Data="M13,2 L4,14 L11,14 L10,22 L19,10 L12,10 Z"/>
+                                            <TextBlock Text="{Binding Text[ActivateNow]}"/>
+                                        </StackPanel>
+                                    </Button>
+                                </Grid>
+                                <TextBlock Classes="help"
+                                           Text="{Binding Text[ActivateHelp]}"/>
                                 </StackPanel>
-                                <Button Grid.Column="1" Classes="primary" Command="{Binding ActivateSelectedProfileCommand}"
-                                        Content="{Binding Text[ActivateNow]}" VerticalAlignment="Center"/>
-                            </Grid>
-
-                            <StackPanel>
-                                <TextBlock Classes="label" Text="{Binding Text[Name]}"/>
-                                <TextBox Text="{Binding SelectedProfile.Name, Mode=TwoWay}" Watermark="{Binding Text[NameExample]}"
-                                         AutomationProperties.Name="{Binding Text[ProfileName]}"/>
-                            </StackPanel>
-                            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
-                                <StackPanel>
-                                    <TextBlock Classes="label" Text="{Binding Text[Output]}"/>
-                                    <ComboBox ItemsSource="{Binding OutputDevices}" SelectedItem="{Binding SelectedOutputDevice}"
+                                <Border Height="1" Background="#E3E1DB"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[Name]}"/>
+                                    <TextBox x:Name="ProfileName" Width="{Binding #ProfileContent.Bounds.Width}" MaxWidth="420" HorizontalAlignment="Left"
+                                             Text="{Binding SelectedProfile.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Watermark="{Binding Text[NameExample]}"
+                                             AutomationProperties.Name="{Binding Text[ProfileName]}"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                                              StrokeLineCap="Round" StrokeJoin="Round" VerticalAlignment="Center"
+                                              Data="M4,9 L7,9 L12,5 L12,19 L7,15 L4,15 Z M16,9 A4,4 0 0 1 16,15 M18.5,6.5 A7.5,7.5 0 0 1 18.5,17.5"/>
+                                        <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding Text[Output]}"/>
+                                    </StackPanel>
+                                    <ComboBox Width="{Binding #ProfileContent.Bounds.Width}" MaxWidth="520" HorizontalAlignment="Left" ItemsSource="{Binding OutputDevices}"
+                                              SelectedItem="{Binding SelectedOutputDevice}"
                                               AutomationProperties.Name="{Binding Text[OutputDevice]}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:AudioDeviceInfo">
@@ -159,9 +399,15 @@
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
-                                <StackPanel Grid.Column="1">
-                                    <TextBlock Classes="label" Text="{Binding Text[Input]}"/>
-                                    <ComboBox ItemsSource="{Binding InputDevices}" SelectedItem="{Binding SelectedInputDevice}"
+                                <StackPanel Spacing="6">
+                                    <StackPanel Orientation="Horizontal" Spacing="6">
+                                        <Path Width="16" Height="16" Stretch="Uniform" Stroke="#1C1B19" StrokeThickness="1.8"
+                                              StrokeLineCap="Round" VerticalAlignment="Center"
+                                              Data="M9,6 A3,3 0 0 1 15,6 L15,11 A3,3 0 0 1 9,11 Z M6,11 A6,6 0 0 0 18,11 M12,17 L12,21 M9,21 L15,21"/>
+                                        <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding Text[Input]}"/>
+                                    </StackPanel>
+                                    <ComboBox Width="{Binding #ProfileContent.Bounds.Width}" MaxWidth="520" HorizontalAlignment="Left" ItemsSource="{Binding InputDevices}"
+                                              SelectedItem="{Binding SelectedInputDevice}"
                                               AutomationProperties.Name="{Binding Text[InputDevice]}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate x:DataType="models:AudioDeviceInfo">
@@ -170,55 +416,133 @@
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
                                 </StackPanel>
-                            </Grid>
-                            <StackPanel>
-                                <TextBlock Classes="label" Text="{Binding Text[ProfileShortcutLabel]}"/>
-                                <TextBox Classes="hotkey" Text="{Binding SelectedProfile.Hotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Watermark="{Binding Text[ShortcutWatermark]}" IsReadOnly="True"
-                                         GotFocus="OnHotkeyGotFocus" KeyDown="OnHotkeyKeyDown"
-                                         AutomationProperties.Name="{Binding Text[ProfileShortcut]}"
-                                         AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
-                                <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#687587"
-                                           Text="{Binding Text[ShortcutHint]}"/>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[ProfileShortcutLabel]}"/>
+                                    <Button Classes="hotkey" Width="320" HorizontalAlignment="Left"
+                                             Content="{Binding SelectedProfile.Hotkey, Mode=TwoWay}"
+                                             KeyDown="OnHotkeyKeyDown"
+                                             AutomationProperties.Name="{Binding Text[ProfileShortcut]}"
+                                             AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
+                                    <TextBlock Classes="help" MaxWidth="520" HorizontalAlignment="Left"
+                                               Text="{Binding Text[ShortcutHint]}"/>
+                                </StackPanel>
+                                <Border Height="1" Background="#E3E1DB"/>
+                                <Button Classes="danger" HorizontalAlignment="Left" Margin="-10,0,0,0"
+                                        Command="{Binding DeleteProfileCommand}">
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Path Width="16" Height="16" Stretch="Uniform" Stroke="#B3261E" StrokeThickness="1.8"
+                                              StrokeLineCap="Round" Data="M5,7 L19,7 M10,7 L10,5 L14,5 L14,7 M7,7 L8,20 L16,20 L17,7"/>
+                                        <TextBlock Text="{Binding Text[RemoveProfile]}"/>
+                                    </StackPanel>
+                                </Button>
                             </StackPanel>
-                        </StackPanel>
-                    </Border>
+                            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="12"
+                                        MaxWidth="340" IsVisible="{Binding HasNoSelectedProfile}">
+                                <Border Width="48" Height="48" CornerRadius="12" Background="#F1F0EC"
+                                        HorizontalAlignment="Center">
+                                    <TextBlock Text="♪" FontSize="22" Foreground="#5D5A53"
+                                               HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBlock Text="{Binding Text[NoProfileSelected]}" FontSize="18" FontWeight="SemiBold"
+                                           Foreground="#1C1B19" TextAlignment="Center"/>
+                                <TextBlock Text="{Binding Text[NoProfileSelectedHint]}" Foreground="#5D5A53"
+                                           TextWrapping="Wrap" TextAlignment="Center"/>
+                                <Button Classes="primary" HorizontalAlignment="Center" Margin="0,8,0,0"
+                                        Command="{Binding AddProfileCommand}" Content="{Binding Text[AddProfile]}"/>
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
 
-                    <Border Classes="card">
-                        <StackPanel Spacing="16">
-                            <StackPanel>
-                                <TextBlock Classes="eyebrow" Text="{Binding Text[QuickSwitch]}"/>
-                                <TextBlock FontSize="21" FontWeight="SemiBold" Text="{Binding Text[QuickSwitchTitle]}"/>
+                    <ScrollViewer IsVisible="{Binding IsQuickSwitchView}">
+                        <StackPanel x:Name="QuickContent" Classes="editor" Margin="32,28,32,32" Spacing="24">
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="page-title" Text="{Binding Text[QuickSwitch]}"/>
+                                <TextBlock Classes="help" MaxWidth="520" Text="{Binding Text[QuickSwitchTitle]}"/>
                             </StackPanel>
-                            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12">
-                                <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileA}"
-                                          AutomationProperties.Name="{Binding Text[FirstToggleProfile]}"/>
-                                <TextBlock Grid.Column="1" Text="⇄" FontSize="22" Foreground="#66E3C4" VerticalAlignment="Center"/>
-                                <ComboBox Grid.Column="2" ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileB}"
-                                          AutomationProperties.Name="{Binding Text[SecondToggleProfile]}"/>
+                            <Border Height="1" Background="#E3E1DB"/>
+                            <Grid ColumnDefinitions="*,32,*" ColumnSpacing="8" Width="{Binding #QuickContent.Bounds.Width}" MaxWidth="560" HorizontalAlignment="Left">
+                                <StackPanel Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[FirstToggleProfile]}"/>
+                                    <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileA}"/>
+                                </StackPanel>
+                                <TextBlock Grid.Column="1" Text="⇄" FontSize="20" Foreground="#5D5A53"
+                                           HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="0,0,0,8"/>
+                                <StackPanel Grid.Column="2" Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[SecondToggleProfile]}"/>
+                                    <ComboBox ItemsSource="{Binding Profiles}" SelectedItem="{Binding ToggleProfileB}"/>
+                                </StackPanel>
                             </Grid>
-                            <StackPanel>
+                            <StackPanel Spacing="6">
                                 <TextBlock Classes="label" Text="{Binding Text[ToggleShortcut]}"/>
-                                <TextBox Classes="hotkey" Text="{Binding ToggleHotkey, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         Watermark="{Binding Text[ShortcutWatermark]}" IsReadOnly="True"
-                                         GotFocus="OnHotkeyGotFocus" KeyDown="OnHotkeyKeyDown"
+                                <Button Classes="hotkey" Width="320" HorizontalAlignment="Left"
+                                         Content="{Binding ToggleHotkey, Mode=TwoWay}"
+                                         KeyDown="OnHotkeyKeyDown"
                                          AutomationProperties.Name="{Binding Text[ToggleShortcut]}"
                                          AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
-                                <TextBlock Margin="0,6,0,0" FontSize="11" Foreground="#687587"
-                                           Text="{Binding Text[ShortcutHint]}"/>
+                                <TextBlock Classes="help" MaxWidth="520" Text="{Binding Text[ShortcutHint]}"/>
                             </StackPanel>
                         </StackPanel>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
+                    </ScrollViewer>
+
+                    <ScrollViewer IsVisible="{Binding IsSettingsView}">
+                        <StackPanel x:Name="SettingsContent" Classes="editor" Margin="32,28,32,32" Spacing="24">
+                            <TextBlock Classes="page-title" Text="{Binding Text[Settings]}"/>
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="label" Text="{Binding Text[Language]}"/>
+                                <ComboBox Width="280" HorizontalAlignment="Left" ItemsSource="{Binding Languages}"
+                                          SelectedItem="{Binding SelectedLanguage}"/>
+                                <TextBlock Classes="help" Text="{Binding Text[LanguageHelp]}"/>
+                            </StackPanel>
+                            <Border Height="1" Background="#E3E1DB"/>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Classes="label" Text="{Binding Text[StartWithWindows]}" Margin="0"/>
+                                    <TextBlock Classes="help" Text="{Binding Text[StartupHelp]}"/>
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding StartWithWindows}"/>
+                            </Grid>
+                            <Border Height="1" Background="#E3E1DB"/>
+                            <Border Background="#F7F6F3" CornerRadius="8" Padding="16">
+                                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                    <Border Width="20" Height="20" CornerRadius="10" Background="#E6E4DE">
+                                        <TextBlock Text="i" FontWeight="Bold" Foreground="#5D5A53"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Spacing="4">
+                                        <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding Text[TrayTitle]}"/>
+                                        <TextBlock FontSize="13" Foreground="#5D5A53" TextWrapping="Wrap"
+                                                   Text="{Binding Text[TrayBody]}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                            <StackPanel Spacing="6">
+                                <TextBlock FontSize="13" FontWeight="SemiBold" Text="{Binding Text[Updates]}"/>
+                                <TextBlock FontSize="13" Foreground="#5D5A53" TextWrapping="Wrap"
+                                           Text="{Binding Text[UpdatesBody]}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
         </Grid>
 
-        <Border Grid.Row="2" Padding="30,11" Background="#10151C" BorderBrush="#27313E" BorderThickness="0,1,0,0">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
-                <Border Width="7" Height="7" CornerRadius="4" Background="#66E3C4" VerticalAlignment="Center"/>
-                <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" Foreground="#AEB8C5"/>
-                <TextBlock Grid.Column="2" Text="{Binding VersionText}" Foreground="#687587"/>
+        <Border Grid.Row="2" Background="#F1F0EC" BorderBrush="#E3E1DB" BorderThickness="0,1,0,0"
+                Padding="12,0">
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <Border Padding="8,3" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Left"
+                        Background="#FCEBE9" IsVisible="{Binding IsStatusError}">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#B3261E"
+                               TextTrimming="CharacterEllipsis"/>
+                </Border>
+                <Border Padding="8,3" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Left"
+                        Background="#E2EFEC" IsVisible="{Binding IsStatusSuccess}">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#0B6B63"
+                               TextTrimming="CharacterEllipsis"/>
+                </Border>
+                <TextBlock Grid.Column="1" Text="{Binding VersionText}" FontSize="12" Foreground="#77746C"
+                           FontFamily="Cascadia Mono, Consolas" VerticalAlignment="Center"/>
             </Grid>
         </Border>
     </Grid>
+    </Border>
 </Window>

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using AudioSwitcher.Models;
 using AudioSwitcher.Services;
 using Avalonia.Threading;
@@ -7,6 +8,13 @@ using CommunityToolkit.Mvvm.Input;
 using NAudio.CoreAudioApi;
 
 namespace AudioSwitcher.ViewModels;
+
+public enum MainPage
+{
+    Profile,
+    QuickSwitch,
+    Settings,
+}
 
 public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
@@ -26,6 +34,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private LanguageOption? _selectedLanguage;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isStatusError;
+    [ObservableProperty] private bool _isDirty;
+    [ObservableProperty] private MainPage _currentPage = MainPage.Profile;
+    [ObservableProperty] private string _selectedActivationText = string.Empty;
+    [ObservableProperty] private string _selectedActivationColor = "#77746C";
+
+    public bool IsProfileView => CurrentPage == MainPage.Profile;
+    public bool IsQuickSwitchView => CurrentPage == MainPage.QuickSwitch;
+    public bool IsSettingsView => CurrentPage == MainPage.Settings;
+    public bool HasSelectedProfile => SelectedProfile is not null;
+    public bool HasNoSelectedProfile => SelectedProfile is null;
+    public bool IsStatusSuccess => !IsStatusError;
 
     public event Action<string>? ProfileActivated;
 
@@ -61,9 +80,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         ToggleProfileA = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileAId);
         ToggleProfileB = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileBId);
         SelectedProfile = Profiles[0];
+        foreach (var profile in Profiles) profile.PropertyChanged += OnProfilePropertyChanged;
+        RefreshProfileDisplayInfo();
+        RefreshSelectedActivationText();
 
         if (!string.IsNullOrEmpty(warning)) ShowError(warning);
         else if (!TryRegisterHotkeys(out var error)) ShowError(error);
+        IsDirty = false;
     }
 
     public ObservableCollection<AudioProfile> Profiles { get; } = [];
@@ -83,8 +106,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             OutputDeviceId = _audioDeviceService.GetDefaultDeviceId(DataFlow.Render) ?? string.Empty,
             InputDeviceId = _audioDeviceService.GetDefaultDeviceId(DataFlow.Capture) ?? string.Empty,
         };
+        profile.PropertyChanged += OnProfilePropertyChanged;
         Profiles.Add(profile);
         SelectedProfile = profile;
+        RefreshProfileDisplayInfo();
+        IsDirty = true;
         ShowSuccess(Text["ProfileCreated"]);
     }
 
@@ -93,10 +119,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (SelectedProfile is null) return;
         var index = Profiles.IndexOf(SelectedProfile);
+        SelectedProfile.PropertyChanged -= OnProfilePropertyChanged;
         Profiles.Remove(SelectedProfile);
         SelectedProfile = Profiles.Count == 0 ? null : Profiles[Math.Min(index, Profiles.Count - 1)];
         if (ToggleProfileA is not null && !Profiles.Contains(ToggleProfileA)) ToggleProfileA = null;
         if (ToggleProfileB is not null && !Profiles.Contains(ToggleProfileB)) ToggleProfileB = null;
+        IsDirty = true;
         ShowSuccess(Text["ProfileRemoved"]);
     }
 
@@ -109,6 +137,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         Replace(InputDevices, _audioDeviceService.GetDevices(DataFlow.Capture));
         SelectedOutputDevice = OutputDevices.FirstOrDefault(device => device.Id == outputId);
         SelectedInputDevice = InputDevices.FirstOrDefault(device => device.Id == inputId);
+        RefreshProfileDisplayInfo();
         ShowSuccess(Text.Format("DeviceCounts", OutputDevices.Count, InputDevices.Count));
     }
 
@@ -139,6 +168,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 ToggleProfileBId = ToggleProfileB?.Id,
                 StartWithWindows = StartWithWindows,
             });
+            IsDirty = false;
             ShowSuccess(Text["ConfigurationSaved"]);
         }
         catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
@@ -153,25 +183,57 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         Text.SetLanguage(value.Code);
         StatusMessage = Text["Ready"];
         OnPropertyChanged(nameof(VersionText));
+        RefreshProfileDisplayInfo();
+        RefreshSelectedActivationText();
+        IsDirty = true;
     }
 
     partial void OnSelectedProfileChanged(AudioProfile? value)
     {
         SelectedOutputDevice = OutputDevices.FirstOrDefault(device => device.Id == value?.OutputDeviceId);
         SelectedInputDevice = InputDevices.FirstOrDefault(device => device.Id == value?.InputDeviceId);
+        CurrentPage = MainPage.Profile;
+        OnPropertyChanged(nameof(HasSelectedProfile));
+        OnPropertyChanged(nameof(HasNoSelectedProfile));
+        RefreshSelectedActivationText();
     }
 
     partial void OnSelectedOutputDeviceChanged(AudioDeviceInfo? value)
     {
-        if (SelectedProfile is not null && value is not null) SelectedProfile.OutputDeviceId = value.Id;
+        if (SelectedProfile is not null && value is not null && SelectedProfile.OutputDeviceId != value.Id)
+            SelectedProfile.OutputDeviceId = value.Id;
     }
 
     partial void OnSelectedInputDeviceChanged(AudioDeviceInfo? value)
     {
-        if (SelectedProfile is not null && value is not null) SelectedProfile.InputDeviceId = value.Id;
+        if (SelectedProfile is not null && value is not null && SelectedProfile.InputDeviceId != value.Id)
+            SelectedProfile.InputDeviceId = value.Id;
     }
 
-    public void Dispose() => _hotkeyService.Triggered -= OnHotkeyTriggered;
+    partial void OnToggleProfileAChanged(AudioProfile? value) => IsDirty = true;
+    partial void OnToggleProfileBChanged(AudioProfile? value) => IsDirty = true;
+    partial void OnToggleHotkeyChanged(string value) => IsDirty = true;
+    partial void OnStartWithWindowsChanged(bool value) => IsDirty = true;
+    partial void OnCurrentPageChanged(MainPage value)
+    {
+        OnPropertyChanged(nameof(IsProfileView));
+        OnPropertyChanged(nameof(IsQuickSwitchView));
+        OnPropertyChanged(nameof(IsSettingsView));
+    }
+
+    partial void OnIsStatusErrorChanged(bool value) => OnPropertyChanged(nameof(IsStatusSuccess));
+
+    [RelayCommand]
+    private void ShowQuickSwitch() => CurrentPage = MainPage.QuickSwitch;
+
+    [RelayCommand]
+    private void ShowSettings() => CurrentPage = MainPage.Settings;
+
+    public void Dispose()
+    {
+        _hotkeyService.Triggered -= OnHotkeyTriggered;
+        foreach (var profile in Profiles) profile.PropertyChanged -= OnProfilePropertyChanged;
+    }
 
     public void ReportBackgroundStatus(string message) => ShowSuccess(message);
 
@@ -221,7 +283,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         try
         {
             _audioDeviceService.ActivateProfile(profile);
+            profile.LastActivatedAt = DateTime.Now;
             SelectedProfile = profile;
+            RefreshProfileDisplayInfo();
+            RefreshSelectedActivationText();
             ShowSuccess(Text.Format("ProfileActive", profile.Name));
         }
         catch (Exception exception)
@@ -293,6 +358,60 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         collection.Clear();
         foreach (var value in values) collection.Add(value);
+    }
+
+    private void OnProfilePropertyChanged(object? sender, PropertyChangedEventArgs eventArgs)
+    {
+        if (eventArgs.PropertyName is nameof(AudioProfile.Name) or nameof(AudioProfile.OutputDeviceId) or
+            nameof(AudioProfile.InputDeviceId) or nameof(AudioProfile.Hotkey))
+        {
+            IsDirty = true;
+            RefreshProfileDisplayInfo();
+        }
+    }
+
+    private void RefreshProfileDisplayInfo()
+    {
+        foreach (var profile in Profiles)
+        {
+            var output = OutputDevices.FirstOrDefault(device => device.Id == profile.OutputDeviceId);
+            var input = InputDevices.FirstOrDefault(device => device.Id == profile.InputDeviceId);
+            if (output is null || input is null)
+            {
+                profile.SecondaryText = Text["DeviceNotAvailable"];
+                profile.SecondaryColor = "#8A5A00";
+            }
+            else if (profile.LastActivatedAt is { } activatedAt)
+            {
+                profile.SecondaryText = Text.Format("ActivatedAt", activatedAt.ToString("HH:mm"));
+                profile.SecondaryColor = "#0B6B63";
+            }
+            else
+            {
+                profile.SecondaryText = $"{ShortDeviceName(output.Name)} · {ShortDeviceName(input.Name)}";
+                profile.SecondaryColor = "#5D5A53";
+            }
+        }
+    }
+
+    private void RefreshSelectedActivationText()
+    {
+        if (SelectedProfile?.LastActivatedAt is { } activatedAt)
+        {
+            SelectedActivationText = Text.Format("ActivatedAt", activatedAt.ToString("HH:mm"));
+            SelectedActivationColor = "#0B6B63";
+        }
+        else
+        {
+            SelectedActivationText = Text["NotActivatedThisSession"];
+            SelectedActivationColor = "#77746C";
+        }
+    }
+
+    private static string ShortDeviceName(string name)
+    {
+        var parenthesis = name.IndexOf(" (", StringComparison.Ordinal);
+        return parenthesis < 0 ? name : name[..parenthesis];
     }
 
     private void ShowSuccess(string message) { IsStatusError = false; StatusMessage = message; }

@@ -1,0 +1,99 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AudioSwitcher.ViewModels"
+        x:Class="AudioSwitcher.Views.AboutWindow" x:DataType="vm:AboutWindowViewModel"
+        Title="{Binding Text[About]}" Width="660" Height="700" MinWidth="520" MinHeight="480"
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Background="#F1F0EC" Foreground="#1C1B19" FontSize="14"
+        FontFamily="Segoe UI Variable Text, Segoe UI" Icon="/Assets/audioswitcher.ico">
+    <Window.Styles>
+        <Style Selector="TextBlock.heading">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="TextBlock.help">
+            <Setter Property="Foreground" Value="#5D5A53"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="Button">
+            <Setter Property="MinHeight" Value="36"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="14,6"/>
+        </Style>
+        <Style Selector="HyperlinkButton">
+            <Setter Property="Foreground" Value="#0B6B63"/>
+            <Setter Property="Padding" Value="0,4"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#0B6B63"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#095A53"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Styles>
+    <Grid RowDefinitions="*,Auto" Background="#F1F0EC">
+        <ScrollViewer>
+            <StackPanel Margin="28" Spacing="24">
+                <Grid ColumnDefinitions="48,*" ColumnSpacing="16">
+                    <Border Background="#0B6B63" CornerRadius="12" Width="48" Height="48" VerticalAlignment="Top">
+                        <Path Width="28" Height="28" Stretch="Uniform" Stroke="White" StrokeThickness="2.4"
+                              HorizontalAlignment="Center" VerticalAlignment="Center" StrokeLineCap="Round"
+                              Data="M6,8 L18,8 L15,5 M18,16 L6,16 L9,19"/>
+                    </Border>
+                    <StackPanel Grid.Column="1" Spacing="6">
+                        <TextBlock Text="AudioSwitcher" FontSize="28" FontWeight="SemiBold"/>
+                        <TextBlock Text="{Binding Version}" FontFamily="Cascadia Mono, Consolas" Foreground="#0B6B63"/>
+                        <TextBlock Classes="help" Text="{Binding Text[AboutDescription]}"/>
+                        <TextBlock Classes="help" Text="{Binding Runtime}" FontSize="12"/>
+                        <WrapPanel Orientation="Horizontal">
+                            <HyperlinkButton Content="{Binding Text[SourceCode]}" Margin="0,0,20,0"
+                                             NavigateUri="https://github.com/Diddlik/AudioSwitcher"/>
+                            <HyperlinkButton Content="{Binding Text[ReleaseNotes]}"
+                                             NavigateUri="https://github.com/Diddlik/AudioSwitcher/releases"/>
+                        </WrapPanel>
+                    </StackPanel>
+                </Grid>
+                <Border Background="White" CornerRadius="8" Padding="20" BorderBrush="#E3E1DB" BorderThickness="1">
+                    <StackPanel Spacing="12">
+                        <TextBlock Classes="heading" Text="{Binding Text[Updates]}"/>
+                        <TextBlock Classes="help" Text="{Binding Text[UpdatesBody]}"/>
+                        <TextBlock Text="{Binding UpdateStatus}" TextWrapping="Wrap"/>
+                        <ProgressBar IsIndeterminate="True" Height="3" Foreground="#0B6B63"
+                                     IsVisible="{Binding CheckForUpdatesCommand.IsRunning}"/>
+                        <Button Classes="primary" Content="{Binding Text[CheckForUpdates]}"
+                                Command="{Binding CheckForUpdatesCommand}"/>
+                    </StackPanel>
+                </Border>
+                <StackPanel Spacing="8">
+                    <TextBlock Classes="heading" Text="{Binding Text[PackageCredits]}"/>
+                    <TextBlock Classes="help" Text="{Binding Text[PackageCreditsHint]}" FontSize="12"/>
+                    <ItemsControl ItemsSource="{Binding Packages}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:PackageCredit">
+                                <Border BorderBrush="#E0DDD6" BorderThickness="0,0,0,1" Padding="0,12">
+                                    <StackPanel Spacing="3">
+                                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                                            <HyperlinkButton NavigateUri="{Binding Url}" HorizontalAlignment="Stretch">
+                                                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold"/>
+                                            </HyperlinkButton>
+                                            <TextBlock Grid.Column="1" Text="{Binding Version}" VerticalAlignment="Center"
+                                                       FontFamily="Cascadia Mono, Consolas" FontSize="12"/>
+                                        </Grid>
+                                        <TextBlock Classes="help" Text="{Binding Authors}" FontSize="12"/>
+                                        <TextBlock Classes="help" Text="{Binding License}" FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+        <Border Grid.Row="1" BorderBrush="#E0DDD6" BorderThickness="0,1,0,0" Padding="20,12">
+            <Button Content="{Binding Text[Close]}" HorizontalAlignment="Right" Click="OnCloseClick" IsCancel="True"/>
+        </Border>
+    </Grid>
+</Window>
