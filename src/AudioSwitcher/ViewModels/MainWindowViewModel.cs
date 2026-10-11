@@ -259,25 +259,53 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         });
     }
 
-    private void ToggleProfiles()
+    /// <summary>Answers a request from <see cref="ProfileControlServer"/>; runs on the UI thread.</summary>
+    public ControlResponse HandleControlRequest(ControlRequest request)
+    {
+        var ok = request.Command switch
+        {
+            "state" => true,
+            "toggle" => ToggleProfiles(),
+            "activate" => Profiles.FirstOrDefault(profile => profile.Id == request.ProfileId) is { } profile
+                ? Activate(profile)
+                : FailControl("Unknown profile."),
+            _ => FailControl("Unknown command."),
+        };
+
+        var output = _audioDeviceService.GetDefaultDeviceId(DataFlow.Render);
+        var input = _audioDeviceService.GetDefaultDeviceId(DataFlow.Capture);
+        var active = Profiles.FirstOrDefault(profile => profile.OutputDeviceId == output && profile.InputDeviceId == input);
+        var profiles = Profiles.Select(profile => new ControlProfile(profile.Id, profile.Name,
+            OutputDevices.Any(device => device.Id == profile.OutputDeviceId) &&
+            InputDevices.Any(device => device.Id == profile.InputDeviceId))).ToArray();
+        return new ControlResponse(ok, ok ? null : StatusMessage, profiles, active?.Id);
+    }
+
+    private bool FailControl(string message)
+    {
+        ShowError(message);
+        return false;
+    }
+
+    private bool ToggleProfiles()
     {
         if (ToggleProfileA is null || ToggleProfileB is null)
         {
             ShowError(Text["SelectTwoProfiles"]);
-            return;
+            return false;
         }
 
         var currentOutput = _audioDeviceService.GetDefaultDeviceId(DataFlow.Render);
-        Activate(currentOutput == ToggleProfileA.OutputDeviceId ? ToggleProfileB : ToggleProfileA);
+        return Activate(currentOutput == ToggleProfileA.OutputDeviceId ? ToggleProfileB : ToggleProfileA);
     }
 
-    private void Activate(AudioProfile profile)
+    private bool Activate(AudioProfile profile)
     {
         if (!OutputDevices.Any(device => device.Id == profile.OutputDeviceId) ||
             !InputDevices.Any(device => device.Id == profile.InputDeviceId))
         {
             ShowError(Text.Format("UnavailableDevice", profile.Name));
-            return;
+            return false;
         }
 
         try
@@ -292,10 +320,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         catch (Exception exception)
         {
             ShowError(Text.Format("ProfileActivationFailed", exception.Message));
-            return;
+            return false;
         }
 
         ProfileActivated?.Invoke(profile.Name);
+        return true;
     }
 
     private bool Validate(out string error)

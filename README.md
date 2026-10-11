@@ -33,6 +33,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | --- | --- |
 | Audio profiles | One default output and input device per profile |
 | Global shortcuts | Activate profiles from any application |
+| Remote control | Stream-deck plugins and scripts can list, activate, and toggle profiles over a local pipe |
 | Quick switch | Switch between two profiles with one shortcut |
 | Direct key capture | Focus a shortcut field and press the required combination |
 | All Windows roles | Set the Console, Multimedia, and Communications defaults together |
@@ -84,6 +85,25 @@ AudioSwitcher stores profiles and settings only in `%LocalAppData%\AudioSwitcher
 Configure two profiles and one shortcut in the dedicated Quick switch view. Shortcut buttons display individual keycaps; press a combination to replace it, or Delete/Backspace to clear it. Tab leaves capture mode.
 
 ![AudioSwitcher 1.4 quick switch](docs/screenshots/v1.4-quick-switch.png)
+
+## Remote control
+
+While AudioSwitcher runs, other programs of the same Windows user can control it through the named pipe `\\.\pipe\AudioSwitcher.Control`. The [OpenDeckN3 AudioSwitcher plugin](https://github.com/Diddlik/OpenDeckN3/blob/main/docs/PLUGIN_AUDIOSWITCHER.md) uses it to switch profiles from a stream deck.
+
+Each line is one JSON request, and each request receives one JSON line in response:
+
+```json
+{ "command": "state" }
+{ "command": "activate", "profileId": "<profile id>" }
+{ "command": "toggle" }
+```
+
+```json
+{ "ok": true, "error": null, "activeProfileId": "<profile id>",
+  "profiles": [{ "id": "<profile id>", "name": "Headset", "available": true }] }
+```
+
+Every response includes the current state. The active profile is the one whose output and input devices are the current Windows defaults. When `ok` is `false`, `error` contains the reason in the interface language. `toggle` uses the two quick-switch profiles.
 
 ## Earlier desktop screenshots
 

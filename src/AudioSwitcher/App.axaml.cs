@@ -20,6 +20,7 @@ public partial class App : Application
     private AutoUpdateService? _autoUpdateService;
     private AboutWindowViewModel? _aboutViewModel;
     private ProfileNotificationService? _profileNotificationService;
+    private ProfileControlServer? _controlServer;
     private readonly LocalizationService _text = new();
     private readonly CancellationTokenSource _updateCancellation = new();
 
@@ -47,6 +48,10 @@ public partial class App : Application
             _profileNotificationService = new ProfileNotificationService(window, _text);
             _viewModel.ProfileActivated += _profileNotificationService.Show;
             CreateTrayIcon(desktop, window);
+            var viewModel = _viewModel;
+            _controlServer = new ProfileControlServer(
+                request => Dispatcher.UIThread.InvokeAsync(() => viewModel.HandleControlRequest(request)).GetTask());
+            _controlServer.Start();
             _ = _aboutViewModel.CheckForUpdatesCommand.ExecuteAsync(null);
 
             if (desktop.Args?.Contains("--minimized", StringComparer.OrdinalIgnoreCase) == true)
@@ -101,6 +106,7 @@ public partial class App : Application
 
         TrayIcon.SetIcons(this, null);
         _trayIcon?.Dispose();
+        _controlServer?.Dispose();
         _profileNotificationService?.Dispose();
         _viewModel?.Dispose();
         _hotkeyService?.Dispose();
