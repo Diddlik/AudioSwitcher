@@ -56,7 +56,14 @@ public partial class App : Application
 
             if (desktop.Args?.Contains("--minimized", StringComparer.OrdinalIgnoreCase) == true)
             {
-                window.Opened += (_, _) => window.Hide();
+                // Avalonia raises Opened on every Show, so hide only on the first one.
+                void HideOnFirstOpen(object? sender, EventArgs eventArgs)
+                {
+                    window.Opened -= HideOnFirstOpen;
+                    window.Hide();
+                }
+
+                window.Opened += HideOnFirstOpen;
             }
         }
 
