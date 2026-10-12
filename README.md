@@ -132,7 +132,7 @@ dotnet run --project src/AudioSwitcher
 Create a local Velopack installer with:
 
 ```powershell
-.\scripts\package.ps1 -Version 1.5.0
+.\scripts\package.ps1 -Version 1.5.1
 ```
 
 The packages are written to `artifacts\releases`.
