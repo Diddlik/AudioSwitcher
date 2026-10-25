@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using AudioSwitcher.Models;
 using AudioSwitcher.Services;
 using Avalonia.Threading;
@@ -23,6 +24,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly AudioDeviceService _audioDeviceService;
     private readonly StartupService _startupService;
     private readonly GlobalHotkeyService _hotkeyService;
+    private readonly MMDeviceEnumerator _deviceEnumerator = new();
+    private readonly MMDeviceNotificationClient _deviceNotifications;
+    private int _deviceRefreshPending;
+    private bool _disposed;
 
     [ObservableProperty] private AudioProfile? _selectedProfile;
     [ObservableProperty] private AudioDeviceInfo? _selectedOutputDevice;
@@ -36,6 +41,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _isStatusError;
     [ObservableProperty] private bool _isDirty;
     [ObservableProperty] private MainPage _currentPage = MainPage.Profile;
+    [ObservableProperty] private AboutWindowViewModel? _updates;
     [ObservableProperty] private string _selectedActivationText = string.Empty;
     [ObservableProperty] private string _selectedActivationColor = "#77746C";
 
@@ -57,6 +63,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _hotkeyService = hotkeyService;
         Text = localization;
         _hotkeyService.Triggered += OnHotkeyTriggered;
+        _deviceNotifications = _deviceEnumerator.CreateNotificationClient(useSynchronizationContext: false);
+        _deviceNotifications.DeviceStateChanged += (_, _) => QueueDeviceRefresh();
+        _deviceNotifications.DeviceAdded += (_, _) => QueueDeviceRefresh();
+        _deviceNotifications.DeviceRemoved += (_, _) => QueueDeviceRefresh();
 
         RefreshDevices();
         var configuration = _configurationStore.Load(out var warning);
@@ -133,12 +143,37 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         var outputId = SelectedProfile?.OutputDeviceId;
         var inputId = SelectedProfile?.InputDeviceId;
-        Replace(OutputDevices, _audioDeviceService.GetDevices(DataFlow.Render));
-        Replace(InputDevices, _audioDeviceService.GetDevices(DataFlow.Capture));
+        var outputs = _audioDeviceService.GetDevices(DataFlow.Render);
+        var inputs = _audioDeviceService.GetDevices(DataFlow.Capture);
+        Replace(OutputDevices, outputs);
+        Replace(InputDevices, inputs);
         SelectedOutputDevice = OutputDevices.FirstOrDefault(device => device.Id == outputId);
         SelectedInputDevice = InputDevices.FirstOrDefault(device => device.Id == inputId);
         RefreshProfileDisplayInfo();
         ShowSuccess(Text.Format("DeviceCounts", OutputDevices.Count, InputDevices.Count));
+    }
+
+    private void QueueDeviceRefresh()
+    {
+        // Windows invokes notifications on an audio worker thread; never enumerate inside the callback.
+        if (Interlocked.Exchange(ref _deviceRefreshPending, 1) != 0) return;
+        Dispatcher.UIThread.Post(() =>
+        {
+            Interlocked.Exchange(ref _deviceRefreshPending, 0);
+            if (_disposed) return;
+            var status = StatusMessage;
+            var isError = IsStatusError;
+            try
+            {
+                RefreshDevices();
+                StatusMessage = status;
+                IsStatusError = isError;
+            }
+            catch (Exception exception) when (exception is COMException or CoreAudioException)
+            {
+                ShowError(exception.Message);
+            }
+        });
     }
 
     [RelayCommand]
@@ -231,6 +266,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public void Dispose()
     {
+        if (_disposed) return;
+        _disposed = true;
+        _deviceNotifications.Dispose();
+        _deviceEnumerator.Dispose();
         _hotkeyService.Triggered -= OnHotkeyTriggered;
         foreach (var profile in Profiles) profile.PropertyChanged -= OnProfilePropertyChanged;
     }

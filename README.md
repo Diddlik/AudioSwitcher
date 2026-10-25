@@ -32,6 +32,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Feature | Description |
 | --- | --- |
 | Audio profiles | One default output and input device per profile |
+| Device detection | Refresh device availability automatically when devices disconnect or reconnect, including in the tray |
 | Global shortcuts | Activate profiles from any application |
 | Remote control | Stream-deck plugins and scripts can list, activate, and toggle profiles over a local pipe |
 | Quick switch | Switch between two profiles with one shortcut |
@@ -72,7 +73,7 @@ Closing the main window hides it. Use the tray menu to open AudioSwitcher again 
 
 ## Updates and local data
 
-Installed copies of AudioSwitcher check the public GitHub Releases feed for stable updates. An available update downloads in the background and installs when the application exits. Open **About** to view the current status or check again. Standalone development builds explain that automatic updates require an installed copy.
+Installed copies of AudioSwitcher check the public GitHub Releases feed for stable updates. An available update downloads in the background and installs when the application exits. Once downloaded, **Update now** appears in the main window and **About** to install the update immediately and restart AudioSwitcher. Open **About** to view the current status or check again. Standalone development builds explain that automatic updates require an installed copy.
 
 The About window also lists application/runtime versions and credits for 25 direct, transitive, and development dependencies, with package versions, authors, and license references. Package links lead to their NuGet pages.
 

@@ -42,7 +42,8 @@ public partial class App : Application
                 _text);
 
             _autoUpdateService = new AutoUpdateService(_text);
-            _aboutViewModel = new AboutWindowViewModel(_text, CheckForUpdatesAsync);
+            _aboutViewModel = new AboutWindowViewModel(_text, CheckForUpdatesAsync, InstallUpdate);
+            _viewModel.Updates = _aboutViewModel;
             var window = new MainWindow { DataContext = _viewModel, AboutViewModel = _aboutViewModel };
             desktop.MainWindow = window;
             _profileNotificationService = new ProfileNotificationService(window, _text);
@@ -129,7 +130,11 @@ public partial class App : Application
                 message => Dispatcher.UIThread.Post(() =>
                 {
                     _viewModel?.ReportBackgroundStatus(message);
-                    if (_aboutViewModel is not null) _aboutViewModel.UpdateStatus = message;
+                    if (_aboutViewModel is not null)
+                    {
+                        _aboutViewModel.UpdateStatus = message;
+                        _aboutViewModel.IsUpdateReady = _autoUpdateService.HasPendingUpdate;
+                    }
                 }),
                 _updateCancellation.Token);
         }
@@ -144,6 +149,26 @@ public partial class App : Application
                 _viewModel?.ReportBackgroundError(message);
                 if (_aboutViewModel is not null) _aboutViewModel.UpdateStatus = message;
             });
+        }
+    }
+
+    private void InstallUpdate()
+    {
+        if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop
+            || desktop.MainWindow is not MainWindow window) return;
+        try
+        {
+            if (_autoUpdateService?.SchedulePendingUpdate(restart: true) == true)
+            {
+                _aboutViewModel!.IsUpdateReady = false;
+                Exit(desktop, window);
+            }
+        }
+        catch (Exception exception)
+        {
+            var message = _text.Format("UpdatePreparingFailed", exception.Message);
+            _viewModel?.ReportBackgroundError(message);
+            if (_aboutViewModel is not null) _aboutViewModel.UpdateStatus = message;
         }
     }
 

@@ -10,6 +10,8 @@ public sealed class AutoUpdateService
     private readonly LocalizationService _text;
     private VelopackAsset? _pendingUpdate;
 
+    public bool HasPendingUpdate => _pendingUpdate is not null;
+
     public AutoUpdateService(LocalizationService text) => _text = text;
 
     public async Task CheckAndDownloadAsync(Action<string> reportStatus, CancellationToken cancellationToken = default)
@@ -43,14 +45,14 @@ public sealed class AutoUpdateService
         reportStatus(_text.Format("UpdateOnExit", update.TargetFullRelease.Version));
     }
 
-    public bool SchedulePendingUpdate()
+    public bool SchedulePendingUpdate(bool restart = false)
     {
         if (_pendingUpdate is null)
         {
             return false;
         }
 
-        _updateManager.WaitExitThenApplyUpdates(_pendingUpdate, silent: true, restart: false);
+        _updateManager.WaitExitThenApplyUpdates(_pendingUpdate, silent: true, restart: restart);
         _pendingUpdate = null;
         return true;
     }

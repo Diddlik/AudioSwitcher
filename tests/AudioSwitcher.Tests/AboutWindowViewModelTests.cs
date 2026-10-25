@@ -6,9 +6,26 @@ namespace AudioSwitcher.Tests;
 public sealed class AboutWindowViewModelTests
 {
     [Fact]
+    public void InstallUpdateCommand_RequiresDownloadedUpdate()
+    {
+        var installs = 0;
+        var model = new AboutWindowViewModel(new LocalizationService(), () => Task.CompletedTask, () => installs++);
+        Assert.False(model.IsUpdateReady);
+        Assert.False(model.InstallUpdateCommand.CanExecute(null));
+
+        model.IsUpdateReady = true;
+        Assert.True(model.InstallUpdateCommand.CanExecute(null));
+        model.InstallUpdateCommand.Execute(null);
+        Assert.Equal(1, installs);
+
+        model.IsUpdateReady = false;
+        Assert.False(model.InstallUpdateCommand.CanExecute(null));
+    }
+
+    [Fact]
     public void Credits_ContainDependencyVersionsAuthorsAndLicenseReferences()
     {
-        var model = new AboutWindowViewModel(new LocalizationService(), () => Task.CompletedTask);
+        var model = new AboutWindowViewModel(new LocalizationService(), () => Task.CompletedTask, () => { });
         Assert.Contains(model.Packages, package => package.Name == "Avalonia" && package.Version == "11.3.6");
         Assert.Contains(model.Packages, package => package.Name == "Velopack" && package.Version == "1.2.158");
         Assert.Contains(model.Packages, package => package.Name == "NAudio.Wasapi" && package.Authors == "Mark Heath");
@@ -25,7 +42,7 @@ public sealed class AboutWindowViewModelTests
     public async Task UpdateCommand_DisablesWhileSharedCheckIsRunning()
     {
         var completion = new TaskCompletionSource();
-        var model = new AboutWindowViewModel(new LocalizationService(), () => completion.Task);
+        var model = new AboutWindowViewModel(new LocalizationService(), () => completion.Task, () => { });
         var running = model.CheckForUpdatesCommand.ExecuteAsync(null);
         Assert.True(model.CheckForUpdatesCommand.IsRunning);
         Assert.False(model.CheckForUpdatesCommand.CanExecute(null));

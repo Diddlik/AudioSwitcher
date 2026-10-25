@@ -65,6 +65,8 @@
                                      IsVisible="{Binding CheckForUpdatesCommand.IsRunning}"/>
                         <Button Classes="primary" Content="{Binding Text[CheckForUpdates]}"
                                 Command="{Binding CheckForUpdatesCommand}"/>
+                        <Button Name="InstallUpdateButton" Classes="primary" Content="{Binding Text[InstallUpdateNow]}"
+                                IsVisible="{Binding IsUpdateReady}" Command="{Binding InstallUpdateCommand}"/>
                     </StackPanel>
                 </Border>
                 <StackPanel Spacing="8">

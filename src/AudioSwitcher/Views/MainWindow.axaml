@@ -528,7 +528,7 @@
 
         <Border Grid.Row="2" Background="#F1F0EC" BorderBrush="#E3E1DB" BorderThickness="0,1,0,0"
                 Padding="12,0">
-            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="12">
                 <Border Padding="8,3" CornerRadius="4" VerticalAlignment="Center" HorizontalAlignment="Left"
                         Background="#FCEBE9" IsVisible="{Binding IsStatusError}">
                     <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#B3261E"
@@ -539,7 +539,10 @@
                     <TextBlock Text="{Binding StatusMessage}" FontSize="12" Foreground="#0B6B63"
                                TextTrimming="CharacterEllipsis"/>
                 </Border>
-                <TextBlock Grid.Column="1" Text="{Binding VersionText}" FontSize="12" Foreground="#77746C"
+                <Button Grid.Column="1" Name="InstallUpdateButton" Classes="primary" Content="{Binding Text[InstallUpdateNow]}"
+                        IsVisible="{Binding Updates.IsUpdateReady, FallbackValue=False}" Command="{Binding Updates.InstallUpdateCommand}"
+                        MinHeight="28" Padding="10,2" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="{Binding VersionText}" FontSize="12" Foreground="#77746C"
                            FontFamily="Cascadia Mono, Consolas" VerticalAlignment="Center"/>
             </Grid>
         </Border>

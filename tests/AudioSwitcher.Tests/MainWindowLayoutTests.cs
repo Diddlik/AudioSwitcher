@@ -1,3 +1,4 @@
+using AudioSwitcher.Models;
 using AudioSwitcher.Services;
 using AudioSwitcher.ViewModels;
 using AudioSwitcher.Views;
@@ -8,6 +9,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
+using Avalonia.Threading;
 using Avalonia.VisualTree;
 
 namespace AudioSwitcher.Tests;
@@ -34,6 +36,8 @@ public sealed class MainWindowLayoutTests
                 using var model = new MainWindowViewModel(
                     new ConfigurationStore(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString(), "config.json")),
                     new AudioDeviceService(), new StartupService(), hotkeys, text);
+                model.Updates = new AboutWindowViewModel(text, () => Task.CompletedTask, () => { });
+                AssertAutomaticDeviceRefresh(model);
                 var window = new MainWindow
                 {
                     DataContext = model,
@@ -44,6 +48,10 @@ public sealed class MainWindowLayoutTests
                 try
                 {
                     window.Show();
+                    var installButton = window.FindControl<Button>("InstallUpdateButton")!;
+                    Assert.False(installButton.IsVisible);
+                    model.Updates.IsUpdateReady = true;
+                    Assert.True(installButton.IsVisible);
                     foreach (var size in new[] { new Size(1040, 700), new Size(880, 620) })
                         foreach (var language in new[] { "en", "ru", "uk", "fr", "it", "pl" })
                             foreach (var page in Enum.GetValues<MainPage>())
@@ -110,7 +118,8 @@ public sealed class MainWindowLayoutTests
                                 shortcut.RemoveHandler(InputElement.KeyDownEvent, onKeyDown);
                                 Assert.False(tabHandled);
                             }
-                    var aboutModel = new AboutWindowViewModel(text, () => Task.CompletedTask);
+                    var aboutModel = new AboutWindowViewModel(text, () => Task.CompletedTask, () => { });
+                    aboutModel.IsUpdateReady = true;
                     var about = new AboutWindow
                     {
                         DataContext = aboutModel,
@@ -121,6 +130,7 @@ public sealed class MainWindowLayoutTests
                     try
                     {
                         about.Show();
+                        Assert.True(about.FindControl<Button>("InstallUpdateButton")!.IsVisible);
                         foreach (var language in text.SupportedLanguages)
                             foreach (var width in new[] { 660, 520 })
                             {
@@ -165,5 +175,56 @@ public sealed class MainWindowLayoutTests
         thread.Start();
         Assert.True(thread.Join(TimeSpan.FromSeconds(45)), "Desktop layout check timed out.");
         Assert.Null(failure);
+    }
+
+    private static void AssertAutomaticDeviceRefresh(MainWindowViewModel model)
+    {
+        var outputs = model.OutputDevices.ToArray();
+        var inputs = model.InputDevices.ToArray();
+        var profile = model.SelectedProfile!;
+        var outputId = profile.OutputDeviceId;
+        var inputId = profile.InputDeviceId;
+        model.OutputDevices.Clear();
+        model.InputDevices.Clear();
+        model.SelectedOutputDevice = null;
+        model.SelectedInputDevice = null;
+        profile.SecondaryText = model.Text["DeviceNotAvailable"];
+        model.ReportBackgroundError("Keep the existing status");
+        model.IsDirty = false;
+
+        var callback = typeof(MainWindowViewModel).GetMethod("QueueDeviceRefresh",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        Task.Run(() =>
+        {
+            callback.Invoke(model, null);
+            callback.Invoke(model, null);
+        }).GetAwaiter().GetResult();
+        Assert.Empty(model.OutputDevices);
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.Equal(outputs, model.OutputDevices);
+        Assert.Equal(inputs, model.InputDevices);
+        Assert.Equal(outputId, profile.OutputDeviceId);
+        Assert.Equal(inputId, profile.InputDeviceId);
+        Assert.Equal(outputs.FirstOrDefault(device => device.Id == outputId), model.SelectedOutputDevice);
+        Assert.Equal(inputs.FirstOrDefault(device => device.Id == inputId), model.SelectedInputDevice);
+        if (model.SelectedOutputDevice is not null && model.SelectedInputDevice is not null)
+            Assert.NotEqual(model.Text["DeviceNotAvailable"], profile.SecondaryText);
+        Assert.False(model.IsDirty);
+        Assert.Equal("Keep the existing status", model.StatusMessage);
+        Assert.True(model.IsStatusError);
+
+        var missing = new AudioProfile { OutputDeviceId = "missing-output", InputDeviceId = "missing-input" };
+        model.Profiles.Add(missing);
+        model.SelectedProfile = missing;
+        callback.Invoke(model, null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.Equal("missing-output", missing.OutputDeviceId);
+        Assert.Equal("missing-input", missing.InputDeviceId);
+        Assert.Equal(model.Text["DeviceNotAvailable"], missing.SecondaryText);
+        Assert.Null(model.SelectedOutputDevice);
+        Assert.Null(model.SelectedInputDevice);
+        model.SelectedProfile = profile;
+        model.Profiles.Remove(missing);
     }
 }

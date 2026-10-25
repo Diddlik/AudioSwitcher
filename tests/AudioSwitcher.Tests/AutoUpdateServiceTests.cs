@@ -14,7 +14,9 @@ public sealed class AutoUpdateServiceTests
 
         await service.CheckAndDownloadAsync(statuses.Add);
 
+        Assert.False(service.HasPendingUpdate);
         Assert.Equal([new LocalizationService()["StandaloneUpdates"]], statuses);
         Assert.False(service.SchedulePendingUpdate());
+        Assert.False(service.SchedulePendingUpdate(restart: true));
     }
 }
