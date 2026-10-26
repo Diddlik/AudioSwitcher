@@ -513,7 +513,8 @@
                                     <TextBlock Classes="label" Text="{Binding Text[StartWithWindows]}" Margin="0"/>
                                     <TextBlock Classes="help" Text="{Binding Text[StartupHelp]}"/>
                                 </StackPanel>
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding StartWithWindows}"/>
+                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding StartWithWindows}"
+                                              OnContent="{Binding Text[On]}" OffContent="{Binding Text[Off]}"/>
                             </Grid>
                             <Border Height="1" Background="#E3E1DB"/>
                             <StackPanel Spacing="10">
@@ -522,7 +523,8 @@
                                         <TextBlock Classes="label" Text="{Binding Text[ActivateProfileOnStartup]}" Margin="0"/>
                                         <TextBlock Classes="help" Text="{Binding Text[StartupProfileHelp]}"/>
                                     </StackPanel>
-                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ActivateProfileOnStartup}"/>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ActivateProfileOnStartup}"
+                                                  OnContent="{Binding Text[On]}" OffContent="{Binding Text[Off]}"/>
                                 </Grid>
                                 <ComboBox Width="280" HorizontalAlignment="Left" ItemsSource="{Binding Profiles}"
                                           SelectedItem="{Binding StartupProfile}"
@@ -534,7 +536,8 @@
                                     <TextBlock Classes="label" Text="{Binding Text[EnforceActiveProfile]}" Margin="0"/>
                                     <TextBlock Classes="help" Text="{Binding Text[EnforceActiveProfileHelp]}"/>
                                 </StackPanel>
-                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnforceActiveProfile}"/>
+                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnforceActiveProfile}"
+                                              OnContent="{Binding Text[On]}" OffContent="{Binding Text[Off]}"/>
                             </Grid>
                             <Border Height="1" Background="#E3E1DB"/>
                             <Border Background="#F7F6F3" CornerRadius="8" Padding="16">

@@ -31,6 +31,8 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["On"] = "On",
+                ["Off"] = "Off",
                 ["TriggerApps"] = "Activate automatically when a program runs",
                 ["TriggerAppsExample"] = "e.g. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Comma-separated program names. The profile activates as soon as one of them starts.",
@@ -138,6 +140,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["On"] = "Вкл.",
+                ["Off"] = "Выкл.",
                 ["TriggerApps"] = "Активировать автоматически при запуске программы",
                 ["TriggerAppsExample"] = "например, cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Имена программ через запятую. Профиль активируется, как только запустится одна из них.",
@@ -245,6 +249,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["On"] = "Увімк.",
+                ["Off"] = "Вимк.",
                 ["TriggerApps"] = "Активувати автоматично під час запуску програми",
                 ["TriggerAppsExample"] = "наприклад, cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Назви програм через кому. Профіль активується, щойно запуститься одна з них.",
@@ -352,6 +358,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["On"] = "Activé",
+                ["Off"] = "Désactivé",
                 ["TriggerApps"] = "Activer automatiquement quand un programme s’exécute",
                 ["TriggerAppsExample"] = "p. ex. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Noms de programmes séparés par des virgules. Le profil s’active dès que l’un d’eux démarre.",
@@ -459,6 +467,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["On"] = "Attivo",
+                ["Off"] = "Disattivo",
                 ["TriggerApps"] = "Attiva automaticamente quando un programma è in esecuzione",
                 ["TriggerAppsExample"] = "ad es. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Nomi dei programmi separati da virgole. Il profilo si attiva non appena uno di essi viene avviato.",
@@ -566,6 +576,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["On"] = "Wł.",
+                ["Off"] = "Wył.",
                 ["TriggerApps"] = "Aktywuj automatycznie, gdy działa program",
                 ["TriggerAppsExample"] = "np. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Nazwy programów rozdzielone przecinkami. Profil aktywuje się, gdy tylko jeden z nich się uruchomi.",
@@ -673,6 +685,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["On"] = "Ein",
+                ["Off"] = "Aus",
                 ["TriggerApps"] = "Automatisch aktivieren, wenn ein Programm läuft",
                 ["TriggerAppsExample"] = "z. B. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Programmnamen durch Komma getrennt. Das Profil wird aktiviert, sobald eines davon startet.",
@@ -780,6 +794,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["On"] = "Activado",
+                ["Off"] = "Desactivado",
                 ["TriggerApps"] = "Activar automáticamente cuando se ejecute un programa",
                 ["TriggerAppsExample"] = "p. ej. cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Nombres de programas separados por comas. El perfil se activa en cuanto se inicia uno de ellos.",
@@ -887,6 +903,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["On"] = "Ativado",
+                ["Off"] = "Desativado",
                 ["TriggerApps"] = "Ativar automaticamente quando um programa estiver em execução",
                 ["TriggerAppsExample"] = "ex.: cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "Nomes de programas separados por vírgulas. O perfil é ativado assim que um deles é iniciado.",
@@ -994,6 +1012,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["On"] = "开",
+                ["Off"] = "关",
                 ["TriggerApps"] = "程序运行时自动激活",
                 ["TriggerAppsExample"] = "例如：cs2.exe, discord.exe",
                 ["TriggerAppsHelp"] = "以逗号分隔的程序名称。只要其中一个程序启动，就会激活此配置文件。",
