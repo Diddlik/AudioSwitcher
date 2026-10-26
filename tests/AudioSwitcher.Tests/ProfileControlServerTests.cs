@@ -17,7 +17,7 @@ public sealed class ProfileControlServerTests
         using var server = new ProfileControlServer(request =>
         {
             received.Add(request);
-            return Task.FromResult(new ControlResponse(true, null, [new ControlProfile(ProfileId, "Headset", true)], ProfileId));
+            return Task.FromResult(new ControlResponse(true, null, [new ControlProfile(ProfileId, "Headset", true)], ProfileId, true));
         }, pipeName);
         server.Start();
 
@@ -34,6 +34,7 @@ public sealed class ProfileControlServerTests
         Assert.True(state.GetProperty("ok").GetBoolean());
         Assert.Equal("Headset", state.GetProperty("profiles")[0].GetProperty("name").GetString());
         Assert.Equal(ProfileId, activated.GetProperty("activeProfileId").GetGuid());
+        Assert.True(state.GetProperty("microphoneMuted").GetBoolean());
         Assert.Equal(["state", "activate"], received.Select(request => request.Command));
         Assert.Equal(ProfileId, received[1].ProfileId);
     }

@@ -31,6 +31,8 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Active: {0}",
+                ["TrayNoActiveProfile"] = "No profile active",
                 ["ShortcutUnavailable"] = "Another application already uses this shortcut, so it is not active. Choose a different combination.",
                 ["ShortcutUnavailableShort"] = "Shortcut in use",
                 ["MuteShortcut"] = "Microphone mute shortcut",
@@ -148,6 +150,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Активен: {0}",
+                ["TrayNoActiveProfile"] = "Нет активного профиля",
                 ["ShortcutUnavailable"] = "Это сочетание уже использует другое приложение, поэтому оно не работает. Выберите другую комбинацию.",
                 ["ShortcutUnavailableShort"] = "Сочетание занято",
                 ["MuteShortcut"] = "Сочетание для отключения микрофона",
@@ -265,6 +269,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Активний: {0}",
+                ["TrayNoActiveProfile"] = "Немає активного профілю",
                 ["ShortcutUnavailable"] = "Це сполучення вже використовує інша програма, тому воно не працює. Виберіть іншу комбінацію.",
                 ["ShortcutUnavailableShort"] = "Сполучення зайняте",
                 ["MuteShortcut"] = "Сполучення для вимкнення мікрофона",
@@ -382,6 +388,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Actif : {0}",
+                ["TrayNoActiveProfile"] = "Aucun profil actif",
                 ["ShortcutUnavailable"] = "Une autre application utilise déjà ce raccourci, il n’est donc pas actif. Choisissez une autre combinaison.",
                 ["ShortcutUnavailableShort"] = "Raccourci déjà utilisé",
                 ["MuteShortcut"] = "Raccourci de mise en sourdine du micro",
@@ -499,6 +507,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Attivo: {0}",
+                ["TrayNoActiveProfile"] = "Nessun profilo attivo",
                 ["ShortcutUnavailable"] = "Un’altra applicazione usa già questa scorciatoia, quindi non è attiva. Scegli un’altra combinazione.",
                 ["ShortcutUnavailableShort"] = "Scorciatoia già in uso",
                 ["MuteShortcut"] = "Scorciatoia per disattivare il microfono",
@@ -616,6 +626,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Aktywny: {0}",
+                ["TrayNoActiveProfile"] = "Brak aktywnego profilu",
                 ["ShortcutUnavailable"] = "Inna aplikacja używa już tego skrótu, więc nie jest aktywny. Wybierz inną kombinację.",
                 ["ShortcutUnavailableShort"] = "Skrót zajęty",
                 ["MuteShortcut"] = "Skrót wyciszania mikrofonu",
@@ -733,6 +745,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Aktiv: {0}",
+                ["TrayNoActiveProfile"] = "Kein Profil aktiv",
                 ["ShortcutUnavailable"] = "Eine andere Anwendung verwendet dieses Tastenkürzel bereits, daher ist es nicht aktiv. Wähle eine andere Kombination.",
                 ["ShortcutUnavailableShort"] = "Tastenkürzel belegt",
                 ["MuteShortcut"] = "Tastenkürzel zum Stummschalten des Mikrofons",
@@ -850,6 +864,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Activo: {0}",
+                ["TrayNoActiveProfile"] = "Ningún perfil activo",
                 ["ShortcutUnavailable"] = "Otra aplicación ya usa este atajo, por lo que no está activo. Elige otra combinación.",
                 ["ShortcutUnavailableShort"] = "Atajo en uso",
                 ["MuteShortcut"] = "Atajo para silenciar el micrófono",
@@ -967,6 +983,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "Ativo: {0}",
+                ["TrayNoActiveProfile"] = "Nenhum perfil ativo",
                 ["ShortcutUnavailable"] = "Outro aplicativo já usa este atalho, por isso ele não está ativo. Escolha outra combinação.",
                 ["ShortcutUnavailableShort"] = "Atalho em uso",
                 ["MuteShortcut"] = "Atalho para silenciar o microfone",
@@ -1084,6 +1102,8 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["TrayActiveProfile"] = "当前：{0}",
+                ["TrayNoActiveProfile"] = "没有激活的配置文件",
                 ["ShortcutUnavailable"] = "其他应用已在使用此快捷键，因此它未生效。请选择其他组合键。",
                 ["ShortcutUnavailableShort"] = "快捷键已被占用",
                 ["MuteShortcut"] = "麦克风静音快捷键",

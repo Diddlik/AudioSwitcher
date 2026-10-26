@@ -12,6 +12,7 @@ public sealed class MicrophoneMuteService : IDisposable
     /// <summary>Raised on a Windows audio thread.</summary>
     public event Action? MuteChanged;
 
+    public bool HasMicrophone => _device is not null;
     public bool IsMuted => _device?.AudioEndpointVolume.Mute == true;
 
     /// <summary>Follows the current default microphone; call again after the default capture device changes.</summary>

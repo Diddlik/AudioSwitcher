@@ -40,7 +40,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Automatic triggers | Activate a profile when a program starts and switch back or to another profile after it exits |
 | Direct key capture | Focus a shortcut field and press the required combination |
 | All Windows roles | Set the Console, Multimedia, and Communications defaults together |
-| System tray | Keep running in the background; activate profiles and quick switch from the tray menu |
+| System tray | Keep running in the background; activate profiles and quick switch from the tray menu; the tooltip shows the active profile and microphone mute |
 | Startup | Start automatically for the current Windows user and optionally activate a chosen profile |
 | Automatic updates | Download stable releases in the background |
 | Languages | English, German, French, Italian, Spanish, Portuguese (Brazil), Polish, Russian, Ukrainian, and Simplified Chinese |
@@ -107,14 +107,15 @@ Each line is one JSON request, and each request receives one JSON line in respon
 { "command": "state" }
 { "command": "activate", "profileId": "<profile id>" }
 { "command": "toggle" }
+{ "command": "mute" }
 ```
 
 ```json
-{ "ok": true, "error": null, "activeProfileId": "<profile id>",
+{ "ok": true, "error": null, "activeProfileId": "<profile id>", "microphoneMuted": false,
   "profiles": [{ "id": "<profile id>", "name": "Headset", "available": true }] }
 ```
 
-Every response includes the current state. The active profile is the one whose output and input devices are the current Windows defaults. When `ok` is `false`, `error` contains the reason in the interface language. `toggle` uses the two quick-switch profiles.
+Every response includes the current state. The active profile is the one whose output and input devices are the current Windows defaults. When `ok` is `false`, `error` contains the reason in the interface language. `toggle` uses the two quick-switch profiles. `mute` toggles the default microphone; `microphoneMuted` is `null` when no default microphone exists.
 
 ## Earlier desktop screenshots
 

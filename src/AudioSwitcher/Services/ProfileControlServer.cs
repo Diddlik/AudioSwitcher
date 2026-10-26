@@ -12,7 +12,8 @@ public sealed record ControlResponse(
     bool Ok,
     string? Error,
     IReadOnlyList<ControlProfile> Profiles,
-    Guid? ActiveProfileId);
+    Guid? ActiveProfileId,
+    bool? MicrophoneMuted = null);
 
 /// <summary>
 /// Lets other local programs (e.g. stream-deck plugins) list and activate profiles.

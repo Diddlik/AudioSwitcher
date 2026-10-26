@@ -368,22 +368,24 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public void RefreshMicrophoneState() =>
         MicrophoneMuteChanged?.Invoke(!string.IsNullOrWhiteSpace(MuteHotkey) && _microphone.IsMuted);
 
-    private void ToggleMicrophone()
+    private bool ToggleMicrophone()
     {
         try
         {
             if (_microphone.ToggleMute() is not { } muted)
             {
                 ShowError(Text["NoMicrophone"]);
-                return;
+                return false;
             }
 
             ShowSuccess(Text[muted ? "MicrophoneMuted" : "MicrophoneUnmuted"]);
             RefreshMicrophoneState();
+            return true;
         }
         catch (COMException exception)
         {
             ShowError(exception.Message);
+            return false;
         }
     }
 
@@ -424,6 +426,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             "state" => true,
             "toggle" => ToggleProfiles(),
+            "mute" => ToggleMicrophone(),
             "activate" => Profiles.FirstOrDefault(profile => profile.Id == request.ProfileId) is { } profile
                 ? Activate(profile)
                 : FailControl("Unknown profile."),
@@ -431,7 +434,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         };
 
         var profiles = Profiles.Select(profile => new ControlProfile(profile.Id, profile.Name, IsAvailable(profile))).ToArray();
-        return new ControlResponse(ok, ok ? null : StatusMessage, profiles, FindActiveProfile()?.Id);
+        return new ControlResponse(ok, ok ? null : StatusMessage, profiles, FindActiveProfile()?.Id,
+            _microphone.HasMicrophone ? _microphone.IsMuted : null);
     }
 
     private AudioProfile? FindActiveProfile()

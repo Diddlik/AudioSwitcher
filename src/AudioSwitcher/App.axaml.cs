@@ -85,6 +85,7 @@ public partial class App : Application
         TrayIcon.SetIcons(this, new TrayIcons { _trayIcon });
         UpdateTrayMenu(desktop, window);
         _viewModel!.StateChanged += () => UpdateTrayMenu(desktop, window);
+        _viewModel.MicrophoneMuteChanged += _ => UpdateTrayMenu(desktop, window);
     }
 
     private void UpdateTrayMenu(IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
@@ -121,6 +122,15 @@ public partial class App : Application
         menu.Items.Add(new NativeMenuItemSeparator());
         menu.Items.Add(exitItem);
         _trayIcon.Menu = menu;
+
+        var activeName = state.Profiles.FirstOrDefault(profile => profile.Id == state.ActiveProfileId)?.Name;
+        var lines = new List<string>
+        {
+            "AudioSwitcher",
+            activeName is null ? _text["TrayNoActiveProfile"] : _text.Format("TrayActiveProfile", activeName),
+        };
+        if (state.MicrophoneMuted == true) lines.Add(_text["MicrophoneMuted"]);
+        _trayIcon.ToolTipText = string.Join('\n', lines);
     }
 
     private static void ShowWindow(MainWindow window)
