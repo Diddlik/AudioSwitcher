@@ -31,6 +31,9 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Keep the active profile",
+                ["EnforceActiveProfileHelp"] = "Restores the last activated profile when Windows or another app changes the default devices.",
+                ["ProfileRestored"] = "{0} restored after Windows changed the default devices.",
                 ["ActivateProfileOnStartup"] = "Activate a profile on startup",
                 ["StartupProfileHelp"] = "Activates the selected profile each time AudioSwitcher starts.",
                 ["StartupProfileRequired"] = "Select the profile to activate on startup.",
@@ -128,6 +131,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Сохранять активный профиль",
+                ["EnforceActiveProfileHelp"] = "Восстанавливает последний активированный профиль, если Windows или другое приложение меняет устройства по умолчанию.",
+                ["ProfileRestored"] = "Профиль {0} восстановлен после того, как Windows изменила устройства по умолчанию.",
                 ["ActivateProfileOnStartup"] = "Активировать профиль при запуске",
                 ["StartupProfileHelp"] = "Активирует выбранный профиль при каждом запуске AudioSwitcher.",
                 ["StartupProfileRequired"] = "Выберите профиль для активации при запуске.",
@@ -225,6 +231,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Зберігати активний профіль",
+                ["EnforceActiveProfileHelp"] = "Відновлює останній активований профіль, якщо Windows або інша програма змінює пристрої за замовчуванням.",
+                ["ProfileRestored"] = "Профіль {0} відновлено після того, як Windows змінила пристрої за замовчуванням.",
                 ["ActivateProfileOnStartup"] = "Активувати профіль під час запуску",
                 ["StartupProfileHelp"] = "Активує вибраний профіль під час кожного запуску AudioSwitcher.",
                 ["StartupProfileRequired"] = "Виберіть профіль для активації під час запуску.",
@@ -322,6 +331,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Conserver le profil actif",
+                ["EnforceActiveProfileHelp"] = "Rétablit le dernier profil activé lorsque Windows ou une autre application modifie les périphériques par défaut.",
+                ["ProfileRestored"] = "{0} rétabli après une modification des périphériques par défaut par Windows.",
                 ["ActivateProfileOnStartup"] = "Activer un profil au démarrage",
                 ["StartupProfileHelp"] = "Active le profil sélectionné à chaque démarrage d’AudioSwitcher.",
                 ["StartupProfileRequired"] = "Sélectionnez le profil à activer au démarrage.",
@@ -419,6 +431,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Mantieni il profilo attivo",
+                ["EnforceActiveProfileHelp"] = "Ripristina l’ultimo profilo attivato quando Windows o un’altra app cambia i dispositivi predefiniti.",
+                ["ProfileRestored"] = "{0} ripristinato dopo che Windows ha cambiato i dispositivi predefiniti.",
                 ["ActivateProfileOnStartup"] = "Attiva un profilo all’avvio",
                 ["StartupProfileHelp"] = "Attiva il profilo selezionato a ogni avvio di AudioSwitcher.",
                 ["StartupProfileRequired"] = "Seleziona il profilo da attivare all’avvio.",
@@ -516,6 +531,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Utrzymuj aktywny profil",
+                ["EnforceActiveProfileHelp"] = "Przywraca ostatnio aktywowany profil, gdy Windows lub inna aplikacja zmieni urządzenia domyślne.",
+                ["ProfileRestored"] = "Przywrócono profil {0} po zmianie urządzeń domyślnych przez Windows.",
                 ["ActivateProfileOnStartup"] = "Aktywuj profil przy uruchomieniu",
                 ["StartupProfileHelp"] = "Aktywuje wybrany profil przy każdym uruchomieniu AudioSwitcher.",
                 ["StartupProfileRequired"] = "Wybierz profil do aktywacji przy uruchomieniu.",
@@ -613,6 +631,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Aktives Profil beibehalten",
+                ["EnforceActiveProfileHelp"] = "Stellt das zuletzt aktivierte Profil wieder her, wenn Windows oder eine andere App die Standardgeräte ändert.",
+                ["ProfileRestored"] = "{0} wiederhergestellt, nachdem Windows die Standardgeräte geändert hat.",
                 ["ActivateProfileOnStartup"] = "Profil beim Start aktivieren",
                 ["StartupProfileHelp"] = "Aktiviert das gewählte Profil bei jedem Start von AudioSwitcher.",
                 ["StartupProfileRequired"] = "Wähle das Profil, das beim Start aktiviert wird.",
@@ -710,6 +731,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Mantener el perfil activo",
+                ["EnforceActiveProfileHelp"] = "Restaura el último perfil activado cuando Windows u otra aplicación cambia los dispositivos predeterminados.",
+                ["ProfileRestored"] = "{0} restaurado después de que Windows cambiara los dispositivos predeterminados.",
                 ["ActivateProfileOnStartup"] = "Activar un perfil al iniciar",
                 ["StartupProfileHelp"] = "Activa el perfil seleccionado cada vez que se inicia AudioSwitcher.",
                 ["StartupProfileRequired"] = "Selecciona el perfil que se activará al iniciar.",
@@ -807,6 +831,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "Manter o perfil ativo",
+                ["EnforceActiveProfileHelp"] = "Restaura o último perfil ativado quando o Windows ou outro aplicativo altera os dispositivos padrão.",
+                ["ProfileRestored"] = "{0} restaurado depois que o Windows alterou os dispositivos padrão.",
                 ["ActivateProfileOnStartup"] = "Ativar um perfil ao iniciar",
                 ["StartupProfileHelp"] = "Ativa o perfil selecionado sempre que o AudioSwitcher é iniciado.",
                 ["StartupProfileRequired"] = "Selecione o perfil a ser ativado ao iniciar.",
@@ -904,6 +931,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["EnforceActiveProfile"] = "保持当前配置文件",
+                ["EnforceActiveProfileHelp"] = "当 Windows 或其他应用更改默认设备时，恢复上次激活的配置文件。",
+                ["ProfileRestored"] = "Windows 更改默认设备后已恢复 {0}。",
                 ["ActivateProfileOnStartup"] = "启动时激活配置文件",
                 ["StartupProfileHelp"] = "每次启动 AudioSwitcher 时激活所选配置文件。",
                 ["StartupProfileRequired"] = "请选择启动时要激活的配置文件。",

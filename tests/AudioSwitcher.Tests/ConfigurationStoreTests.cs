@@ -28,6 +28,7 @@ public sealed class ConfigurationStoreTests : IDisposable
             ToggleProfileAId = profile.Id,
             StartWithWindows = true,
             StartupProfileId = profile.Id,
+            EnforceActiveProfile = true,
         });
 
         var result = store.Load(out var warning);
@@ -40,6 +41,7 @@ public sealed class ConfigurationStoreTests : IDisposable
         Assert.Equal("pl", result.Language);
         Assert.True(result.StartWithWindows);
         Assert.Equal(profile.Id, result.StartupProfileId);
+        Assert.True(result.EnforceActiveProfile);
     }
 
     [Fact]

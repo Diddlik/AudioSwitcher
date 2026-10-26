@@ -26,6 +26,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly GlobalHotkeyService _hotkeyService;
     private readonly MMDeviceEnumerator _deviceEnumerator = new();
     private readonly MMDeviceNotificationClient _deviceNotifications;
+    private readonly DispatcherTimer _enforceTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
+    private AudioProfile? _enforcedProfile;
     private int _deviceRefreshPending;
     private bool _disposed;
 
@@ -38,6 +40,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _startWithWindows;
     [ObservableProperty] private bool _activateProfileOnStartup;
     [ObservableProperty] private AudioProfile? _startupProfile;
+    [ObservableProperty] private bool _enforceActiveProfile;
     [ObservableProperty] private LanguageOption? _selectedLanguage;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isStatusError;
@@ -74,8 +77,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _deviceNotifications.DeviceRemoved += (_, _) => QueueDeviceRefresh();
         _deviceNotifications.DefaultDeviceChanged += (_, _) => Dispatcher.UIThread.Post(() =>
         {
-            if (!_disposed) StateChanged?.Invoke();
+            if (_disposed) return;
+            StateChanged?.Invoke();
+            QueueEnforcement();
         });
+        _enforceTimer.Tick += (_, _) => EnforceProfile();
         Profiles.CollectionChanged += (_, _) => StateChanged?.Invoke();
 
         RefreshDevices();
@@ -101,6 +107,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         ToggleProfileB = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileBId);
         StartupProfile = Profiles.FirstOrDefault(profile => profile.Id == configuration.StartupProfileId);
         ActivateProfileOnStartup = StartupProfile is not null;
+        EnforceActiveProfile = configuration.EnforceActiveProfile;
+        _enforcedProfile = FindActiveProfile();
         SelectedProfile = Profiles[0];
         foreach (var profile in Profiles) profile.PropertyChanged += OnProfilePropertyChanged;
         RefreshProfileDisplayInfo();
@@ -147,6 +155,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (ToggleProfileA is not null && !Profiles.Contains(ToggleProfileA)) ToggleProfileA = null;
         if (ToggleProfileB is not null && !Profiles.Contains(ToggleProfileB)) ToggleProfileB = null;
         if (StartupProfile is not null && !Profiles.Contains(StartupProfile)) StartupProfile = null;
+        if (_enforcedProfile is not null && !Profiles.Contains(_enforcedProfile)) _enforcedProfile = null;
         IsDirty = true;
         ShowSuccess(Text["ProfileRemoved"]);
     }
@@ -181,6 +190,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 RefreshDevices();
                 StatusMessage = status;
                 IsStatusError = isError;
+                QueueEnforcement();
             }
             catch (Exception exception) when (exception is COMException or CoreAudioException)
             {
@@ -216,6 +226,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 ToggleProfileBId = ToggleProfileB?.Id,
                 StartWithWindows = StartWithWindows,
                 StartupProfileId = ActivateProfileOnStartup ? StartupProfile?.Id : null,
+                EnforceActiveProfile = EnforceActiveProfile,
             });
             IsDirty = false;
             ShowSuccess(Text["ConfigurationSaved"]);
@@ -269,6 +280,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         IsDirty = true;
     }
     partial void OnStartupProfileChanged(AudioProfile? value) => IsDirty = true;
+    partial void OnEnforceActiveProfileChanged(bool value) => IsDirty = true;
     partial void OnCurrentPageChanged(MainPage value)
     {
         OnPropertyChanged(nameof(IsProfileView));
@@ -288,6 +300,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         if (_disposed) return;
         _disposed = true;
+        _enforceTimer.Stop();
         _deviceNotifications.Dispose();
         _deviceEnumerator.Dispose();
         _hotkeyService.Triggered -= OnHotkeyTriggered;
@@ -336,13 +349,44 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             _ => FailControl("Unknown command."),
         };
 
+        var profiles = Profiles.Select(profile => new ControlProfile(profile.Id, profile.Name, IsAvailable(profile))).ToArray();
+        return new ControlResponse(ok, ok ? null : StatusMessage, profiles, FindActiveProfile()?.Id);
+    }
+
+    private AudioProfile? FindActiveProfile()
+    {
         var output = _audioDeviceService.GetDefaultDeviceId(DataFlow.Render);
         var input = _audioDeviceService.GetDefaultDeviceId(DataFlow.Capture);
-        var active = Profiles.FirstOrDefault(profile => profile.OutputDeviceId == output && profile.InputDeviceId == input);
-        var profiles = Profiles.Select(profile => new ControlProfile(profile.Id, profile.Name,
-            OutputDevices.Any(device => device.Id == profile.OutputDeviceId) &&
-            InputDevices.Any(device => device.Id == profile.InputDeviceId))).ToArray();
-        return new ControlResponse(ok, ok ? null : StatusMessage, profiles, active?.Id);
+        return Profiles.FirstOrDefault(profile => profile.OutputDeviceId == output && profile.InputDeviceId == input);
+    }
+
+    private bool IsAvailable(AudioProfile profile) =>
+        OutputDevices.Any(device => device.Id == profile.OutputDeviceId) &&
+        InputDevices.Any(device => device.Id == profile.InputDeviceId);
+
+    // Windows switches defaults on its own, e.g. when a device is plugged in; debounce notification bursts.
+    private void QueueEnforcement()
+    {
+        if (!EnforceActiveProfile) return;
+        _enforceTimer.Stop();
+        _enforceTimer.Start();
+    }
+
+    private void EnforceProfile()
+    {
+        _enforceTimer.Stop();
+        if (_disposed || !EnforceActiveProfile || _enforcedProfile is not { } profile || !IsAvailable(profile)) return;
+        try
+        {
+            // Our own activation also raises DefaultDeviceChanged; afterwards every role matches, which ends the cycle.
+            if (_audioDeviceService.IsProfileDefault(profile)) return;
+            _audioDeviceService.ActivateProfile(profile);
+            ShowSuccess(Text.Format("ProfileRestored", profile.Name));
+        }
+        catch (Exception exception) when (exception is COMException or CoreAudioException)
+        {
+            ShowError(Text.Format("ProfileActivationFailed", exception.Message));
+        }
     }
 
     private bool FailControl(string message)
@@ -365,8 +409,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     private bool Activate(AudioProfile profile)
     {
-        if (!OutputDevices.Any(device => device.Id == profile.OutputDeviceId) ||
-            !InputDevices.Any(device => device.Id == profile.InputDeviceId))
+        if (!IsAvailable(profile))
         {
             ShowError(Text.Format("UnavailableDevice", profile.Name));
             return false;
@@ -376,6 +419,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             _audioDeviceService.ActivateProfile(profile);
             profile.LastActivatedAt = DateTime.Now;
+            _enforcedProfile = profile;
             SelectedProfile = profile;
             RefreshProfileDisplayInfo();
             RefreshSelectedActivationText();

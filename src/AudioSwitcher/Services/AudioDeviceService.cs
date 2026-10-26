@@ -30,6 +30,29 @@ public sealed class AudioDeviceService
         }
     }
 
+    public bool IsProfileDefault(AudioProfile profile) =>
+        IsDefaultForAllRoles(DataFlow.Render, profile.OutputDeviceId) &&
+        IsDefaultForAllRoles(DataFlow.Capture, profile.InputDeviceId);
+
+    private static bool IsDefaultForAllRoles(DataFlow flow, string deviceId)
+    {
+        using var enumerator = new MMDeviceEnumerator();
+        foreach (var role in Enum.GetValues<Role>())
+        {
+            try
+            {
+                using var device = enumerator.GetDefaultAudioEndpoint(flow, role);
+                if (device.ID != deviceId) return false;
+            }
+            catch (COMException)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public void ActivateProfile(AudioProfile profile)
     {
         SetDefaultEndpoint(profile.OutputDeviceId);

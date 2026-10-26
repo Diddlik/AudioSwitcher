@@ -515,6 +515,14 @@
                                           IsEnabled="{Binding ActivateProfileOnStartup}"/>
                             </StackPanel>
                             <Border Height="1" Background="#E3E1DB"/>
+                            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
+                                <StackPanel Spacing="4">
+                                    <TextBlock Classes="label" Text="{Binding Text[EnforceActiveProfile]}" Margin="0"/>
+                                    <TextBlock Classes="help" Text="{Binding Text[EnforceActiveProfileHelp]}"/>
+                                </StackPanel>
+                                <ToggleSwitch Grid.Column="1" IsChecked="{Binding EnforceActiveProfile}"/>
+                            </Grid>
+                            <Border Height="1" Background="#E3E1DB"/>
                             <Border Background="#F7F6F3" CornerRadius="8" Padding="16">
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                                     <Border Width="20" Height="20" CornerRadius="10" Background="#E6E4DE">

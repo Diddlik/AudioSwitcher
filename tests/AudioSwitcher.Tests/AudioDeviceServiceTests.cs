@@ -17,4 +17,12 @@ public sealed class AudioDeviceServiceTests
         Assert.Equal("F8679F50-850A-41CF-9C72-430F290290C8", interfaceType.GetCustomAttribute<GuidAttribute>()?.Value);
         Assert.Contains(interfaceType.GetMethods(), method => method.Name == "ResetDeviceFormat");
     }
+
+    [Fact]
+    public void IsProfileDefault_UnknownDevices_ReturnsFalse()
+    {
+        var profile = new AudioSwitcher.Models.AudioProfile { OutputDeviceId = "missing-output", InputDeviceId = "missing-input" };
+
+        Assert.False(new AudioDeviceService().IsProfileDefault(profile));
+    }
 }

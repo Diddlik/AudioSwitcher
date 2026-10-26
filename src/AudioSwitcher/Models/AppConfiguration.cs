@@ -10,4 +10,5 @@ public sealed class AppConfiguration
     public Guid? ToggleProfileBId { get; set; }
     public bool StartWithWindows { get; set; }
     public Guid? StartupProfileId { get; set; }
+    public bool EnforceActiveProfile { get; set; }
 }

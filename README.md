@@ -65,7 +65,7 @@ Select **Activate now** to switch to the selected profile. Press `Delete` or `Ba
 
 ## Settings
 
-Open **Settings** to choose the interface language, enable automatic startup with Windows, or select a profile that AudioSwitcher activates each time it starts (off by default).
+Open **Settings** to choose the interface language, enable automatic startup with Windows, select a profile that AudioSwitcher activates each time it starts, or keep the active profile: when Windows or another app changes a default device, AudioSwitcher restores the last activated profile once its devices are available. Both are off by default.
 
 ![AudioSwitcher 1.4 settings](docs/screenshots/v1.4-settings.png)
 
