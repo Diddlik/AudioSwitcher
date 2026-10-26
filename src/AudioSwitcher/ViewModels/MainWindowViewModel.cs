@@ -54,6 +54,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     public event Action<string>? ProfileActivated;
 
+    /// <summary>Raised on the UI thread when profiles, their availability, or the active profile may have changed.</summary>
+    public event Action? StateChanged;
+
     public MainWindowViewModel(ConfigurationStore configurationStore, AudioDeviceService audioDeviceService,
         StartupService startupService, GlobalHotkeyService hotkeyService, LocalizationService localization)
     {
@@ -67,6 +70,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _deviceNotifications.DeviceStateChanged += (_, _) => QueueDeviceRefresh();
         _deviceNotifications.DeviceAdded += (_, _) => QueueDeviceRefresh();
         _deviceNotifications.DeviceRemoved += (_, _) => QueueDeviceRefresh();
+        _deviceNotifications.DefaultDeviceChanged += (_, _) => Dispatcher.UIThread.Post(() =>
+        {
+            if (!_disposed) StateChanged?.Invoke();
+        });
+        Profiles.CollectionChanged += (_, _) => StateChanged?.Invoke();
 
         RefreshDevices();
         var configuration = _configurationStore.Load(out var warning);
@@ -245,8 +253,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             SelectedProfile.InputDeviceId = value.Id;
     }
 
-    partial void OnToggleProfileAChanged(AudioProfile? value) => IsDirty = true;
-    partial void OnToggleProfileBChanged(AudioProfile? value) => IsDirty = true;
+    partial void OnToggleProfileAChanged(AudioProfile? value) { IsDirty = true; StateChanged?.Invoke(); }
+    partial void OnToggleProfileBChanged(AudioProfile? value) { IsDirty = true; StateChanged?.Invoke(); }
     partial void OnToggleHotkeyChanged(string value) => IsDirty = true;
     partial void OnStartWithWindowsChanged(bool value) => IsDirty = true;
     partial void OnCurrentPageChanged(MainPage value)
@@ -460,6 +468,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 profile.SecondaryColor = "#5D5A53";
             }
         }
+
+        StateChanged?.Invoke();
     }
 
     private void RefreshSelectedActivationText()

@@ -73,24 +73,51 @@ public partial class App : Application
 
     private void CreateTrayIcon(IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
     {
+        _trayIcon = new TrayIcon
+        {
+            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://AudioSwitcher/Assets/audioswitcher.ico"))),
+            ToolTipText = "AudioSwitcher",
+        };
+        _trayIcon.Clicked += (_, _) => ShowWindow(window);
+        TrayIcon.SetIcons(this, new TrayIcons { _trayIcon });
+        UpdateTrayMenu(desktop, window);
+        _viewModel!.StateChanged += () => UpdateTrayMenu(desktop, window);
+    }
+
+    private void UpdateTrayMenu(IClassicDesktopStyleApplicationLifetime desktop, MainWindow window)
+    {
+        if (_trayIcon is null || _viewModel is not { } viewModel) return;
+
+        var state = viewModel.HandleControlRequest(new ControlRequest("state", null));
+        var menu = new NativeMenu();
+        foreach (var profile in state.Profiles)
+        {
+            var item = new NativeMenuItem(profile.Name)
+            {
+                ToggleType = NativeMenuItemToggleType.Radio,
+                IsChecked = profile.Id == state.ActiveProfileId,
+                IsEnabled = profile.Available,
+            };
+            item.Click += (_, _) => viewModel.HandleControlRequest(new ControlRequest("activate", profile.Id));
+            menu.Items.Add(item);
+        }
+
+        var quickSwitchItem = new NativeMenuItem(_text["QuickSwitch"])
+        {
+            IsEnabled = viewModel.ToggleProfileA is not null && viewModel.ToggleProfileB is not null,
+        };
+        quickSwitchItem.Click += (_, _) => viewModel.HandleControlRequest(new ControlRequest("toggle", null));
         var openItem = new NativeMenuItem(_text["Open"]);
         openItem.Click += (_, _) => ShowWindow(window);
         var exitItem = new NativeMenuItem(_text["Exit"]);
         exitItem.Click += (_, _) => Exit(desktop, window);
 
-        _trayIcon = new TrayIcon
-        {
-            Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://AudioSwitcher/Assets/audioswitcher.ico"))),
-            ToolTipText = "AudioSwitcher",
-            Menu = new NativeMenu { Items = { openItem, new NativeMenuItemSeparator(), exitItem } },
-        };
-        _trayIcon.Clicked += (_, _) => ShowWindow(window);
-        TrayIcon.SetIcons(this, new TrayIcons { _trayIcon });
-        _text.LanguageChanged += (_, _) =>
-        {
-            openItem.Header = _text["Open"];
-            exitItem.Header = _text["Exit"];
-        };
+        if (menu.Items.Count > 0) menu.Items.Add(new NativeMenuItemSeparator());
+        menu.Items.Add(quickSwitchItem);
+        menu.Items.Add(openItem);
+        menu.Items.Add(new NativeMenuItemSeparator());
+        menu.Items.Add(exitItem);
+        _trayIcon.Menu = menu;
     }
 
     private static void ShowWindow(MainWindow window)
@@ -114,6 +141,7 @@ public partial class App : Application
 
         TrayIcon.SetIcons(this, null);
         _trayIcon?.Dispose();
+        _trayIcon = null;
         _controlServer?.Dispose();
         _profileNotificationService?.Dispose();
         _viewModel?.Dispose();
