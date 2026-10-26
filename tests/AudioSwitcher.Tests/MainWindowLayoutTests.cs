@@ -53,7 +53,7 @@ public sealed class MainWindowLayoutTests
                     model.Updates.IsUpdateReady = true;
                     Assert.True(installButton.IsVisible);
                     foreach (var size in new[] { new Size(1040, 700), new Size(880, 620) })
-                        foreach (var language in new[] { "en", "ru", "uk", "fr", "it", "pl" })
+                        foreach (var language in model.Languages.Select(item => item.Code))
                             foreach (var page in Enum.GetValues<MainPage>())
                             {
                                 model.SelectedLanguage = model.Languages.Single(item => item.Code == language);

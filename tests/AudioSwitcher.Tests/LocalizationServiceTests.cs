@@ -15,6 +15,10 @@ public sealed class LocalizationServiceTests
     [InlineData("fr", "Paramètres")]
     [InlineData("it", "Impostazioni")]
     [InlineData("pl", "Ustawienia")]
+    [InlineData("de", "Einstellungen")]
+    [InlineData("es", "Configuración")]
+    [InlineData("pt-BR", "Configurações")]
+    [InlineData("zh-Hans", "设置")]
     public void SetLanguage_UsesRequestedTranslation(string language, string expected)
     {
         var localization = new LocalizationService();
@@ -29,7 +33,7 @@ public sealed class LocalizationServiceTests
     {
         var localization = new LocalizationService();
 
-        localization.SetLanguage("de");
+        localization.SetLanguage("xx");
 
         Assert.Equal("en", localization.CurrentLanguage);
         Assert.Equal("Settings", localization["Settings"]);

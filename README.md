@@ -41,7 +41,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | System tray | Hide the window and keep AudioSwitcher running in the background |
 | Startup | Start automatically for the current Windows user |
 | Automatic updates | Download stable releases in the background |
-| Languages | English, Russian, Ukrainian, French, Italian, and Polish |
+| Languages | English, German, French, Italian, Spanish, Portuguese (Brazil), Polish, Russian, Ukrainian, and Simplified Chinese |
 | Redesigned interface | Dedicated profile, quick-switch, and settings views; visible unsaved state and shortcut keycaps |
 | About | App and runtime versions, update status, manual update checks, and package credits |
 
