@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using AudioSwitcher.Models;
 using AudioSwitcher.Services;
@@ -9,6 +10,11 @@ using CommunityToolkit.Mvvm.Input;
 using NAudio.CoreAudioApi;
 
 namespace AudioSwitcher.ViewModels;
+
+public sealed record TriggerExitOption(Guid? ProfileId, string Name)
+{
+    public override string ToString() => Name;
+}
 
 public enum MainPage
 {
@@ -27,7 +33,10 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private readonly MMDeviceEnumerator _deviceEnumerator = new();
     private readonly MMDeviceNotificationClient _deviceNotifications;
     private readonly DispatcherTimer _enforceTimer = new() { Interval = TimeSpan.FromMilliseconds(500) };
-    private AudioProfile? _enforcedProfile;
+    private AudioProfile? _lastActivatedProfile;
+    private readonly AppTriggerTracker _triggers = new();
+    private readonly DispatcherTimer _triggerTimer = new() { Interval = TimeSpan.FromSeconds(2) };
+    private bool _updatingTriggerExitOptions;
     private int _deviceRefreshPending;
     private bool _disposed;
 
@@ -41,6 +50,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private bool _activateProfileOnStartup;
     [ObservableProperty] private AudioProfile? _startupProfile;
     [ObservableProperty] private bool _enforceActiveProfile;
+    [ObservableProperty] private TriggerExitOption? _selectedTriggerExitOption;
     [ObservableProperty] private LanguageOption? _selectedLanguage;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isStatusError;
@@ -108,7 +118,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         StartupProfile = Profiles.FirstOrDefault(profile => profile.Id == configuration.StartupProfileId);
         ActivateProfileOnStartup = StartupProfile is not null;
         EnforceActiveProfile = configuration.EnforceActiveProfile;
-        _enforcedProfile = FindActiveProfile();
+        _lastActivatedProfile = FindActiveProfile();
         SelectedProfile = Profiles[0];
         foreach (var profile in Profiles) profile.PropertyChanged += OnProfilePropertyChanged;
         RefreshProfileDisplayInfo();
@@ -117,9 +127,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!string.IsNullOrEmpty(warning)) ShowError(warning);
         else if (!TryRegisterHotkeys(out var error)) ShowError(error);
         IsDirty = false;
+        _triggerTimer.Tick += (_, _) => CheckTriggers();
+        _triggerTimer.Start();
     }
 
     public ObservableCollection<AudioProfile> Profiles { get; } = [];
+    public ObservableCollection<TriggerExitOption> TriggerExitOptions { get; } = [];
     public ObservableCollection<AudioDeviceInfo> OutputDevices { get; } = [];
     public ObservableCollection<AudioDeviceInfo> InputDevices { get; } = [];
     public LocalizationService Text { get; }
@@ -148,14 +161,17 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private void DeleteProfile()
     {
         if (SelectedProfile is null) return;
-        var index = Profiles.IndexOf(SelectedProfile);
-        SelectedProfile.PropertyChanged -= OnProfilePropertyChanged;
-        Profiles.Remove(SelectedProfile);
+        var removed = SelectedProfile;
+        var index = Profiles.IndexOf(removed);
+        removed.PropertyChanged -= OnProfilePropertyChanged;
+        Profiles.Remove(removed);
+        foreach (var profile in Profiles.Where(profile => profile.TriggerExitProfileId == removed.Id))
+            profile.TriggerExitProfileId = null;
         SelectedProfile = Profiles.Count == 0 ? null : Profiles[Math.Min(index, Profiles.Count - 1)];
         if (ToggleProfileA is not null && !Profiles.Contains(ToggleProfileA)) ToggleProfileA = null;
         if (ToggleProfileB is not null && !Profiles.Contains(ToggleProfileB)) ToggleProfileB = null;
         if (StartupProfile is not null && !Profiles.Contains(StartupProfile)) StartupProfile = null;
-        if (_enforcedProfile is not null && !Profiles.Contains(_enforcedProfile)) _enforcedProfile = null;
+        if (_lastActivatedProfile is not null && !Profiles.Contains(_lastActivatedProfile)) _lastActivatedProfile = null;
         IsDirty = true;
         ShowSuccess(Text["ProfileRemoved"]);
     }
@@ -256,6 +272,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(HasSelectedProfile));
         OnPropertyChanged(nameof(HasNoSelectedProfile));
         RefreshSelectedActivationText();
+        RefreshTriggerExitOptions();
+    }
+
+    partial void OnSelectedTriggerExitOptionChanged(TriggerExitOption? value)
+    {
+        if (!_updatingTriggerExitOptions && value is not null && SelectedProfile is not null)
+            SelectedProfile.TriggerExitProfileId = value.ProfileId;
     }
 
     partial void OnSelectedOutputDeviceChanged(AudioDeviceInfo? value)
@@ -301,6 +324,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (_disposed) return;
         _disposed = true;
         _enforceTimer.Stop();
+        _triggerTimer.Stop();
         _deviceNotifications.Dispose();
         _deviceEnumerator.Dispose();
         _hotkeyService.Triggered -= OnHotkeyTriggered;
@@ -375,7 +399,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     private void EnforceProfile()
     {
         _enforceTimer.Stop();
-        if (_disposed || !EnforceActiveProfile || _enforcedProfile is not { } profile || !IsAvailable(profile)) return;
+        if (_disposed || !EnforceActiveProfile || _lastActivatedProfile is not { } profile || !IsAvailable(profile)) return;
         try
         {
             // Our own activation also raises DefaultDeviceChanged; afterwards every role matches, which ends the cycle.
@@ -419,7 +443,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         {
             _audioDeviceService.ActivateProfile(profile);
             profile.LastActivatedAt = DateTime.Now;
-            _enforcedProfile = profile;
+            _lastActivatedProfile = profile;
             SelectedProfile = profile;
             RefreshProfileDisplayInfo();
             RefreshSelectedActivationText();
@@ -457,6 +481,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!string.IsNullOrWhiteSpace(ToggleHotkey) &&
             (ToggleProfileA is null || ToggleProfileB is null || ToggleProfileA == ToggleProfileB))
             return Fail(Text["ToggleProfilesRequired"], out error);
+        var sharedTriggerApp = Profiles
+            .SelectMany(profile => AppTriggerTracker.ParseApps(profile.TriggerApps).Distinct(StringComparer.OrdinalIgnoreCase))
+            .GroupBy(app => app, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault(group => group.Count() > 1);
+        if (sharedTriggerApp is not null) return Fail(Text.Format("TriggerAppUsedTwice", sharedTriggerApp.Key), out error);
         if (ActivateProfileOnStartup && StartupProfile is null) return Fail(Text["StartupProfileRequired"], out error);
 
         error = string.Empty;
@@ -506,6 +535,49 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             IsDirty = true;
             RefreshProfileDisplayInfo();
         }
+        // Rebuilding the exit options here would replace the ComboBox items while it commits a selection.
+        else if (eventArgs.PropertyName is nameof(AudioProfile.TriggerApps) or nameof(AudioProfile.TriggerExitProfileId))
+        {
+            IsDirty = true;
+        }
+    }
+
+    private void RefreshTriggerExitOptions()
+    {
+        _updatingTriggerExitOptions = true;
+        Replace(TriggerExitOptions,
+        [
+            new TriggerExitOption(null, Text["TriggerExitNothing"]),
+            new TriggerExitOption(AudioProfile.PreviousProfileId, Text["TriggerExitPrevious"]),
+            .. Profiles.Where(profile => profile != SelectedProfile).Select(profile => new TriggerExitOption(profile.Id, profile.Name)),
+        ]);
+        SelectedTriggerExitOption = TriggerExitOptions.FirstOrDefault(option => option.ProfileId == SelectedProfile?.TriggerExitProfileId)
+            ?? TriggerExitOptions[0];
+        _updatingTriggerExitOptions = false;
+    }
+
+    private void CheckTriggers()
+    {
+        if (_disposed || Profiles.All(profile => string.IsNullOrWhiteSpace(profile.TriggerApps))) return;
+
+        var running = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var process in Process.GetProcesses())
+        {
+            using (process)
+            {
+                try
+                {
+                    running.Add(process.ProcessName);
+                }
+                catch (InvalidOperationException)
+                {
+                    // The process exited during enumeration.
+                }
+            }
+        }
+
+        var active = FindActiveProfile();
+        if (_triggers.Update(running, Profiles, active ?? _lastActivatedProfile) is { } profile && profile != active) Activate(profile);
     }
 
     private void RefreshProfileDisplayInfo()
@@ -519,7 +591,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 profile.SecondaryText = Text["DeviceNotAvailable"];
                 profile.SecondaryColor = "#8A5A00";
             }
-            else if (profile.LastActivatedAt is { } activatedAt)
+            else if (profile == _lastActivatedProfile && profile.LastActivatedAt is { } activatedAt)
             {
                 profile.SecondaryText = Text.Format("ActivatedAt", activatedAt.ToString("HH:mm"));
                 profile.SecondaryColor = "#0B6B63";
@@ -531,6 +603,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             }
         }
 
+        RefreshTriggerExitOptions();
         StateChanged?.Invoke();
     }
 

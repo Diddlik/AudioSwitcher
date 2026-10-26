@@ -5,6 +5,9 @@ namespace AudioSwitcher.Models;
 
 public sealed partial class AudioProfile : ObservableObject
 {
+    /// <summary><see cref="TriggerExitProfileId"/> value that restores the profile active before the trigger.</summary>
+    public static readonly Guid PreviousProfileId = Guid.Empty;
+
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [ObservableProperty]
@@ -18,6 +21,13 @@ public sealed partial class AudioProfile : ObservableObject
 
     [ObservableProperty]
     private string _hotkey = string.Empty;
+
+    [ObservableProperty]
+    private string _triggerApps = string.Empty;
+
+    /// <summary>Profile to activate after all trigger apps exit: null keeps the current one.</summary>
+    [ObservableProperty]
+    private Guid? _triggerExitProfileId;
 
     [ObservableProperty]
     [property: JsonIgnore]

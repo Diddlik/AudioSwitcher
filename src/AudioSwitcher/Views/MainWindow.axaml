@@ -426,6 +426,20 @@
                                     <TextBlock Classes="help" MaxWidth="520" HorizontalAlignment="Left"
                                                Text="{Binding Text[ShortcutHint]}"/>
                                 </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[TriggerApps]}"/>
+                                    <TextBox Width="{Binding #ProfileContent.Bounds.Width}" MaxWidth="520" HorizontalAlignment="Left"
+                                             Text="{Binding SelectedProfile.TriggerApps, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             Watermark="{Binding Text[TriggerAppsExample]}"
+                                             AutomationProperties.Name="{Binding Text[TriggerApps]}"/>
+                                    <TextBlock Classes="help" MaxWidth="520" Text="{Binding Text[TriggerAppsHelp]}"/>
+                                </StackPanel>
+                                <StackPanel Spacing="6">
+                                    <TextBlock Classes="label" Text="{Binding Text[TriggerExit]}"/>
+                                    <ComboBox Width="320" HorizontalAlignment="Left" ItemsSource="{Binding TriggerExitOptions}"
+                                              SelectedItem="{Binding SelectedTriggerExitOption}"
+                                              AutomationProperties.Name="{Binding Text[TriggerExit]}"/>
+                                </StackPanel>
                                 <Border Height="1" Background="#E3E1DB"/>
                                 <Button Classes="danger" HorizontalAlignment="Left" Margin="-10,0,0,0"
                                         Command="{Binding DeleteProfileCommand}">

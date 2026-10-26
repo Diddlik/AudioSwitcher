@@ -31,6 +31,13 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Activate automatically when a program runs",
+                ["TriggerAppsExample"] = "e.g. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Comma-separated program names. The profile activates as soon as one of them starts.",
+                ["TriggerExit"] = "After all of these programs exit",
+                ["TriggerExitNothing"] = "Keep the current profile",
+                ["TriggerExitPrevious"] = "Restore the previous profile",
+                ["TriggerAppUsedTwice"] = "Program {0} is assigned to more than one profile.",
                 ["EnforceActiveProfile"] = "Keep the active profile",
                 ["EnforceActiveProfileHelp"] = "Restores the last activated profile when Windows or another app changes the default devices.",
                 ["ProfileRestored"] = "{0} restored after Windows changed the default devices.",
@@ -131,6 +138,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Активировать автоматически при запуске программы",
+                ["TriggerAppsExample"] = "например, cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Имена программ через запятую. Профиль активируется, как только запустится одна из них.",
+                ["TriggerExit"] = "После завершения всех этих программ",
+                ["TriggerExitNothing"] = "Оставить текущий профиль",
+                ["TriggerExitPrevious"] = "Вернуть предыдущий профиль",
+                ["TriggerAppUsedTwice"] = "Программа {0} назначена нескольким профилям.",
                 ["EnforceActiveProfile"] = "Сохранять активный профиль",
                 ["EnforceActiveProfileHelp"] = "Восстанавливает последний активированный профиль, если Windows или другое приложение меняет устройства по умолчанию.",
                 ["ProfileRestored"] = "Профиль {0} восстановлен после того, как Windows изменила устройства по умолчанию.",
@@ -231,6 +245,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Активувати автоматично під час запуску програми",
+                ["TriggerAppsExample"] = "наприклад, cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Назви програм через кому. Профіль активується, щойно запуститься одна з них.",
+                ["TriggerExit"] = "Після завершення всіх цих програм",
+                ["TriggerExitNothing"] = "Залишити поточний профіль",
+                ["TriggerExitPrevious"] = "Повернути попередній профіль",
+                ["TriggerAppUsedTwice"] = "Програму {0} призначено кільком профілям.",
                 ["EnforceActiveProfile"] = "Зберігати активний профіль",
                 ["EnforceActiveProfileHelp"] = "Відновлює останній активований профіль, якщо Windows або інша програма змінює пристрої за замовчуванням.",
                 ["ProfileRestored"] = "Профіль {0} відновлено після того, як Windows змінила пристрої за замовчуванням.",
@@ -331,6 +352,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Activer automatiquement quand un programme s’exécute",
+                ["TriggerAppsExample"] = "p. ex. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Noms de programmes séparés par des virgules. Le profil s’active dès que l’un d’eux démarre.",
+                ["TriggerExit"] = "Quand tous ces programmes sont fermés",
+                ["TriggerExitNothing"] = "Conserver le profil actuel",
+                ["TriggerExitPrevious"] = "Rétablir le profil précédent",
+                ["TriggerAppUsedTwice"] = "Le programme {0} est attribué à plusieurs profils.",
                 ["EnforceActiveProfile"] = "Conserver le profil actif",
                 ["EnforceActiveProfileHelp"] = "Rétablit le dernier profil activé lorsque Windows ou une autre application modifie les périphériques par défaut.",
                 ["ProfileRestored"] = "{0} rétabli après une modification des périphériques par défaut par Windows.",
@@ -431,6 +459,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Attiva automaticamente quando un programma è in esecuzione",
+                ["TriggerAppsExample"] = "ad es. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Nomi dei programmi separati da virgole. Il profilo si attiva non appena uno di essi viene avviato.",
+                ["TriggerExit"] = "Dopo la chiusura di tutti questi programmi",
+                ["TriggerExitNothing"] = "Mantieni il profilo attuale",
+                ["TriggerExitPrevious"] = "Ripristina il profilo precedente",
+                ["TriggerAppUsedTwice"] = "Il programma {0} è assegnato a più profili.",
                 ["EnforceActiveProfile"] = "Mantieni il profilo attivo",
                 ["EnforceActiveProfileHelp"] = "Ripristina l’ultimo profilo attivato quando Windows o un’altra app cambia i dispositivi predefiniti.",
                 ["ProfileRestored"] = "{0} ripristinato dopo che Windows ha cambiato i dispositivi predefiniti.",
@@ -531,6 +566,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Aktywuj automatycznie, gdy działa program",
+                ["TriggerAppsExample"] = "np. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Nazwy programów rozdzielone przecinkami. Profil aktywuje się, gdy tylko jeden z nich się uruchomi.",
+                ["TriggerExit"] = "Po zamknięciu wszystkich tych programów",
+                ["TriggerExitNothing"] = "Zachowaj bieżący profil",
+                ["TriggerExitPrevious"] = "Przywróć poprzedni profil",
+                ["TriggerAppUsedTwice"] = "Program {0} jest przypisany do więcej niż jednego profilu.",
                 ["EnforceActiveProfile"] = "Utrzymuj aktywny profil",
                 ["EnforceActiveProfileHelp"] = "Przywraca ostatnio aktywowany profil, gdy Windows lub inna aplikacja zmieni urządzenia domyślne.",
                 ["ProfileRestored"] = "Przywrócono profil {0} po zmianie urządzeń domyślnych przez Windows.",
@@ -631,6 +673,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Automatisch aktivieren, wenn ein Programm läuft",
+                ["TriggerAppsExample"] = "z. B. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Programmnamen durch Komma getrennt. Das Profil wird aktiviert, sobald eines davon startet.",
+                ["TriggerExit"] = "Wenn alle diese Programme beendet sind",
+                ["TriggerExitNothing"] = "Aktuelles Profil beibehalten",
+                ["TriggerExitPrevious"] = "Vorheriges Profil wiederherstellen",
+                ["TriggerAppUsedTwice"] = "Das Programm {0} ist mehreren Profilen zugeordnet.",
                 ["EnforceActiveProfile"] = "Aktives Profil beibehalten",
                 ["EnforceActiveProfileHelp"] = "Stellt das zuletzt aktivierte Profil wieder her, wenn Windows oder eine andere App die Standardgeräte ändert.",
                 ["ProfileRestored"] = "{0} wiederhergestellt, nachdem Windows die Standardgeräte geändert hat.",
@@ -731,6 +780,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Activar automáticamente cuando se ejecute un programa",
+                ["TriggerAppsExample"] = "p. ej. cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Nombres de programas separados por comas. El perfil se activa en cuanto se inicia uno de ellos.",
+                ["TriggerExit"] = "Cuando se cierren todos estos programas",
+                ["TriggerExitNothing"] = "Mantener el perfil actual",
+                ["TriggerExitPrevious"] = "Restaurar el perfil anterior",
+                ["TriggerAppUsedTwice"] = "El programa {0} está asignado a más de un perfil.",
                 ["EnforceActiveProfile"] = "Mantener el perfil activo",
                 ["EnforceActiveProfileHelp"] = "Restaura el último perfil activado cuando Windows u otra aplicación cambia los dispositivos predeterminados.",
                 ["ProfileRestored"] = "{0} restaurado después de que Windows cambiara los dispositivos predeterminados.",
@@ -831,6 +887,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "Ativar automaticamente quando um programa estiver em execução",
+                ["TriggerAppsExample"] = "ex.: cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "Nomes de programas separados por vírgulas. O perfil é ativado assim que um deles é iniciado.",
+                ["TriggerExit"] = "Depois que todos esses programas forem fechados",
+                ["TriggerExitNothing"] = "Manter o perfil atual",
+                ["TriggerExitPrevious"] = "Restaurar o perfil anterior",
+                ["TriggerAppUsedTwice"] = "O programa {0} está atribuído a mais de um perfil.",
                 ["EnforceActiveProfile"] = "Manter o perfil ativo",
                 ["EnforceActiveProfileHelp"] = "Restaura o último perfil ativado quando o Windows ou outro aplicativo altera os dispositivos padrão.",
                 ["ProfileRestored"] = "{0} restaurado depois que o Windows alterou os dispositivos padrão.",
@@ -931,6 +994,13 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["TriggerApps"] = "程序运行时自动激活",
+                ["TriggerAppsExample"] = "例如：cs2.exe, discord.exe",
+                ["TriggerAppsHelp"] = "以逗号分隔的程序名称。只要其中一个程序启动，就会激活此配置文件。",
+                ["TriggerExit"] = "所有这些程序退出后",
+                ["TriggerExitNothing"] = "保持当前配置文件",
+                ["TriggerExitPrevious"] = "恢复之前的配置文件",
+                ["TriggerAppUsedTwice"] = "程序 {0} 被分配给了多个配置文件。",
                 ["EnforceActiveProfile"] = "保持当前配置文件",
                 ["EnforceActiveProfileHelp"] = "当 Windows 或其他应用更改默认设备时，恢复上次激活的配置文件。",
                 ["ProfileRestored"] = "Windows 更改默认设备后已恢复 {0}。",

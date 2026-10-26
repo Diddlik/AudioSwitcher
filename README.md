@@ -36,6 +36,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Global shortcuts | Activate profiles from any application |
 | Remote control | Stream-deck plugins and scripts can list, activate, and toggle profiles over a local pipe |
 | Quick switch | Switch between two profiles with one shortcut |
+| Automatic triggers | Activate a profile when a program starts and switch back or to another profile after it exits |
 | Direct key capture | Focus a shortcut field and press the required combination |
 | All Windows roles | Set the Console, Multimedia, and Communications defaults together |
 | System tray | Keep running in the background; activate profiles and quick switch from the tray menu |
@@ -80,6 +81,10 @@ The About window also lists application/runtime versions and credits for 25 dire
 ![AudioSwitcher 1.4 About window](docs/screenshots/v1.4-about.png)
 
 AudioSwitcher stores profiles and settings only in `%LocalAppData%\AudioSwitcher\config.json`.
+
+## Automatic triggers
+
+Enter comma-separated program names such as `cs2.exe, discord.exe` in a profile. AudioSwitcher checks running programs every two seconds and activates the profile as soon as one of them starts, also when it is already running at startup. After all of them exit, AudioSwitcher keeps the current profile, restores the previous one, or activates a selected profile. A program can belong to only one profile.
 
 ## Quick switch
 
