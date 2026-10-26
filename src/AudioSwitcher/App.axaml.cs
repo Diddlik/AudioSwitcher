@@ -48,6 +48,8 @@ public partial class App : Application
             desktop.MainWindow = window;
             _profileNotificationService = new ProfileNotificationService(window, _text);
             _viewModel.ProfileActivated += _profileNotificationService.Show;
+            _viewModel.MicrophoneMuteChanged += _profileNotificationService.SetMicrophoneMuted;
+            _viewModel.RefreshMicrophoneState();
             CreateTrayIcon(desktop, window);
             var viewModel = _viewModel;
             _controlServer = new ProfileControlServer(

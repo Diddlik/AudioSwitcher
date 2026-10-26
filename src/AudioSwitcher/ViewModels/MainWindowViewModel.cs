@@ -26,6 +26,8 @@ public enum MainPage
 public partial class MainWindowViewModel : ViewModelBase, IDisposable
 {
     private const string ToggleAction = "toggle";
+    private const string MuteAction = "mute";
+    private readonly MicrophoneMuteService _microphone = new();
     private readonly ConfigurationStore _configurationStore;
     private readonly AudioDeviceService _audioDeviceService;
     private readonly StartupService _startupService;
@@ -46,6 +48,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private AudioProfile? _toggleProfileA;
     [ObservableProperty] private AudioProfile? _toggleProfileB;
     [ObservableProperty] private string _toggleHotkey = string.Empty;
+    [ObservableProperty] private string _muteHotkey = string.Empty;
+    [ObservableProperty] private bool _isToggleHotkeyUnavailable;
+    [ObservableProperty] private bool _isMuteHotkeyUnavailable;
     [ObservableProperty] private bool _startWithWindows;
     [ObservableProperty] private bool _activateProfileOnStartup;
     [ObservableProperty] private AudioProfile? _startupProfile;
@@ -72,6 +77,9 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     /// <summary>Raised on the UI thread when profiles, their availability, or the active profile may have changed.</summary>
     public event Action? StateChanged;
 
+    /// <summary>Raised on the UI thread with true while the mute shortcut is set and the default microphone is muted.</summary>
+    public event Action<bool>? MicrophoneMuteChanged;
+
     public MainWindowViewModel(ConfigurationStore configurationStore, AudioDeviceService audioDeviceService,
         StartupService startupService, GlobalHotkeyService hotkeyService, LocalizationService localization)
     {
@@ -88,9 +96,16 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _deviceNotifications.DefaultDeviceChanged += (_, _) => Dispatcher.UIThread.Post(() =>
         {
             if (_disposed) return;
+            _microphone.Attach();
+            RefreshMicrophoneState();
             StateChanged?.Invoke();
             QueueEnforcement();
         });
+        _microphone.MuteChanged += () => Dispatcher.UIThread.Post(() =>
+        {
+            if (!_disposed) RefreshMicrophoneState();
+        });
+        _microphone.Attach();
         _enforceTimer.Tick += (_, _) => EnforceProfile();
         Profiles.CollectionChanged += (_, _) => StateChanged?.Invoke();
 
@@ -112,6 +127,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         ToggleHotkey = configuration.ToggleHotkey;
+        MuteHotkey = configuration.MuteHotkey;
         StartWithWindows = configuration.StartWithWindows;
         ToggleProfileA = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileAId);
         ToggleProfileB = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileBId);
@@ -238,6 +254,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 Profiles = Profiles.ToList(),
                 Language = Text.CurrentLanguage,
                 ToggleHotkey = ToggleHotkey.Trim(),
+                MuteHotkey = MuteHotkey.Trim(),
                 ToggleProfileAId = ToggleProfileA?.Id,
                 ToggleProfileBId = ToggleProfileB?.Id,
                 StartWithWindows = StartWithWindows,
@@ -295,7 +312,18 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
 
     partial void OnToggleProfileAChanged(AudioProfile? value) { IsDirty = true; StateChanged?.Invoke(); }
     partial void OnToggleProfileBChanged(AudioProfile? value) { IsDirty = true; StateChanged?.Invoke(); }
-    partial void OnToggleHotkeyChanged(string value) => IsDirty = true;
+    partial void OnToggleHotkeyChanged(string value)
+    {
+        IsDirty = true;
+        IsToggleHotkeyUnavailable = false;
+    }
+
+    partial void OnMuteHotkeyChanged(string value)
+    {
+        IsDirty = true;
+        IsMuteHotkeyUnavailable = false;
+        RefreshMicrophoneState();
+    }
     partial void OnStartWithWindowsChanged(bool value) => IsDirty = true;
     partial void OnActivateProfileOnStartupChanged(bool value)
     {
@@ -326,6 +354,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _enforceTimer.Stop();
         _triggerTimer.Stop();
         _deviceNotifications.Dispose();
+        _microphone.Dispose();
         _deviceEnumerator.Dispose();
         _hotkeyService.Triggered -= OnHotkeyTriggered;
         foreach (var profile in Profiles) profile.PropertyChanged -= OnProfilePropertyChanged;
@@ -334,6 +363,28 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     public void ActivateStartupProfile()
     {
         if (ActivateProfileOnStartup && StartupProfile is not null) Activate(StartupProfile);
+    }
+
+    public void RefreshMicrophoneState() =>
+        MicrophoneMuteChanged?.Invoke(!string.IsNullOrWhiteSpace(MuteHotkey) && _microphone.IsMuted);
+
+    private void ToggleMicrophone()
+    {
+        try
+        {
+            if (_microphone.ToggleMute() is not { } muted)
+            {
+                ShowError(Text["NoMicrophone"]);
+                return;
+            }
+
+            ShowSuccess(Text[muted ? "MicrophoneMuted" : "MicrophoneUnmuted"]);
+            RefreshMicrophoneState();
+        }
+        catch (COMException exception)
+        {
+            ShowError(exception.Message);
+        }
     }
 
     public void ReportBackgroundStatus(string message) => ShowSuccess(message);
@@ -347,6 +398,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             if (action == ToggleAction)
             {
                 ToggleProfiles();
+                return;
+            }
+
+            if (action == MuteAction)
+            {
+                ToggleMicrophone();
                 return;
             }
 
@@ -474,7 +531,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         }
 
         if (!ValidateOptionalHotkey(ToggleHotkey, out error)) return false;
-        var shortcuts = Profiles.Select(profile => profile.Hotkey).Append(ToggleHotkey)
+        if (!ValidateOptionalHotkey(MuteHotkey, out error)) return false;
+        var shortcuts = Profiles.Select(profile => profile.Hotkey).Append(ToggleHotkey).Append(MuteHotkey)
             .Where(shortcut => !string.IsNullOrWhiteSpace(shortcut)).Select(NormalizeHotkey).ToArray();
         if (shortcuts.Distinct(StringComparer.OrdinalIgnoreCase).Count() != shortcuts.Length)
             return Fail(Text["UniqueShortcuts"], out error);
@@ -497,7 +555,13 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         var shortcuts = Profiles.Where(profile => !string.IsNullOrWhiteSpace(profile.Hotkey))
             .ToDictionary(profile => $"profile:{profile.Id}", profile => profile.Hotkey.Trim());
         if (!string.IsNullOrWhiteSpace(ToggleHotkey)) shortcuts[ToggleAction] = ToggleHotkey.Trim();
-        return _hotkeyService.Register(shortcuts, out error);
+        if (!string.IsNullOrWhiteSpace(MuteHotkey)) shortcuts[MuteAction] = MuteHotkey.Trim();
+        var registered = _hotkeyService.Register(shortcuts, out error, out var unavailable);
+        foreach (var profile in Profiles) profile.IsHotkeyUnavailable = unavailable.Contains($"profile:{profile.Id}");
+        IsToggleHotkeyUnavailable = unavailable.Contains(ToggleAction);
+        IsMuteHotkeyUnavailable = unavailable.Contains(MuteAction);
+        RefreshProfileDisplayInfo();
+        return registered;
     }
 
     private string GetUniqueProfileName()
@@ -533,6 +597,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             nameof(AudioProfile.InputDeviceId) or nameof(AudioProfile.Hotkey))
         {
             IsDirty = true;
+            if (eventArgs.PropertyName == nameof(AudioProfile.Hotkey) && sender is AudioProfile profile)
+                profile.IsHotkeyUnavailable = false;
             RefreshProfileDisplayInfo();
         }
         // Rebuilding the exit options here would replace the ComboBox items while it commits a selection.
@@ -590,6 +656,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
             {
                 profile.SecondaryText = Text["DeviceNotAvailable"];
                 profile.SecondaryColor = "#8A5A00";
+            }
+            else if (profile.IsHotkeyUnavailable)
+            {
+                profile.SecondaryText = Text["ShortcutUnavailableShort"];
+                profile.SecondaryColor = "#B3261E";
             }
             else if (profile == _lastActivatedProfile && profile.LastActivatedAt is { } activatedAt)
             {

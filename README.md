@@ -36,6 +36,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Global shortcuts | Activate profiles from any application |
 | Remote control | Stream-deck plugins and scripts can list, activate, and toggle profiles over a local pipe |
 | Quick switch | Switch between two profiles with one shortcut |
+| Microphone mute | Mute or unmute the default microphone with a global shortcut; a banner stays visible while muted |
 | Automatic triggers | Activate a profile when a program starts and switch back or to another profile after it exits |
 | Direct key capture | Focus a shortcut field and press the required combination |
 | All Windows roles | Set the Console, Multimedia, and Communications defaults together |
@@ -62,7 +63,7 @@ The installer does not require administrator rights. It is not code signed, so W
 4. Select two profiles and capture a shortcut if you want to use quick switching.
 5. Select **Save**.
 
-Select **Activate now** to switch to the selected profile. Press `Delete` or `Backspace` to clear a shortcut. AudioSwitcher rejects combinations that another application has already registered.
+Select **Activate now** to switch to the selected profile. Press `Delete` or `Backspace` to clear a shortcut. If another application already uses a combination, that shortcut field turns red with an explanation, the profile list shows **Shortcut in use**, and saving is blocked until you choose another combination. All other shortcuts keep working.
 
 ## Settings
 
@@ -81,6 +82,10 @@ The About window also lists application/runtime versions and credits for 25 dire
 ![AudioSwitcher 1.4 About window](docs/screenshots/v1.4-about.png)
 
 AudioSwitcher stores profiles and settings only in `%LocalAppData%\AudioSwitcher\config.json`.
+
+## Microphone mute
+
+Set a shortcut in the Quick switch view to mute or unmute the default microphone. While the shortcut is set and the microphone is muted, a banner stays at the top of every screen, also when the microphone was muted another way, for example with a headset button.
 
 ## Automatic triggers
 

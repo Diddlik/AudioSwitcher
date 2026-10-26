@@ -203,6 +203,17 @@
         <Style Selector="Button.hotkey:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#F7F6F3"/>
         </Style>
+        <Style Selector="Button.hotkey.unavailable /template/ ContentPresenter">
+            <Setter Property="BorderBrush" Value="#B3261E"/>
+            <Setter Property="Background" Value="#FCF1F0"/>
+        </Style>
+        <Style Selector="TextBlock.error">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#B3261E"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="MaxWidth" Value="520"/>
+        </Style>
         <Style Selector="Button.hotkey:focus /template/ ContentPresenter">
             <Setter Property="BorderBrush" Value="#0B6B63"/>
             <Setter Property="BorderThickness" Value="1,1,1,2"/>
@@ -420,9 +431,12 @@
                                     <TextBlock Classes="label" Text="{Binding Text[ProfileShortcutLabel]}"/>
                                     <Button Classes="hotkey" Width="320" HorizontalAlignment="Left"
                                              Content="{Binding SelectedProfile.Hotkey, Mode=TwoWay}"
+                                             Classes.unavailable="{Binding SelectedProfile.IsHotkeyUnavailable}"
                                              KeyDown="OnHotkeyKeyDown"
                                              AutomationProperties.Name="{Binding Text[ProfileShortcut]}"
                                              AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
+                                    <TextBlock Classes="error" Text="{Binding Text[ShortcutUnavailable]}"
+                                               IsVisible="{Binding SelectedProfile.IsHotkeyUnavailable}"/>
                                     <TextBlock Classes="help" MaxWidth="520" HorizontalAlignment="Left"
                                                Text="{Binding Text[ShortcutHint]}"/>
                                 </StackPanel>
@@ -490,10 +504,26 @@
                                 <TextBlock Classes="label" Text="{Binding Text[ToggleShortcut]}"/>
                                 <Button Classes="hotkey" Width="320" HorizontalAlignment="Left"
                                          Content="{Binding ToggleHotkey, Mode=TwoWay}"
+                                         Classes.unavailable="{Binding IsToggleHotkeyUnavailable}"
                                          KeyDown="OnHotkeyKeyDown"
                                          AutomationProperties.Name="{Binding Text[ToggleShortcut]}"
                                          AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
+                                <TextBlock Classes="error" Text="{Binding Text[ShortcutUnavailable]}"
+                                           IsVisible="{Binding IsToggleHotkeyUnavailable}"/>
                                 <TextBlock Classes="help" MaxWidth="520" Text="{Binding Text[ShortcutHint]}"/>
+                            </StackPanel>
+                            <Border Height="1" Background="#E3E1DB"/>
+                            <StackPanel Spacing="6">
+                                <TextBlock Classes="label" Text="{Binding Text[MuteShortcut]}"/>
+                                <Button Classes="hotkey" Width="320" HorizontalAlignment="Left"
+                                         Content="{Binding MuteHotkey, Mode=TwoWay}"
+                                         Classes.unavailable="{Binding IsMuteHotkeyUnavailable}"
+                                         KeyDown="OnHotkeyKeyDown"
+                                         AutomationProperties.Name="{Binding Text[MuteShortcut]}"
+                                         AutomationProperties.HelpText="{Binding Text[ShortcutHelp]}"/>
+                                <TextBlock Classes="error" Text="{Binding Text[ShortcutUnavailable]}"
+                                           IsVisible="{Binding IsMuteHotkeyUnavailable}"/>
+                                <TextBlock Classes="help" MaxWidth="520" Text="{Binding Text[MuteShortcutHelp]}"/>
                             </StackPanel>
                         </StackPanel>
                     </ScrollViewer>

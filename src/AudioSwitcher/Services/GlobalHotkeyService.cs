@@ -32,10 +32,13 @@ public sealed class GlobalHotkeyService : IDisposable
 
     public event EventHandler<string>? Triggered;
 
-    public bool Register(IReadOnlyDictionary<string, string> shortcuts, out string error)
+    /// <summary>Replaces all registrations; shortcuts that fail do not prevent the others from working.</summary>
+    /// <param name="unavailableActions">Actions whose shortcut is invalid or already registered by another application.</param>
+    public bool Register(IReadOnlyDictionary<string, string> shortcuts, out string error, out IReadOnlySet<string> unavailableActions)
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
         var request = new RegistrationRequest(shortcuts);
+        unavailableActions = new HashSet<string>();
         _requests.Enqueue(request);
         if (!PostThreadMessage(_threadId, WmAppRegister, UIntPtr.Zero, IntPtr.Zero))
         {
@@ -50,6 +53,7 @@ public sealed class GlobalHotkeyService : IDisposable
         }
 
         error = request.Error;
+        unavailableActions = request.UnavailableActions;
         return string.IsNullOrEmpty(error);
     }
 
@@ -94,28 +98,30 @@ public sealed class GlobalHotkeyService : IDisposable
     {
         ClearRegistrations();
         var id = 1;
+        var errors = new List<string>();
+        var inUse = new List<string>();
 
         foreach (var shortcut in request.Shortcuts)
         {
             if (!HotkeyGesture.TryParse(shortcut.Value, out var gesture, out var parseError, _text))
             {
-                request.Error = $"{shortcut.Value}: {parseError}";
-                ClearRegistrations();
-                request.Completed.Set();
-                return;
+                request.UnavailableActions.Add(shortcut.Key);
+                errors.Add($"{shortcut.Value}: {parseError}");
+                continue;
             }
 
             if (!RegisterHotKey(IntPtr.Zero, id, (uint)gesture.Modifiers, gesture.VirtualKey))
             {
-                request.Error = _text.Format("ShortcutAlreadyInUse", shortcut.Value);
-                ClearRegistrations();
-                request.Completed.Set();
-                return;
+                request.UnavailableActions.Add(shortcut.Key);
+                inUse.Add(shortcut.Value);
+                continue;
             }
 
             _registrations[id++] = shortcut.Key;
         }
 
+        if (inUse.Count > 0) errors.Add(_text.Format("ShortcutAlreadyInUse", string.Join(", ", inUse)));
+        request.Error = string.Join(" ", errors);
         request.Completed.Set();
     }
 
@@ -134,6 +140,9 @@ public sealed class GlobalHotkeyService : IDisposable
         public IReadOnlyDictionary<string, string> Shortcuts { get; } = shortcuts;
         public ManualResetEventSlim Completed { get; } = new();
         public string Error { get; set; } = string.Empty;
+
+        // Written only by the message loop before Completed is set.
+        public HashSet<string> UnavailableActions { get; } = new(StringComparer.Ordinal);
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -23,6 +23,7 @@ public sealed class ProfileNotificationService : IDisposable
     private readonly LocalizationService _text;
     private readonly DispatcherTimer _closeTimer;
     private readonly List<Window> _windows = [];
+    private readonly List<Window> _muteWindows = [];
 
     public ProfileNotificationService(Window screenSource, LocalizationService text)
     {
@@ -30,6 +31,12 @@ public sealed class ProfileNotificationService : IDisposable
         _text = text;
         _closeTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1.6) };
         _closeTimer.Tick += (_, _) => CloseAll();
+        _text.LanguageChanged += (_, _) =>
+        {
+            if (_muteWindows.Count == 0) return;
+            CloseMuteBanner();
+            SetMicrophoneMuted(true);
+        };
     }
 
     public void Show(string profileName)
@@ -43,14 +50,7 @@ public sealed class ProfileNotificationService : IDisposable
         try
         {
             CloseAll();
-            foreach (var screen in _screenSource.Screens.All)
-            {
-                var window = CreateWindow(profileName, screen);
-                window.Opened += (_, _) => MakeNonActivating(window);
-                window.Show();
-                _windows.Add(window);
-            }
-
+            ShowOnAllScreens(_windows, _text.Format("ProfileActivatedOverlay", profileName), Color.FromArgb(230, 24, 24, 27), atTop: false);
             PlaySound("SystemAsterisk", IntPtr.Zero, PlaySoundAlias | PlaySoundAsync | PlaySoundNoDefault);
             _closeTimer.Start();
         }
@@ -60,13 +60,56 @@ public sealed class ProfileNotificationService : IDisposable
         }
     }
 
-    public void Dispose() => CloseAll();
+    /// <summary>Shows a banner on every screen until the microphone is unmuted.</summary>
+    public void SetMicrophoneMuted(bool muted)
+    {
+        if (!Dispatcher.UIThread.CheckAccess())
+        {
+            Dispatcher.UIThread.Post(() => SetMicrophoneMuted(muted));
+            return;
+        }
 
-    private Window CreateWindow(string profileName, Screen screen) => new()
+        if (muted == _muteWindows.Count > 0) return;
+        CloseMuteBanner();
+        if (!muted) return;
+        try
+        {
+            ShowOnAllScreens(_muteWindows, _text["MicrophoneMutedBanner"], Color.FromArgb(235, 140, 29, 24), atTop: true);
+        }
+        catch
+        {
+            CloseMuteBanner();
+        }
+    }
+
+    public void Dispose()
+    {
+        CloseAll();
+        CloseMuteBanner();
+    }
+
+    private void ShowOnAllScreens(List<Window> windows, string text, Color background, bool atTop)
+    {
+        foreach (var screen in _screenSource.Screens.All)
+        {
+            var window = CreateWindow(text, background, CalculatePosition(screen, atTop));
+            window.Opened += (_, _) => MakeNonActivating(window);
+            window.Show();
+            windows.Add(window);
+        }
+    }
+
+    private void CloseMuteBanner()
+    {
+        foreach (var window in _muteWindows) window.Close();
+        _muteWindows.Clear();
+    }
+
+    private static Window CreateWindow(string text, Color background, PixelPoint position) => new()
     {
         Width = OverlayWidth,
         Height = OverlayHeight,
-        Position = CalculatePosition(screen),
+        Position = position,
         WindowStartupLocation = WindowStartupLocation.Manual,
         SystemDecorations = SystemDecorations.None,
         ShowInTaskbar = false,
@@ -78,12 +121,12 @@ public sealed class ProfileNotificationService : IDisposable
         TransparencyLevelHint = [WindowTransparencyLevel.Transparent],
         Content = new Border
         {
-            Background = new SolidColorBrush(Color.FromArgb(230, 24, 24, 27)),
+            Background = new SolidColorBrush(background),
             CornerRadius = new CornerRadius(12),
             Padding = new Thickness(24, 16),
             Child = new TextBlock
             {
-                Text = _text.Format("ProfileActivatedOverlay", profileName),
+                Text = text,
                 Foreground = Brushes.White,
                 FontSize = 19,
                 FontWeight = FontWeight.SemiBold,
@@ -94,14 +137,14 @@ public sealed class ProfileNotificationService : IDisposable
         },
     };
 
-    private static PixelPoint CalculatePosition(Screen screen)
+    private static PixelPoint CalculatePosition(Screen screen, bool atTop)
     {
         var width = (int)Math.Round(OverlayWidth * screen.Scaling);
         var height = (int)Math.Round(OverlayHeight * screen.Scaling);
-        var bottomMargin = (int)Math.Round(64 * screen.Scaling);
-        return new PixelPoint(
-            screen.Bounds.X + (screen.Bounds.Width - width) / 2,
-            screen.Bounds.Bottom - height - bottomMargin);
+        var x = screen.Bounds.X + (screen.Bounds.Width - width) / 2;
+        return atTop
+            ? new PixelPoint(x, screen.WorkingArea.Y + (int)Math.Round(24 * screen.Scaling))
+            : new PixelPoint(x, screen.Bounds.Bottom - height - (int)Math.Round(64 * screen.Scaling));
     }
 
     private static void MakeNonActivating(Window window)

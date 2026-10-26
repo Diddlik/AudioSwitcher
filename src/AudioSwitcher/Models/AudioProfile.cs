@@ -31,6 +31,10 @@ public sealed partial class AudioProfile : ObservableObject
 
     [ObservableProperty]
     [property: JsonIgnore]
+    private bool _isHotkeyUnavailable;
+
+    [ObservableProperty]
+    [property: JsonIgnore]
     private string _secondaryText = string.Empty;
 
     [ObservableProperty]

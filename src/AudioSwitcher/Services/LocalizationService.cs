@@ -31,6 +31,14 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Another application already uses this shortcut, so it is not active. Choose a different combination.",
+                ["ShortcutUnavailableShort"] = "Shortcut in use",
+                ["MuteShortcut"] = "Microphone mute shortcut",
+                ["MuteShortcutHelp"] = "Mutes or unmutes the default microphone. A banner stays visible while it is muted.",
+                ["MicrophoneMutedBanner"] = "●  Microphone muted",
+                ["MicrophoneMuted"] = "Microphone muted.",
+                ["MicrophoneUnmuted"] = "Microphone unmuted.",
+                ["NoMicrophone"] = "No default microphone found.",
                 ["On"] = "On",
                 ["Off"] = "Off",
                 ["TriggerApps"] = "Activate automatically when a program runs",
@@ -140,6 +148,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Это сочетание уже использует другое приложение, поэтому оно не работает. Выберите другую комбинацию.",
+                ["ShortcutUnavailableShort"] = "Сочетание занято",
+                ["MuteShortcut"] = "Сочетание для отключения микрофона",
+                ["MuteShortcutHelp"] = "Отключает или включает микрофон по умолчанию. Пока он отключён, отображается баннер.",
+                ["MicrophoneMutedBanner"] = "●  Микрофон отключён",
+                ["MicrophoneMuted"] = "Микрофон отключён.",
+                ["MicrophoneUnmuted"] = "Микрофон включён.",
+                ["NoMicrophone"] = "Микрофон по умолчанию не найден.",
                 ["On"] = "Вкл.",
                 ["Off"] = "Выкл.",
                 ["TriggerApps"] = "Активировать автоматически при запуске программы",
@@ -249,6 +265,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Це сполучення вже використовує інша програма, тому воно не працює. Виберіть іншу комбінацію.",
+                ["ShortcutUnavailableShort"] = "Сполучення зайняте",
+                ["MuteShortcut"] = "Сполучення для вимкнення мікрофона",
+                ["MuteShortcutHelp"] = "Вимикає або вмикає мікрофон за замовчуванням. Поки він вимкнений, видно банер.",
+                ["MicrophoneMutedBanner"] = "●  Мікрофон вимкнено",
+                ["MicrophoneMuted"] = "Мікрофон вимкнено.",
+                ["MicrophoneUnmuted"] = "Мікрофон увімкнено.",
+                ["NoMicrophone"] = "Мікрофон за замовчуванням не знайдено.",
                 ["On"] = "Увімк.",
                 ["Off"] = "Вимк.",
                 ["TriggerApps"] = "Активувати автоматично під час запуску програми",
@@ -358,6 +382,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Une autre application utilise déjà ce raccourci, il n’est donc pas actif. Choisissez une autre combinaison.",
+                ["ShortcutUnavailableShort"] = "Raccourci déjà utilisé",
+                ["MuteShortcut"] = "Raccourci de mise en sourdine du micro",
+                ["MuteShortcutHelp"] = "Coupe ou rétablit le micro par défaut. Une bannière reste affichée tant qu’il est coupé.",
+                ["MicrophoneMutedBanner"] = "●  Micro coupé",
+                ["MicrophoneMuted"] = "Micro coupé.",
+                ["MicrophoneUnmuted"] = "Micro rétabli.",
+                ["NoMicrophone"] = "Aucun micro par défaut trouvé.",
                 ["On"] = "Activé",
                 ["Off"] = "Désactivé",
                 ["TriggerApps"] = "Activer automatiquement quand un programme s’exécute",
@@ -467,6 +499,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Un’altra applicazione usa già questa scorciatoia, quindi non è attiva. Scegli un’altra combinazione.",
+                ["ShortcutUnavailableShort"] = "Scorciatoia già in uso",
+                ["MuteShortcut"] = "Scorciatoia per disattivare il microfono",
+                ["MuteShortcutHelp"] = "Disattiva o riattiva il microfono predefinito. Un banner resta visibile finché è disattivato.",
+                ["MicrophoneMutedBanner"] = "●  Microfono disattivato",
+                ["MicrophoneMuted"] = "Microfono disattivato.",
+                ["MicrophoneUnmuted"] = "Microfono riattivato.",
+                ["NoMicrophone"] = "Nessun microfono predefinito trovato.",
                 ["On"] = "Attivo",
                 ["Off"] = "Disattivo",
                 ["TriggerApps"] = "Attiva automaticamente quando un programma è in esecuzione",
@@ -576,6 +616,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Inna aplikacja używa już tego skrótu, więc nie jest aktywny. Wybierz inną kombinację.",
+                ["ShortcutUnavailableShort"] = "Skrót zajęty",
+                ["MuteShortcut"] = "Skrót wyciszania mikrofonu",
+                ["MuteShortcutHelp"] = "Wycisza lub włącza mikrofon domyślny. Baner pozostaje widoczny, dopóki jest wyciszony.",
+                ["MicrophoneMutedBanner"] = "●  Mikrofon wyciszony",
+                ["MicrophoneMuted"] = "Mikrofon wyciszony.",
+                ["MicrophoneUnmuted"] = "Mikrofon włączony.",
+                ["NoMicrophone"] = "Nie znaleziono mikrofonu domyślnego.",
                 ["On"] = "Wł.",
                 ["Off"] = "Wył.",
                 ["TriggerApps"] = "Aktywuj automatycznie, gdy działa program",
@@ -685,6 +733,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Eine andere Anwendung verwendet dieses Tastenkürzel bereits, daher ist es nicht aktiv. Wähle eine andere Kombination.",
+                ["ShortcutUnavailableShort"] = "Tastenkürzel belegt",
+                ["MuteShortcut"] = "Tastenkürzel zum Stummschalten des Mikrofons",
+                ["MuteShortcutHelp"] = "Schaltet das Standardmikrofon stumm oder wieder ein. Solange es stumm ist, bleibt ein Banner sichtbar.",
+                ["MicrophoneMutedBanner"] = "●  Mikrofon stummgeschaltet",
+                ["MicrophoneMuted"] = "Mikrofon stummgeschaltet.",
+                ["MicrophoneUnmuted"] = "Mikrofon wieder aktiv.",
+                ["NoMicrophone"] = "Kein Standardmikrofon gefunden.",
                 ["On"] = "Ein",
                 ["Off"] = "Aus",
                 ["TriggerApps"] = "Automatisch aktivieren, wenn ein Programm läuft",
@@ -794,6 +850,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Otra aplicación ya usa este atajo, por lo que no está activo. Elige otra combinación.",
+                ["ShortcutUnavailableShort"] = "Atajo en uso",
+                ["MuteShortcut"] = "Atajo para silenciar el micrófono",
+                ["MuteShortcutHelp"] = "Silencia o reactiva el micrófono predeterminado. Un aviso permanece visible mientras está silenciado.",
+                ["MicrophoneMutedBanner"] = "●  Micrófono silenciado",
+                ["MicrophoneMuted"] = "Micrófono silenciado.",
+                ["MicrophoneUnmuted"] = "Micrófono reactivado.",
+                ["NoMicrophone"] = "No se encontró ningún micrófono predeterminado.",
                 ["On"] = "Activado",
                 ["Off"] = "Desactivado",
                 ["TriggerApps"] = "Activar automáticamente cuando se ejecute un programa",
@@ -903,6 +967,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "Outro aplicativo já usa este atalho, por isso ele não está ativo. Escolha outra combinação.",
+                ["ShortcutUnavailableShort"] = "Atalho em uso",
+                ["MuteShortcut"] = "Atalho para silenciar o microfone",
+                ["MuteShortcutHelp"] = "Silencia ou reativa o microfone padrão. Um aviso permanece visível enquanto ele estiver silenciado.",
+                ["MicrophoneMutedBanner"] = "●  Microfone silenciado",
+                ["MicrophoneMuted"] = "Microfone silenciado.",
+                ["MicrophoneUnmuted"] = "Microfone reativado.",
+                ["NoMicrophone"] = "Nenhum microfone padrão encontrado.",
                 ["On"] = "Ativado",
                 ["Off"] = "Desativado",
                 ["TriggerApps"] = "Ativar automaticamente quando um programa estiver em execução",
@@ -1012,6 +1084,14 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["ShortcutUnavailable"] = "其他应用已在使用此快捷键，因此它未生效。请选择其他组合键。",
+                ["ShortcutUnavailableShort"] = "快捷键已被占用",
+                ["MuteShortcut"] = "麦克风静音快捷键",
+                ["MuteShortcutHelp"] = "将默认麦克风静音或取消静音。静音期间会一直显示横幅。",
+                ["MicrophoneMutedBanner"] = "●  麦克风已静音",
+                ["MicrophoneMuted"] = "麦克风已静音。",
+                ["MicrophoneUnmuted"] = "麦克风已取消静音。",
+                ["NoMicrophone"] = "未找到默认麦克风。",
                 ["On"] = "开",
                 ["Off"] = "关",
                 ["TriggerApps"] = "程序运行时自动激活",

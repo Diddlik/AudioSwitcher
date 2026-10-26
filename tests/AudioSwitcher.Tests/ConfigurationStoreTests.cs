@@ -29,6 +29,7 @@ public sealed class ConfigurationStoreTests : IDisposable
             StartWithWindows = true,
             StartupProfileId = profile.Id,
             EnforceActiveProfile = true,
+            MuteHotkey = "Ctrl+Alt+M",
         });
 
         var result = store.Load(out var warning);
@@ -42,6 +43,7 @@ public sealed class ConfigurationStoreTests : IDisposable
         Assert.True(result.StartWithWindows);
         Assert.Equal(profile.Id, result.StartupProfileId);
         Assert.True(result.EnforceActiveProfile);
+        Assert.Equal("Ctrl+Alt+M", result.MuteHotkey);
     }
 
     [Fact]
