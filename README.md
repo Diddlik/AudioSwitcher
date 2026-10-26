@@ -39,7 +39,7 @@ Windows can switch default audio devices, but repeatedly selecting the same spea
 | Direct key capture | Focus a shortcut field and press the required combination |
 | All Windows roles | Set the Console, Multimedia, and Communications defaults together |
 | System tray | Keep running in the background; activate profiles and quick switch from the tray menu |
-| Startup | Start automatically for the current Windows user |
+| Startup | Start automatically for the current Windows user and optionally activate a chosen profile |
 | Automatic updates | Download stable releases in the background |
 | Languages | English, German, French, Italian, Spanish, Portuguese (Brazil), Polish, Russian, Ukrainian, and Simplified Chinese |
 | Redesigned interface | Dedicated profile, quick-switch, and settings views; visible unsaved state and shortcut keycaps |
@@ -65,7 +65,7 @@ Select **Activate now** to switch to the selected profile. Press `Delete` or `Ba
 
 ## Settings
 
-Open **Settings** to choose the interface language or enable automatic startup with Windows.
+Open **Settings** to choose the interface language, enable automatic startup with Windows, or select a profile that AudioSwitcher activates each time it starts (off by default).
 
 ![AudioSwitcher 1.4 settings](docs/screenshots/v1.4-settings.png)
 

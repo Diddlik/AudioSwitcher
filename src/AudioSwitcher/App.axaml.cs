@@ -53,6 +53,7 @@ public partial class App : Application
             _controlServer = new ProfileControlServer(
                 request => Dispatcher.UIThread.InvokeAsync(() => viewModel.HandleControlRequest(request)).GetTask());
             _controlServer.Start();
+            _viewModel.ActivateStartupProfile();
             _ = _aboutViewModel.CheckForUpdatesCommand.ExecuteAsync(null);
 
             if (desktop.Args?.Contains("--minimized", StringComparer.OrdinalIgnoreCase) == true)

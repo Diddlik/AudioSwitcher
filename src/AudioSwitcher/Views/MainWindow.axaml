@@ -502,6 +502,19 @@
                                 <ToggleSwitch Grid.Column="1" IsChecked="{Binding StartWithWindows}"/>
                             </Grid>
                             <Border Height="1" Background="#E3E1DB"/>
+                            <StackPanel Spacing="10">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="24">
+                                    <StackPanel Spacing="4">
+                                        <TextBlock Classes="label" Text="{Binding Text[ActivateProfileOnStartup]}" Margin="0"/>
+                                        <TextBlock Classes="help" Text="{Binding Text[StartupProfileHelp]}"/>
+                                    </StackPanel>
+                                    <ToggleSwitch Grid.Column="1" IsChecked="{Binding ActivateProfileOnStartup}"/>
+                                </Grid>
+                                <ComboBox Width="280" HorizontalAlignment="Left" ItemsSource="{Binding Profiles}"
+                                          SelectedItem="{Binding StartupProfile}"
+                                          IsEnabled="{Binding ActivateProfileOnStartup}"/>
+                            </StackPanel>
+                            <Border Height="1" Background="#E3E1DB"/>
                             <Border Background="#F7F6F3" CornerRadius="8" Padding="16">
                                 <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
                                     <Border Width="20" Height="20" CornerRadius="10" Background="#E6E4DE">

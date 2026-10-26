@@ -31,6 +31,9 @@ public sealed class LocalizationService : ObservableObject
         {
             ["en"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Activate a profile on startup",
+                ["StartupProfileHelp"] = "Activates the selected profile each time AudioSwitcher starts.",
+                ["StartupProfileRequired"] = "Select the profile to activate on startup.",
                 ["WindowsAudioRouting"] = "WINDOWS AUDIO ROUTING",
                 ["RefreshDevices"] = "Refresh devices",
                 ["RefreshDevicesTip"] = "Reload available Windows audio devices",
@@ -125,6 +128,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["ru"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Активировать профиль при запуске",
+                ["StartupProfileHelp"] = "Активирует выбранный профиль при каждом запуске AudioSwitcher.",
+                ["StartupProfileRequired"] = "Выберите профиль для активации при запуске.",
                 ["WindowsAudioRouting"] = "МАРШРУТИЗАЦИЯ ЗВУКА WINDOWS",
                 ["RefreshDevices"] = "Обновить устройства",
                 ["RefreshDevicesTip"] = "Повторно загрузить доступные аудиоустройства Windows",
@@ -219,6 +225,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["uk"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Активувати профіль під час запуску",
+                ["StartupProfileHelp"] = "Активує вибраний профіль під час кожного запуску AudioSwitcher.",
+                ["StartupProfileRequired"] = "Виберіть профіль для активації під час запуску.",
                 ["WindowsAudioRouting"] = "МАРШРУТИЗАЦІЯ ЗВУКУ WINDOWS",
                 ["RefreshDevices"] = "Оновити пристрої",
                 ["RefreshDevicesTip"] = "Повторно завантажити доступні аудіопристрої Windows",
@@ -313,6 +322,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["fr"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Activer un profil au démarrage",
+                ["StartupProfileHelp"] = "Active le profil sélectionné à chaque démarrage d’AudioSwitcher.",
+                ["StartupProfileRequired"] = "Sélectionnez le profil à activer au démarrage.",
                 ["WindowsAudioRouting"] = "ROUTAGE AUDIO WINDOWS",
                 ["RefreshDevices"] = "Actualiser les périphériques",
                 ["RefreshDevicesTip"] = "Recharger les périphériques audio Windows disponibles",
@@ -407,6 +419,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["it"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Attiva un profilo all’avvio",
+                ["StartupProfileHelp"] = "Attiva il profilo selezionato a ogni avvio di AudioSwitcher.",
+                ["StartupProfileRequired"] = "Seleziona il profilo da attivare all’avvio.",
                 ["WindowsAudioRouting"] = "INSTRADAMENTO AUDIO WINDOWS",
                 ["RefreshDevices"] = "Aggiorna dispositivi",
                 ["RefreshDevicesTip"] = "Ricarica i dispositivi audio Windows disponibili",
@@ -501,6 +516,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pl"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Aktywuj profil przy uruchomieniu",
+                ["StartupProfileHelp"] = "Aktywuje wybrany profil przy każdym uruchomieniu AudioSwitcher.",
+                ["StartupProfileRequired"] = "Wybierz profil do aktywacji przy uruchomieniu.",
                 ["WindowsAudioRouting"] = "ROUTING DŹWIĘKU WINDOWS",
                 ["RefreshDevices"] = "Odśwież urządzenia",
                 ["RefreshDevicesTip"] = "Ponownie wczytaj dostępne urządzenia audio systemu Windows",
@@ -595,6 +613,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["de"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Profil beim Start aktivieren",
+                ["StartupProfileHelp"] = "Aktiviert das gewählte Profil bei jedem Start von AudioSwitcher.",
+                ["StartupProfileRequired"] = "Wähle das Profil, das beim Start aktiviert wird.",
                 ["WindowsAudioRouting"] = "WINDOWS-AUDIOROUTING",
                 ["RefreshDevices"] = "Geräte aktualisieren",
                 ["RefreshDevicesTip"] = "Verfügbare Windows-Audiogeräte neu laden",
@@ -689,6 +710,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["es"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Activar un perfil al iniciar",
+                ["StartupProfileHelp"] = "Activa el perfil seleccionado cada vez que se inicia AudioSwitcher.",
+                ["StartupProfileRequired"] = "Selecciona el perfil que se activará al iniciar.",
                 ["WindowsAudioRouting"] = "ENRUTAMIENTO DE AUDIO DE WINDOWS",
                 ["RefreshDevices"] = "Actualizar dispositivos",
                 ["RefreshDevicesTip"] = "Volver a cargar los dispositivos de audio de Windows disponibles",
@@ -783,6 +807,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["pt-BR"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "Ativar um perfil ao iniciar",
+                ["StartupProfileHelp"] = "Ativa o perfil selecionado sempre que o AudioSwitcher é iniciado.",
+                ["StartupProfileRequired"] = "Selecione o perfil a ser ativado ao iniciar.",
                 ["WindowsAudioRouting"] = "ROTEAMENTO DE ÁUDIO DO WINDOWS",
                 ["RefreshDevices"] = "Atualizar dispositivos",
                 ["RefreshDevicesTip"] = "Recarregar os dispositivos de áudio do Windows disponíveis",
@@ -877,6 +904,9 @@ public sealed class LocalizationService : ObservableObject
             },
             ["zh-Hans"] = new Dictionary<string, string>
             {
+                ["ActivateProfileOnStartup"] = "启动时激活配置文件",
+                ["StartupProfileHelp"] = "每次启动 AudioSwitcher 时激活所选配置文件。",
+                ["StartupProfileRequired"] = "请选择启动时要激活的配置文件。",
                 ["WindowsAudioRouting"] = "WINDOWS 音频路由",
                 ["RefreshDevices"] = "刷新设备",
                 ["RefreshDevicesTip"] = "重新加载可用的 Windows 音频设备",

@@ -36,6 +36,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     [ObservableProperty] private AudioProfile? _toggleProfileB;
     [ObservableProperty] private string _toggleHotkey = string.Empty;
     [ObservableProperty] private bool _startWithWindows;
+    [ObservableProperty] private bool _activateProfileOnStartup;
+    [ObservableProperty] private AudioProfile? _startupProfile;
     [ObservableProperty] private LanguageOption? _selectedLanguage;
     [ObservableProperty] private string _statusMessage = string.Empty;
     [ObservableProperty] private bool _isStatusError;
@@ -97,6 +99,8 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         StartWithWindows = configuration.StartWithWindows;
         ToggleProfileA = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileAId);
         ToggleProfileB = Profiles.FirstOrDefault(profile => profile.Id == configuration.ToggleProfileBId);
+        StartupProfile = Profiles.FirstOrDefault(profile => profile.Id == configuration.StartupProfileId);
+        ActivateProfileOnStartup = StartupProfile is not null;
         SelectedProfile = Profiles[0];
         foreach (var profile in Profiles) profile.PropertyChanged += OnProfilePropertyChanged;
         RefreshProfileDisplayInfo();
@@ -142,6 +146,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         SelectedProfile = Profiles.Count == 0 ? null : Profiles[Math.Min(index, Profiles.Count - 1)];
         if (ToggleProfileA is not null && !Profiles.Contains(ToggleProfileA)) ToggleProfileA = null;
         if (ToggleProfileB is not null && !Profiles.Contains(ToggleProfileB)) ToggleProfileB = null;
+        if (StartupProfile is not null && !Profiles.Contains(StartupProfile)) StartupProfile = null;
         IsDirty = true;
         ShowSuccess(Text["ProfileRemoved"]);
     }
@@ -210,6 +215,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
                 ToggleProfileAId = ToggleProfileA?.Id,
                 ToggleProfileBId = ToggleProfileB?.Id,
                 StartWithWindows = StartWithWindows,
+                StartupProfileId = ActivateProfileOnStartup ? StartupProfile?.Id : null,
             });
             IsDirty = false;
             ShowSuccess(Text["ConfigurationSaved"]);
@@ -257,6 +263,12 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
     partial void OnToggleProfileBChanged(AudioProfile? value) { IsDirty = true; StateChanged?.Invoke(); }
     partial void OnToggleHotkeyChanged(string value) => IsDirty = true;
     partial void OnStartWithWindowsChanged(bool value) => IsDirty = true;
+    partial void OnActivateProfileOnStartupChanged(bool value)
+    {
+        if (value) StartupProfile ??= SelectedProfile ?? Profiles.FirstOrDefault();
+        IsDirty = true;
+    }
+    partial void OnStartupProfileChanged(AudioProfile? value) => IsDirty = true;
     partial void OnCurrentPageChanged(MainPage value)
     {
         OnPropertyChanged(nameof(IsProfileView));
@@ -280,6 +292,11 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         _deviceEnumerator.Dispose();
         _hotkeyService.Triggered -= OnHotkeyTriggered;
         foreach (var profile in Profiles) profile.PropertyChanged -= OnProfilePropertyChanged;
+    }
+
+    public void ActivateStartupProfile()
+    {
+        if (ActivateProfileOnStartup && StartupProfile is not null) Activate(StartupProfile);
     }
 
     public void ReportBackgroundStatus(string message) => ShowSuccess(message);
@@ -396,6 +413,7 @@ public partial class MainWindowViewModel : ViewModelBase, IDisposable
         if (!string.IsNullOrWhiteSpace(ToggleHotkey) &&
             (ToggleProfileA is null || ToggleProfileB is null || ToggleProfileA == ToggleProfileB))
             return Fail(Text["ToggleProfilesRequired"], out error);
+        if (ActivateProfileOnStartup && StartupProfile is null) return Fail(Text["StartupProfileRequired"], out error);
 
         error = string.Empty;
         return true;

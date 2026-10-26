@@ -27,6 +27,7 @@ public sealed class ConfigurationStoreTests : IDisposable
             ToggleHotkey = "Ctrl+Alt+Space",
             ToggleProfileAId = profile.Id,
             StartWithWindows = true,
+            StartupProfileId = profile.Id,
         });
 
         var result = store.Load(out var warning);
@@ -38,6 +39,7 @@ public sealed class ConfigurationStoreTests : IDisposable
         Assert.Equal(profile.Id, result.ToggleProfileAId);
         Assert.Equal("pl", result.Language);
         Assert.True(result.StartWithWindows);
+        Assert.Equal(profile.Id, result.StartupProfileId);
     }
 
     [Fact]
